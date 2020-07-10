@@ -61,9 +61,14 @@ int Player::getBet() const
 
 std::pair<Player::PlayerAction, int> Player::decision(const std::list<std::shared_ptr<Card>>& board, int current_pot)
 {
-    int action = 1;
+    static int action = 1;
+    action++;
+    if (action > 3)
+        action = 1;
 
     int bet_amt = 0;
+    if (action == 2)
+        bet_amt = 100;
 
     std::pair<Player::PlayerAction, int> result(static_cast<PlayerAction>(action), bet_amt);
 

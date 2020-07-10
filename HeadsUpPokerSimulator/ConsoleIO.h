@@ -6,8 +6,11 @@
 #include <string>
 
 #include "Card.h"
+#include "Hand.h"
 #include "Player.h"
 #include "PokerGame.h"
+
+// TODO, implement a wrapper to protect those copy calls from bound errors
 
 class ConsoleIO
 {
@@ -18,6 +21,8 @@ class ConsoleIO
     void playerAction(const std::string& player_name, Player::PlayerAction action, int bet, const PokerGame::State& state);
 
     void subRoundChange(PokerGame::SubRound new_sub_round, const PokerGame::State& state);
+
+    void roundEnd(bool draw, const std::string& winner, Hand::Ranking ranking, const PokerGame::State& state);
 
    private:
     PokerGame::State cached_state;
@@ -36,6 +41,10 @@ class ConsoleIO
 
     std::string newSubRoundToString(PokerGame::SubRound new_sub_round);
 
+    static std::string printRanking(Hand::Ranking ranking);
+
+    std::string roundEndToString(bool draw, const std::string& winner, Hand::Ranking ranking, int pot);
+
     static std::string printSuit(Card::Suit suit);
 
     static std::string printValue(Card::Value value);
@@ -49,6 +58,8 @@ class ConsoleIO
     void printChipStackCount(int x, int y, int count);
 
     void printPotStackCount(int x, int y);
+
+    void printToCall(int x, int y);
 
     void printEventText(int x, int y);
 

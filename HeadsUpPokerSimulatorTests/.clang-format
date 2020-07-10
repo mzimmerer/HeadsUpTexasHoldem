@@ -1,0 +1,13 @@
+﻿---
+BasedOnStyle: Google
+AllowShortBlocksOnASingleLine: 'false'
+AllowShortCaseLabelsOnASingleLine: 'false'
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: None
+AllowShortLoopsOnASingleLine: 'false'
+BreakBeforeBraces: Allman
+ColumnLimit: '120'
+IndentWidth: '4'
+
+...

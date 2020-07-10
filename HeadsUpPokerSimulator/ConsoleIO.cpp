@@ -9,8 +9,15 @@ std::pair<Player::PlayerAction, int> ConsoleIO::userDecision(const PokerGame::St
     // Copy the state
     this->cached_state = state;
 
+    // Switch the text 'Check' with 'Call' depending on whether or not there is a bet
+    std::string checkorcall;
+    if (state.current_bet > 0)
+        checkorcall = "Call";
+    else
+        checkorcall = "Check";
+
     // Update the screen
-    this->hint_text = "Check(c), bet(b), or quit(q)?";
+    this->hint_text = checkorcall + "(c), bet(b), fold(f), or quit(q)?";
     this->updateScreen();
 
     // Ask user what action to perform
@@ -21,9 +28,9 @@ std::pair<Player::PlayerAction, int> ConsoleIO::userDecision(const PokerGame::St
         std::cin >> action;
 
         // If the user entered something invalid, ask again
-        if (action != 'c' && action != 'b' && action != 'q')
+        if (action != 'c' && action != 'b' && action != 'f' && action != 'q')
         {
-            this->hint_text = "Invalid entry. Check(c), bet(b), or quit(q)?";
+            this->hint_text = "Invalid entry. " + checkorcall + "(c), bet(b), fold(f) or quit(q)?";
             this->updateScreen();
         }
         else
@@ -34,7 +41,7 @@ std::pair<Player::PlayerAction, int> ConsoleIO::userDecision(const PokerGame::St
     } while (1);
 
     // If the user is betting, ask for an amount
-    int bet_amt;
+    int bet_amt = 0;
     if (action == 'b')
     {
         // Update the screen
@@ -90,6 +97,21 @@ void ConsoleIO::subRoundChange(PokerGame::SubRound new_sub_round, const PokerGam
     this->updateScreen();
 }
 
+void ConsoleIO::roundEnd(bool draw, const std::string& winner, Hand::Ranking ranking, const PokerGame::State& state)
+{
+    // Insert the event text into the event text queue
+    std::string event_text = this->roundEndToString(draw, winner, ranking, state.current_pot);
+    this->event_string_queue.push_front(event_text);
+    if (this->event_string_queue.size() > MAX_EVENT_STRING_QUEUE_LEN)
+        this->event_string_queue.pop_back();
+
+    // Copy the state
+    this->cached_state = state;
+
+    // Update the screen
+    this->updateScreen();
+}
+
 std::string ConsoleIO::actionToString(const std::string& player_name, Player::PlayerAction action, int bet)
 {
     std::string result;
@@ -101,7 +123,7 @@ std::string ConsoleIO::actionToString(const std::string& player_name, Player::Pl
         case Player::PlayerAction::CheckOrCall:
             if (bet > 0)
             {
-                // Correct grammer
+                // Correct for grammer
                 if (player_name == "You")
                     result = "You call.";
                 else
@@ -109,7 +131,7 @@ std::string ConsoleIO::actionToString(const std::string& player_name, Player::Pl
             }
             else
             {
-                // Correct grammer
+                // Correct for grammer
                 if (player_name == "You")
                     result = "You check.";
                 else
@@ -120,7 +142,7 @@ std::string ConsoleIO::actionToString(const std::string& player_name, Player::Pl
         // Bet
         case Player::PlayerAction::Bet:
 
-            // Correct grammer
+            // Correct for grammer
             if (player_name == "You")
                 result = "You bet " + std::to_string(bet) + ".";
             else
@@ -130,7 +152,7 @@ std::string ConsoleIO::actionToString(const std::string& player_name, Player::Pl
         // Fold
         case Player::PlayerAction::Fold:
 
-            // Correct grammer
+            // Correct for grammer
             if (player_name == "You")
                 result = "You fold.";
             else
@@ -156,6 +178,59 @@ std::string ConsoleIO::newSubRoundToString(PokerGame::SubRound new_sub_round)
 
         case PokerGame::SubRound::River:
             return "The river.";
+    }
+}
+
+std::string ConsoleIO::printRanking(Hand::Ranking ranking)
+{
+    switch (ranking)
+    {
+        case Hand::Ranking::RoyalFlush:
+            return "royal flush";
+        case Hand::Ranking::StraightFlush:
+            return "straight flush";
+        case Hand::Ranking::FourOfAKind:
+            return "four of a kind";
+        case Hand::Ranking::FullHouse:
+            return "full house";
+        case Hand::Ranking::Flush:
+            return "flush";
+        case Hand::Ranking::Straight:
+            return "straight";
+        case Hand::Ranking::ThreeOfAKind:
+            return "three of a kind";
+        case Hand::Ranking::TwoPair:
+            return "two pair";
+        case Hand::Ranking::Pair:
+            return "pair";
+        case Hand::Ranking::HighCard:
+            return "high card";
+        default:
+            return "";
+    }
+}
+
+std::string ConsoleIO::roundEndToString(bool draw, const std::string& winner, Hand::Ranking ranking, int pot)
+{
+    if (draw == true)
+        return "Round draw with " + ConsoleIO::printRanking(ranking);
+
+    // Correct for grammer
+    if (winner == "You")
+    {
+        // Support hidden rankings
+        if (ranking == Hand::Ranking::Unranked)
+            return "You win " + std::to_string(pot) + ".";
+        else
+            return "You win " + std::to_string(pot) + " with " + ConsoleIO::printRanking(ranking) + ".";
+    }
+    else
+    {
+        // Support hidden rankings
+        if (ranking == Hand::Ranking::Unranked)
+            return winner + " wins " + std::to_string(pot) + ".";
+        else
+            return winner + " wins " + std::to_string(pot) + " with " + ConsoleIO::printRanking(ranking) + ".";
     }
 }
 
@@ -258,6 +333,17 @@ void ConsoleIO::printPotStackCount(int x, int y)
     std::copy(chip_count.begin(), chip_count.end(), &this->screen_buffer[y + 1][x - chip_count.size() / 2]);
 }
 
+void ConsoleIO::printToCall(int x, int y)
+{
+    // Copy the to call message into the screen buffer
+    std::string to_call("to call");
+    std::copy(to_call.begin(), to_call.end(), &this->screen_buffer[y][x - to_call.size() / 2]);
+
+    // Copy the chip count into the screen buffer
+    std::string chip_count = std::to_string(this->cached_state.current_bet);
+    std::copy(chip_count.begin(), chip_count.end(), &this->screen_buffer[y + 1][x - chip_count.size() / 2]);
+}
+
 void ConsoleIO::printEventText(int x, int y)
 {
     // Print each event text to the screen buffer
@@ -302,11 +388,14 @@ void ConsoleIO::updateScreen()
     // Draw the pot chip stack count
     this->printPotStackCount(HEIGHT + 3, HEIGHT / 2 + 2);
 
+    // Draw the to call message
+    this->printToCall(HEIGHT + 3, 3 * HEIGHT / 4 + 1);
+
     // Draw the board
     this->printBoard(HEIGHT + 3, HEIGHT / 2 - 1);
 
     // Print event text
-    this->printEventText(WIDTH - 30, 1);
+    this->printEventText(WIDTH - 40, 1);
 
     // Draw the screen
     for (auto y = 0; y < HEIGHT; y++)
@@ -321,8 +410,8 @@ void ConsoleIO::updateScreen()
     // Sleep for some time
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
 
-    // Consume any characters the user entered while sleeping
-    #if 0
+// Consume any characters the user entered while sleeping
+#if 0
     if (std::cin.peek() != EOF)
     {
         std::cin.clear();

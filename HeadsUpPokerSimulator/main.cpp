@@ -4,9 +4,9 @@
 #include "ConsoleIO.h"
 #include "PokerGame.h"
 
-// TODO Need a wait to determine winner
-
 // TODO Need all in support
+
+// TODO Need AI
 
 int main()
 {
@@ -24,7 +24,12 @@ int main()
         PokerGame::SubRoundChangeCallback subround_change_callback =
             std::bind(&ConsoleIO::subRoundChange, &console_io, std::placeholders::_1, std::placeholders::_2);
 
-        PokerGame poker_game(5, 500, decision_callback, player_action_callback, subround_change_callback);
+        PokerGame::RoundEndCallback round_end_callback =
+            std::bind(&ConsoleIO::roundEnd, &console_io, std::placeholders::_1, std::placeholders::_2,
+                      std::placeholders::_3, std::placeholders::_4);
+
+        PokerGame poker_game(5, 500, decision_callback, player_action_callback, subround_change_callback,
+                             round_end_callback);
 
         poker_game.play();
     }

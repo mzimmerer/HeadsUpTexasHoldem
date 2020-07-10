@@ -5,7 +5,7 @@
 Card::Card(Value value_in, Suit suit_in) : value(value_in), suit(suit_in)
 {
     // Sanity check provided value
-    if (this->value < Value::Ace || this->value > Value::King)
+    if (this->value < Value::Two || this->value > Value::Ace)
         throw std::runtime_error(
             "Invalid card value provided to Card constructor!");
 

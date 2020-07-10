@@ -13,5 +13,36 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="GoogleTestSource">
+      <UniqueIdentifier>{1631db44-db13-4566-af99-17ffb15b741f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SourceUnderTest">
+      <UniqueIdentifier>{86c09dd7-f324-49c7-955f-6a0ba2107137}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="hand_tests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\googletest\googletest\src\gtest_main.cc">
+      <Filter>GoogleTestSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\googletest\googletest\src\gtest-all.cc">
+      <Filter>GoogleTestSource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HeadsUpPokerSimulator\Hand.cpp">
+      <Filter>SourceUnderTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HeadsUpPokerSimulator\Card.cpp">
+      <Filter>SourceUnderTest</Filter>
+    </ClCompile>
+    <ClCompile Include="HandTestWrapper.cpp">
+      <Filter>SourceUnderTest</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="HandTestWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
