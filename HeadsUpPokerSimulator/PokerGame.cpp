@@ -15,7 +15,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
-#include "PokerGame.h"
+#include "PokerGame.h" // TODO get rid of run member
+
+#include <stdexcept>
 
 PokerGame::PokerGame(int small_blind_in, int starting_stack_size_in, DecisionCallback decision_callback_in,
                      PlayerActionCallback player_action_callback_in, SubRoundChangeCallback subround_change_callback_in,
@@ -100,7 +102,7 @@ bool PokerGame::playRound()
     this->board_cards_flipped = 0;
     this->callbackWithSubroundChange(SubRound::PreFlop);
     if (false == this->bettingRoundWrapper(small_blind_target, 0))
-        return false;
+        return this->run;
 
     // The flop
     this->current_sub_round = SubRound::Flop;
@@ -110,7 +112,7 @@ bool PokerGame::playRound()
     this->board_cards_flipped = 3;
     this->callbackWithSubroundChange(SubRound::Flop);
     if (false == this->bettingRoundWrapper(small_blind_target, 0))
-        return false;
+        return this->run;
 
     // The turn
     this->current_sub_round = SubRound::Turn;
@@ -118,7 +120,7 @@ bool PokerGame::playRound()
     this->board_cards_flipped = 4;
     this->callbackWithSubroundChange(SubRound::Turn);
     if (false == this->bettingRoundWrapper(small_blind_target, 0))
-        return false;
+        return this->run;
 
     // The river
     this->current_sub_round = SubRound::River;
@@ -126,7 +128,7 @@ bool PokerGame::playRound()
     this->board_cards_flipped = 5;
     this->callbackWithSubroundChange(SubRound::River);
     if (false == this->bettingRoundWrapper(small_blind_target, 0))
-        return false;
+        return this->run;
 
     // Determine winner
     RankedHand player_hand(this->players[0]->getHand(), this->board);
@@ -273,15 +275,19 @@ void PokerGame::fold(int player, const std::pair<Player::PlayerAction, int>& act
 
 bool PokerGame::bettingRoundWrapper(int player, int players_acted)
 {
+    // Call betting round
     if (false == this->bettingRound(player, players_acted))
     {
         // Callback to indicate round end considering one of the players has folded
         if (this->players[0]->hasFolded() == true)
-            return this->callbackWithRoundEnd(false, this->players[1]->getName(), RankedHand::Ranking::Unranked);
+            this->run = this->callbackWithRoundEnd(false, this->players[1]->getName(), RankedHand::Ranking::Unranked);
         else
-            return this->callbackWithRoundEnd(false, this->players[0]->getName(), RankedHand::Ranking::Unranked);
-        return true;
+            this->run = this->callbackWithRoundEnd(false, this->players[0]->getName(), RankedHand::Ranking::Unranked);
+
+        return false;
     }
+
+    return true;
 }
 
 bool PokerGame::bettingRound(int starting_player, int players_acted)

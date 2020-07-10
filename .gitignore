@@ -1,7 +1,10 @@
 .vs/*
+x64/*
 Debug/*
 Release/*
+HeadsUpPokerSimulator/x64/*
 HeadsUpPokerSimulator/Debug/*
 HeadsUpPokerSimulator/Release/*
+HeadsUpPokerSimulatorTests/x64/*
 HeadsUpPokerSimulatorTests/Debug/*
 HeadsUpPokerSimulatorTests/Release/*

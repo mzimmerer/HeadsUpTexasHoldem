@@ -18,6 +18,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 
 #include "Card.h"
 #include "Random.h"

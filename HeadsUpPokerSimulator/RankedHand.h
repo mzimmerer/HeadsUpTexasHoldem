@@ -22,6 +22,7 @@
 #include <map>
 #include <unordered_map>
 #include <vector>
+#include <memory>
 
 #include "Card.h"
 
