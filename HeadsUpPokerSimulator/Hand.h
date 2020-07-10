@@ -151,4 +151,59 @@ class Hand
      *  @return True if this hand is a straight, false otherwise
      */
     bool isStraight(StraightMap& straight_map);
+
+    /** Rank the hand as a royal flush
+     */
+    void rankRoyalFlush();
+
+    /** Rank the hand as a straight flush
+     *  @param straight_map A reference to the straight map
+     */
+    void rankStraightFlush(const StraightMap& straight_map);
+
+    /** Rank the hand as a four of a kind
+     *  @param straight_map A reference to the straight map
+     *  @param largest_set A reference to the largest set
+     */
+    void rankFourOfAKind(const StraightMap& straight_map, const LargestSet& largest_set);
+
+    /** Rank the hand as a full house
+     *  @param largest_set A reference to the largest set
+     *  @param pair_list A reference to the pair list
+     */
+    void rankFullHouse(const LargestSet& largest_set, const PairList& pair_list);
+
+    /** Rank the hand as a flush
+     *  @param suit_map A reference to the suit map
+     *  @param is_flush A reference to the is_flush pair
+     */
+    void rankFlush(SuitMap& suit_map, const std::pair<bool, Card::Suit>& is_flush);
+
+    /** Rank the hand as a straight
+     *  @param straight_map A reference to the straight map
+     */
+    void rankStraight(const StraightMap& straight_map);
+
+    /** Rank the hand as a three of a kind
+     *  @param straight_map A reference to the straight map
+     *  @param largest_set A reference to the largest set
+     */
+    void rankThreeOfAKind(const StraightMap& straight_map, const LargestSet& largest_set);
+
+    /** Rank the hand as a two pair
+     *  @param straight_map A reference to the straight map
+     *  @param pair_list A reference to the pair list
+     */
+    void rankTwoPair(const StraightMap& straight_map, const PairList& pair_list);
+
+    /** Rank the hand as a pair
+     *  @param straight_map A reference to the straight map
+     *  @param largest_set A reference to the largest set
+     */
+    void rankPair(const StraightMap& straight_map, const LargestSet& largest_set);
+
+    /** Rank the hand as a high card
+     *  @param straight_map A reference to the straight map
+     */
+    void rankHighCard(const StraightMap& straight_map);
 };

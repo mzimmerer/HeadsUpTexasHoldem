@@ -17,8 +17,6 @@
  **/
 #include "PokerGame.h"
 
-// TODO cleanup bool PokerGame::playRound()
-
 PokerGame::PokerGame(int small_blind_in, int starting_stack_size_in, DecisionCallback decision_callback_in,
                      PlayerActionCallback player_action_callback_in, SubRoundChangeCallback subround_change_callback_in,
                      RoundEndCallback round_end_callback_in, GameEndCallback game_end_callback_in)
@@ -41,18 +39,17 @@ void PokerGame::play()
     this->current_dealer = this->rng.getRandomNumberInRange(0, 1);
 
     // While we should continue to play rounds
-    bool run = true;
-    while (run == true)
+    while (this->run == true)
     {
         // Play a round of poker
         if (false == this->playRound())
-            run = false;
+            this->run = false;
     }
 }
 
 bool PokerGame::playRound()
 {
-    // If either player has zero chips at this point, they lose!
+    // If either player has zero chips at the start of the round, they lose!
     if (this->players[0]->chipCount() == 0)
     {
         this->game_end_callback(this->players[1]->getName());
@@ -102,15 +99,8 @@ bool PokerGame::playRound()
     this->current_sub_round = SubRound::PreFlop;
     this->board_cards_flipped = 0;
     this->callbackWithSubroundChange(SubRound::PreFlop);
-    if (false == this->bettingRound(small_blind_target, 0))
-    {
-        // Callback to indicate round end considering one of the players has folded
-        if (this->players[0]->hasFolded() == true)
-            this->callbackWithRoundEnd(false, this->players[1]->getName(), Hand::Ranking::Unranked);
-        else
-            this->callbackWithRoundEnd(false, this->players[0]->getName(), Hand::Ranking::Unranked);
-        return true;
-    }
+    if (false == this->bettingRoundWrapper(small_blind_target, 0))
+        return false;
 
     // The flop
     this->current_sub_round = SubRound::Flop;
@@ -119,67 +109,46 @@ bool PokerGame::playRound()
     this->board[2] = this->deck.dealCard();
     this->board_cards_flipped = 3;
     this->callbackWithSubroundChange(SubRound::Flop);
-    if (false == this->bettingRound(small_blind_target, 0))
-    {
-        // Callback to indicate round end considering one of the players has folded
-        if (this->players[0]->hasFolded() == true)
-            this->callbackWithRoundEnd(false, this->players[1]->getName(), Hand::Ranking::Unranked);
-        else
-            this->callbackWithRoundEnd(false, this->players[0]->getName(), Hand::Ranking::Unranked);
-        return true;
-    }
+    if (false == this->bettingRoundWrapper(small_blind_target, 0))
+        return false;
 
     // The turn
     this->current_sub_round = SubRound::Turn;
     this->board[3] = this->deck.dealCard();
     this->board_cards_flipped = 4;
     this->callbackWithSubroundChange(SubRound::Turn);
-    if (false == this->bettingRound(small_blind_target, 0))
-    {
-        // Callback to indicate round end considering one of the players has folded
-        if (this->players[0]->hasFolded() == true)
-            this->callbackWithRoundEnd(false, this->players[1]->getName(), Hand::Ranking::Unranked);
-        else
-            this->callbackWithRoundEnd(false, this->players[0]->getName(), Hand::Ranking::Unranked);
-        return true;
-    }
+    if (false == this->bettingRoundWrapper(small_blind_target, 0))
+        return false;
 
     // The river
     this->current_sub_round = SubRound::River;
     this->board[4] = this->deck.dealCard();
     this->board_cards_flipped = 5;
     this->callbackWithSubroundChange(SubRound::River);
-    if (false == this->bettingRound(small_blind_target, 0))
-    {
-        // Callback to indicate round end considering one of the players has folded
-        if (this->players[0]->hasFolded() == true)
-            this->callbackWithRoundEnd(false, this->players[1]->getName(), Hand::Ranking::Unranked);
-        else
-            this->callbackWithRoundEnd(false, this->players[0]->getName(), Hand::Ranking::Unranked);
-        return true;
-    }
+    if (false == this->bettingRoundWrapper(small_blind_target, 0))
+        return false;
 
     // Determine winner
     Hand player_hand(this->players[0]->getHand(), this->board);
     Hand ai_hand(this->players[1]->getHand(), this->board);
     if (player_hand == ai_hand)
     {
-        // Draw
-        this->callbackWithRoundEnd(true, "draw", player_hand.getRanking());
+        // Round draw
         this->players[0]->adjustChips(this->current_pot / 2);
         this->players[1]->adjustChips(this->current_pot / 2);
+        return this->callbackWithRoundEnd(true, "draw", player_hand.getRanking());
     }
     else if (player_hand < ai_hand)
     {
         // AI wins
-        this->callbackWithRoundEnd(false, this->players[1]->getName(), ai_hand.getRanking());
         this->players[0]->adjustChips(this->current_pot);
+        return this->callbackWithRoundEnd(false, this->players[1]->getName(), ai_hand.getRanking());
     }
     else
     {
         // You win
-        this->callbackWithRoundEnd(false, this->players[0]->getName(), player_hand.getRanking());
         this->players[0]->adjustChips(this->current_pot);
+        return this->callbackWithRoundEnd(false, this->players[0]->getName(), player_hand.getRanking());
     }
 
     return true;
@@ -214,6 +183,107 @@ void PokerGame::dealCards()
         player->clearFolded();
 }
 
+void PokerGame::checkOrCall(int player, const std::pair<Player::PlayerAction, int>& action)
+{
+    // If it was a call, move chips to the pot
+    if (this->current_bet > 0)
+    {
+        // Lookup this player's current bet
+        int chips_in_pot = this->players[player]->getPotInvestment();
+
+        // Determine how many chips are required to call
+        int to_call = this->current_bet - chips_in_pot;
+
+        // Players can only call with the chips that they have
+        if (to_call > this->players[player]->chipCount())
+            to_call = this->players[player]->chipCount();
+
+        // Remove chips from this player's stack
+        this->players[player]->adjustChips(-to_call);
+
+        // Remember this players bet
+        this->players[player]->adjustPotInvestment(to_call);
+
+        // Add the chips to the pot
+        this->current_pot += to_call;
+
+        // Call action callback
+        if (action.first == Player::PlayerAction::CheckOrCall)
+            this->callbackWithPlayerAction(this->players[player]->getName(), Player::PlayerAction::CheckOrCall,
+                                           this->current_bet - this->players[0]->getPotInvestment());
+        else
+            this->callbackWithPlayerAction(this->players[player]->getName(), action.first, action.second);
+    }
+}
+
+bool PokerGame::bet(int player, const std::pair<Player::PlayerAction, int>& action)
+{
+    // Lookup this player's current bet
+    int chips_in_pot = this->players[player]->getPotInvestment();
+
+    // Determine how many chips are required to flat call
+    int to_call = this->current_bet - chips_in_pot;
+
+    // Determine how many chips the player must put into the pot
+    int chips_to_pot = to_call + action.second;
+
+    // Players can only bet with the chips that they have
+    if (chips_to_pot > this->players[player]->chipCount())
+        chips_to_pot = this->players[player]->chipCount();
+
+    // Remove chips from this player's stack
+    this->players[player]->adjustChips(-chips_to_pot);
+
+    // Remember this players bet
+    this->players[player]->adjustPotInvestment(chips_to_pot);
+
+    // Add the chips to the pot
+    this->current_pot += chips_to_pot;
+
+    // Call action callback
+    if (action.first == Player::PlayerAction::CheckOrCall)
+        this->callbackWithPlayerAction(this->players[player]->getName(), Player::PlayerAction::CheckOrCall,
+                                       this->current_bet - this->players[0]->getPotInvestment());
+    else
+        this->callbackWithPlayerAction(this->players[player]->getName(), action.first, action.second);
+
+    // Resolve the bet before ending the betting round
+    this->current_bet += action.second;
+    if (false == this->bettingRound((player + 1) % 2, 1))
+        return false;
+
+    return true;
+}
+
+void PokerGame::fold(int player, const std::pair<Player::PlayerAction, int>& action)
+{
+    // Mark the player as folded
+    this->players[player]->fold();
+
+    // Let the winner collect the pot
+    this->players[(player + 1) % 2]->adjustChips(this->current_pot);
+
+    // Call action callback
+    if (action.first == Player::PlayerAction::CheckOrCall)
+        this->callbackWithPlayerAction(this->players[player]->getName(), Player::PlayerAction::CheckOrCall,
+                                       this->current_bet - this->players[0]->getPotInvestment());
+    else
+        this->callbackWithPlayerAction(this->players[player]->getName(), action.first, action.second);
+}
+
+bool PokerGame::bettingRoundWrapper(int player, int players_acted)
+{
+    if (false == this->bettingRound(player, players_acted))
+    {
+        // Callback to indicate round end considering one of the players has folded
+        if (this->players[0]->hasFolded() == true)
+            return this->callbackWithRoundEnd(false, this->players[1]->getName(), Hand::Ranking::Unranked);
+        else
+            return this->callbackWithRoundEnd(false, this->players[0]->getName(), Hand::Ranking::Unranked);
+        return true;
+    }
+}
+
 bool PokerGame::bettingRound(int starting_player, int players_acted)
 {
     // Initialize local variables
@@ -242,103 +312,25 @@ bool PokerGame::bettingRound(int starting_player, int players_acted)
         // Switch to action specific implementation
         switch (action.first)
         {
-            // Check
+            // Check or call, depending on current bet
             case Player::PlayerAction::CheckOrCall:
-
-                // If it was a call, move chips to the pot
-                if (this->current_bet > 0)
-                {
-                    // Lookup this player's current bet
-                    int chips_in_pot = this->players[deciding_player]->getPotInvestment();
-
-                    // Determine how many chips are required to call
-                    int to_call = this->current_bet - chips_in_pot;
-
-                    // Players can only call with the chips that they have
-                    if (to_call > this->players[deciding_player]->chipCount())
-                        to_call = this->players[deciding_player]->chipCount();
-
-                    // Remove chips from this player's stack
-                    this->players[deciding_player]->adjustChips(-to_call);
-
-                    // Remember this players bet
-                    this->players[deciding_player]->adjustPotInvestment(to_call);
-
-                    // Add the chips to the pot
-                    this->current_pot += to_call;
-
-                    // Call action callback
-                    if (action.first == Player::PlayerAction::CheckOrCall)
-                        this->callbackWithPlayerAction(this->players[deciding_player]->getName(),
-                                                       Player::PlayerAction::CheckOrCall,
-                                                       this->current_bet - this->players[0]->getPotInvestment());
-                    else
-                        this->callbackWithPlayerAction(this->players[deciding_player]->getName(), action.first,
-                                                       action.second);
-                }
+                this->checkOrCall(deciding_player, action);
                 break;
 
             // Bet
             case Player::PlayerAction::Bet:
-
-            {
-                // Lookup this player's current bet
-                int chips_in_pot = this->players[deciding_player]->getPotInvestment();
-
-                // Determine how many chips are required to flat call
-                int to_call = this->current_bet - chips_in_pot;
-
-                // Determine how many chips the player must put into the pot
-                int chips_to_pot = to_call + action.second;
-
-                // Players can only bet with the chips that they have
-                if (chips_to_pot > this->players[deciding_player]->chipCount())
-                    chips_to_pot = this->players[deciding_player]->chipCount();
-
-                // Remove chips from this player's stack
-                this->players[deciding_player]->adjustChips(-chips_to_pot);
-
-                // Remember this players bet
-                this->players[deciding_player]->adjustPotInvestment(chips_to_pot);
-
-                // Add the chips to the pot
-                this->current_pot += chips_to_pot;
-
-                // Call action callback
-                if (action.first == Player::PlayerAction::CheckOrCall)
-                    this->callbackWithPlayerAction(this->players[deciding_player]->getName(),
-                                                   Player::PlayerAction::CheckOrCall,
-                                                   this->current_bet - this->players[0]->getPotInvestment());
-                else
-                    this->callbackWithPlayerAction(this->players[deciding_player]->getName(), action.first,
-                                                   action.second);
-
-                // Resolve the bet before ending the betting round
-                this->current_bet += action.second;
-                if (false == this->bettingRound((deciding_player + 1) % 2, 1))
-                    return false;
-
-                return true;
-            }
+                return this->bet(deciding_player, action);
 
             // Fold
             case Player::PlayerAction::Fold:
+                this->fold(deciding_player, action);
+                return false;
 
-                // Mark the player as folded
-                this->players[deciding_player]->fold();
+            // Quit
+            case Player::PlayerAction::Quit:
 
-                // Let the winner collect the pot
-                this->players[(deciding_player + 1) % 2]->adjustChips(this->current_pot);
-
-                // Call action callback
-                if (action.first == Player::PlayerAction::CheckOrCall)
-                    this->callbackWithPlayerAction(this->players[deciding_player]->getName(),
-                                                   Player::PlayerAction::CheckOrCall,
-                                                   this->current_bet - this->players[0]->getPotInvestment());
-                else
-                    this->callbackWithPlayerAction(this->players[deciding_player]->getName(), action.first,
-                                                   action.second);
-
+                // Set run to false
+                this->run = false;
                 return false;
 
             // Invalid actions
@@ -407,11 +399,11 @@ void PokerGame::callbackWithSubroundChange(SubRound new_subround)
     this->subround_change_callback(new_subround, state);
 }
 
-void PokerGame::callbackWithRoundEnd(bool draw, const std::string& winner, Hand::Ranking ranking)
+bool PokerGame::callbackWithRoundEnd(bool draw, const std::string& winner, Hand::Ranking ranking)
 {
     // Construct state
     State state = this->constructState();
 
     // Callback with the round end information
-    this->round_end_callback(draw, winner, ranking, state);
+    return this->round_end_callback(draw, winner, ranking, state);
 }

@@ -76,7 +76,7 @@ std::pair<Player::PlayerAction, int> ConsoleIO::userDecision(const PokerGame::St
     else if (action == 'b')
         player_action = Player::PlayerAction::Bet;
     else
-        exit(1);  // XXX TODO somehow exit the game cleanly here
+        player_action = Player::PlayerAction::Quit;
 
     std::pair<Player::PlayerAction, int> result(player_action, bet_amt);
 
@@ -114,7 +114,7 @@ void ConsoleIO::subRoundChange(PokerGame::SubRound new_sub_round, const PokerGam
     this->updateScreen();
 }
 
-void ConsoleIO::roundEnd(bool draw, const std::string& winner, Hand::Ranking ranking, const PokerGame::State& state)
+bool ConsoleIO::roundEnd(bool draw, const std::string& winner, Hand::Ranking ranking, const PokerGame::State& state)
 {
     // Insert the event text into the event text queue
     std::string event_text = this->roundEndToString(draw, winner, ranking, state.current_pot);
@@ -151,9 +151,11 @@ void ConsoleIO::roundEnd(bool draw, const std::string& winner, Hand::Ranking ran
 
     } while (1);
 
-    // XXX
-    if (action == 'q')  // TODO
-        exit(1);        // XXX
+    // If the user wants to quit, return false
+    if (action == 'q')
+        return false;
+
+    return true;
 }
 
 void ConsoleIO::gameEnd(const std::string& winner)
@@ -350,8 +352,8 @@ void ConsoleIO::printCard(int x, int y, const Card& card)
     std::string suit = printSuit(card.getSuit());
 
     // Copy these strings to the screen buffer, centered at the X/Y parameters provided
-    std::copy(value.begin(), value.end(), &this->screen_buffer[y][x - value.size() / 2]);   // XXX bound checking
-    std::copy(suit.begin(), suit.end(), &this->screen_buffer[y + 1][x - suit.size() / 2]);  // XXX bound checking
+    ConsoleIO::screenBufferCopy(value.begin(), value.end(), y, x - value.size() / 2);
+    ConsoleIO::screenBufferCopy(suit.begin(), suit.end(), y + 1, x - suit.size() / 2);
 }
 
 void ConsoleIO::printBoard(int x, int y)
@@ -376,33 +378,33 @@ void ConsoleIO::printChipStackCount(int x, int y, int count)
 {
     // Copy the chip count into the screen buffer
     std::string chip_stack("chip stack");
-    std::copy(chip_stack.begin(), chip_stack.end(), &this->screen_buffer[y][x - chip_stack.size() / 2]);
+    ConsoleIO::screenBufferCopy(chip_stack.begin(), chip_stack.end(), y, x - chip_stack.size() / 2);
 
     // Copy the chip count into the screen buffer
     std::string chip_count = std::to_string(count);
-    std::copy(chip_count.begin(), chip_count.end(), &this->screen_buffer[y + 1][x - chip_count.size() / 2]);
+    ConsoleIO::screenBufferCopy(chip_count.begin(), chip_count.end(), y + 1, x - chip_count.size() / 2);
 }
 
 void ConsoleIO::printPotStackCount(int x, int y)
 {
     // Copy the chip count into the screen buffer
     std::string pot("pot");
-    std::copy(pot.begin(), pot.end(), &this->screen_buffer[y][x - pot.size() / 2]);
+    ConsoleIO::screenBufferCopy(pot.begin(), pot.end(), y, x - pot.size() / 2);
 
     // Copy the chip count into the screen buffer
     std::string chip_count = std::to_string(this->cached_state.current_pot);
-    std::copy(chip_count.begin(), chip_count.end(), &this->screen_buffer[y + 1][x - chip_count.size() / 2]);
+    ConsoleIO::screenBufferCopy(chip_count.begin(), chip_count.end(), y + 1, x - chip_count.size() / 2);
 }
 
 void ConsoleIO::printToCall(int x, int y)
 {
     // Copy the to call message into the screen buffer
     std::string to_call("to call");
-    std::copy(to_call.begin(), to_call.end(), &this->screen_buffer[y][x - to_call.size() / 2]);
+    ConsoleIO::screenBufferCopy(to_call.begin(), to_call.end(), y, x - to_call.size() / 2);
 
     // Copy the chip count into the screen buffer
     std::string chip_count = std::to_string(this->cached_state.current_bet);
-    std::copy(chip_count.begin(), chip_count.end(), &this->screen_buffer[y + 1][x - chip_count.size() / 2]);
+    ConsoleIO::screenBufferCopy(chip_count.begin(), chip_count.end(), y + 1, x - chip_count.size() / 2);
 }
 
 void ConsoleIO::printEventText(int x, int y)
@@ -411,7 +413,7 @@ void ConsoleIO::printEventText(int x, int y)
     for (const auto& event_text : this->event_string_queue)
     {
         // Copy the chip count into the screen buffer
-        std::copy(event_text.begin(), event_text.end(), &this->screen_buffer[y++][x]);
+        ConsoleIO::screenBufferCopy(event_text.begin(), event_text.end(), y++, x);
     }
 }
 
@@ -470,4 +472,19 @@ void ConsoleIO::updateScreen()
 
     // Sleep for some time
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
+}
+
+void ConsoleIO::screenBufferCopy(std::string::const_iterator src_begin, std::string::const_iterator src_end, int y,
+                                 int x)
+{
+    // Copy the source to the destination, skipping out of bound writes
+    for (; src_begin != src_end; src_begin++)
+    {
+        // Continue instead of writing out of bounds
+        if (y < 0 || y >= HEIGHT || x < 0 || x >= WIDTH)
+            continue;
+
+        // Copy
+        this->screen_buffer[y][x++] = *src_begin;
+    }
 }

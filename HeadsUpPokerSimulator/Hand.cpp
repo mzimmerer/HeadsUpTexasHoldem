@@ -17,8 +17,6 @@
  **/
 #include "Hand.h"
 
-// XXX split up void Hand::rankHand()
-
 Hand::Hand() : ranking(Ranking::Unranked)
 {
 }
@@ -136,8 +134,8 @@ void Hand::rankHand()
     // Check for royal flush
     if (is_flush.first == true && is_straight == true && straight_map.begin()->second->getValue() == Card::Value::Ace)
     {
-        // The ranking is a royal flush, no subranking is necessary
-        this->ranking = Ranking::RoyalFlush;
+        // The ranking is a royal flush
+        this->rankRoyalFlush();
         return;
     }
 
@@ -145,10 +143,7 @@ void Hand::rankHand()
     if (is_flush.first == true && is_straight == true)
     {
         // The ranking is straight flush
-        this->ranking = Ranking::StraightFlush;
-
-        // The highest card is the subranking
-        this->sub_ranking.push_back(straight_map.begin()->second);
+        this->rankStraightFlush(straight_map);
         return;
     }
 
@@ -156,18 +151,7 @@ void Hand::rankHand()
     if (largest_set.first == 4)
     {
         // The ranking is four of a kind
-        this->ranking = Ranking::FourOfAKind;
-
-        // The first subranking is the value of the set
-        this->sub_ranking.push_back(largest_set.second);
-
-        // Determine remaining high card from the straight map (excluding the value of the set)
-        auto straight_map_iter = straight_map.begin();
-        if (straight_map_iter->second->getValue() == largest_set.second->getValue())
-            straight_map_iter++;
-
-        // The second subranking is the remaining high card
-        this->sub_ranking.push_back(straight_map_iter->second);
+        this->rankFourOfAKind(straight_map, largest_set);
         return;
     }
 
@@ -175,13 +159,7 @@ void Hand::rankHand()
     if (largest_set.first == 3 && pair_list.size() > 0)
     {
         // The ranking is full house
-        this->ranking = Ranking::FullHouse;
-
-        // The first subranking is the value of the three of a kind set
-        this->sub_ranking.push_back(largest_set.second);
-
-        // The second subranking is the value of the two of a kind set
-        this->sub_ranking.push_back(pair_list.front());
+        this->rankFullHouse(largest_set, pair_list);
         return;
     }
 
@@ -189,29 +167,7 @@ void Hand::rankHand()
     if (is_flush.first == true)
     {
         // The ranking is flush
-        this->ranking = Ranking::Flush;
-
-        // Sort the list cooresponding to the flush suit within the suit map in decending order
-        suit_map[is_flush.second].sort([](const std::shared_ptr<Card>& lhs, const std::shared_ptr<Card>& rhs) {
-            return (lhs->getValue()) > (rhs->getValue());
-        });
-
-        // Insert the five highest entries of the flush suit from the suit map into the sub ranking
-        int cards_added = 0;
-        for (const auto& card : suit_map[is_flush.second])
-        {
-            // Check for correct suit
-            if (card->getSuit() == is_flush.second)
-            {
-                // Set the subranking
-                this->sub_ranking.push_back(card);
-
-                // Only add up to 5 cards
-                if (++cards_added >= 5)
-                    break;
-            }
-        }
-
+        this->rankFlush(suit_map, is_flush);
         return;
     }
 
@@ -219,20 +175,7 @@ void Hand::rankHand()
     if (is_straight == true)
     {
         // The ranking is straight
-        this->ranking = Ranking::Straight;
-
-        // Insert the five highest entries from the straight map into the sub ranking
-        int cards_added = 0;
-        for (const auto& card : straight_map)
-        {
-            // Set the subranking
-            this->sub_ranking.push_back(card.second);  // TODO that hack I did with the ace breaks this
-
-            // Only add up to 5 cards
-            if (++cards_added >= 5)
-                break;
-        }
-
+        this->rankStraight(straight_map);
         return;
     }
 
@@ -240,52 +183,14 @@ void Hand::rankHand()
     if (largest_set.first == 3)
     {
         // The ranking is three of a kind
-        this->ranking = Ranking::ThreeOfAKind;
-
-        // The first subranking is the value of the set
-        this->sub_ranking.push_back(largest_set.second);
-
-        // Determine the first remaining high card from the straight map (excluding the value of the set)
-        auto straight_map_iter = straight_map.begin();
-        if (straight_map_iter->second->getValue() == largest_set.second->getValue())
-            straight_map_iter++;
-
-        // The second subranking is the first remaining high card
-        this->sub_ranking.push_back(straight_map_iter->second);
-
-        // Determine the second remaining high card from the straight map (excluding the value of the set)
-        straight_map_iter++;
-        if (straight_map_iter->second->getValue() == largest_set.second->getValue())
-            straight_map_iter++;
-
-        // The second subranking is the first remaining high card
-        this->sub_ranking.push_back(straight_map_iter->second);
-        return;
+        this->rankThreeOfAKind(straight_map, largest_set);
     }
 
     // Check for two pair
     if (pair_list.size() >= 2)
     {
         // The ranking is two pair
-        this->ranking = Ranking::TwoPair;
-
-        // The first subranking is the value of the highest pair
-        auto pair_list_iter = pair_list.begin();
-        this->sub_ranking.push_back(*pair_list_iter);
-
-        // The second subranking is the value of the second highest pair
-        pair_list_iter++;
-        this->sub_ranking.push_back(*pair_list_iter);
-
-        // Determine the remaining high card from the straight map (excluding the value of both pairs)
-        auto straight_map_iter = straight_map.begin();
-        while (straight_map_iter->second->getValue() == this->sub_ranking[0]->getValue() ||
-               straight_map_iter->second->getValue() == this->sub_ranking[1]->getValue())
-            straight_map_iter++;
-
-        // The thirst subranking is the highest card of the remaining set
-        this->sub_ranking.push_back(straight_map_iter->second);
-
+        this->rankTwoPair(straight_map, pair_list);
         return;
     }
 
@@ -293,42 +198,12 @@ void Hand::rankHand()
     if (pair_list.size() == 1)
     {
         // The ranking is pair
-        this->ranking = Ranking::Pair;
-
-        // The first subranking is the value of the pair
-        this->sub_ranking.push_back(largest_set.second);
-
-        // The 4 remaining sub rankings are just ordered high cards excluding the value of the set
-        auto straight_map_iter = straight_map.begin();
-        for (auto i = 0; i < 4; i++)
-        {
-            // Determine the first remaining high card from the straight map (excluding the value of the set)
-            if (straight_map_iter->second->getValue() == largest_set.second->getValue())
-                straight_map_iter++;
-
-            // The subranking is the first remaining high card
-            this->sub_ranking.push_back(straight_map_iter->second);
-
-            // Increment the iterator
-            straight_map_iter++;
-        }
+        this->rankPair(straight_map, largest_set);
         return;
     }
 
     // The ranking is high card
-    this->ranking = Ranking::HighCard;
-
-    // The sub rankings are just ordered high cards
-    auto straight_map_iter = straight_map.begin();
-    for (auto i = 0; i < 5; i++)
-    {
-        // The subranking is the first remaining high card
-        this->sub_ranking.push_back(straight_map_iter->second);
-
-        // Increment the iterator
-        straight_map_iter++;
-    }
-    return;
+    this->rankHighCard(straight_map);
 }
 
 Hand::LargestSet Hand::constructLargestSet(const ValueMap& value_map)
@@ -490,4 +365,182 @@ bool Hand::isStraight(StraightMap& straight_map)
     }
 
     return false;
+}
+
+void Hand::rankRoyalFlush()
+{
+    // The ranking is a royal flush, no subranking is necessary
+    this->ranking = Ranking::RoyalFlush;
+}
+
+void Hand::rankStraightFlush(const StraightMap& straight_map)
+{
+    // The ranking is straight flush
+    this->ranking = Ranking::StraightFlush;
+
+    // The highest card is the subranking
+    this->sub_ranking.push_back(straight_map.begin()->second);
+}
+
+void Hand::rankFourOfAKind(const StraightMap& straight_map, const LargestSet& largest_set)
+{
+    // The ranking is four of a kind
+    this->ranking = Ranking::FourOfAKind;
+
+    // The first subranking is the value of the set
+    this->sub_ranking.push_back(largest_set.second);
+
+    // Determine remaining high card from the straight map (excluding the value of the set)
+    auto straight_map_iter = straight_map.begin();
+    if (straight_map_iter->second->getValue() == largest_set.second->getValue())
+        straight_map_iter++;
+
+    // The second subranking is the remaining high card
+    this->sub_ranking.push_back(straight_map_iter->second);
+}
+
+void Hand::rankFullHouse(const LargestSet& largest_set, const PairList& pair_list)
+{
+    // The ranking is full house
+    this->ranking = Ranking::FullHouse;
+
+    // The first subranking is the value of the three of a kind set
+    this->sub_ranking.push_back(largest_set.second);
+
+    // The second subranking is the value of the two of a kind set
+    this->sub_ranking.push_back(pair_list.front());
+}
+
+void Hand::rankFlush(SuitMap& suit_map, const std::pair<bool, Card::Suit>& is_flush)
+{
+    // The ranking is flush
+    this->ranking = Ranking::Flush;
+
+    // Sort the list cooresponding to the flush suit within the suit map in decending order
+    suit_map[is_flush.second].sort([](const std::shared_ptr<Card>& lhs, const std::shared_ptr<Card>& rhs) {
+        return (lhs->getValue()) > (rhs->getValue());
+    });
+
+    // Insert the five highest entries of the flush suit from the suit map into the sub ranking
+    int cards_added = 0;
+    for (const auto& card : suit_map[is_flush.second])
+    {
+        // Check for correct suit
+        if (card->getSuit() == is_flush.second)
+        {
+            // Set the subranking
+            this->sub_ranking.push_back(card);
+
+            // Only add up to 5 cards
+            if (++cards_added >= 5)
+                break;
+        }
+    }
+}
+
+void Hand::rankStraight(const StraightMap& straight_map)
+{
+    // The ranking is straight
+    this->ranking = Ranking::Straight;
+
+    // Insert the five highest entries from the straight map into the sub ranking
+    int cards_added = 0;
+    for (const auto& card : straight_map)
+    {
+        // Set the subranking
+        this->sub_ranking.push_back(card.second);
+
+        // Only add up to 5 cards
+        if (++cards_added >= 5)
+            break;
+    }
+}
+
+void Hand::rankThreeOfAKind(const StraightMap& straight_map, const LargestSet& largest_set)
+{
+    // The ranking is three of a kind
+    this->ranking = Ranking::ThreeOfAKind;
+
+    // The first subranking is the value of the set
+    this->sub_ranking.push_back(largest_set.second);
+
+    // Determine the first remaining high card from the straight map (excluding the value of the set)
+    auto straight_map_iter = straight_map.begin();
+    if (straight_map_iter->second->getValue() == largest_set.second->getValue())
+        straight_map_iter++;
+
+    // The second subranking is the first remaining high card
+    this->sub_ranking.push_back(straight_map_iter->second);
+
+    // Determine the second remaining high card from the straight map (excluding the value of the set)
+    straight_map_iter++;
+    if (straight_map_iter->second->getValue() == largest_set.second->getValue())
+        straight_map_iter++;
+
+    // The second subranking is the first remaining high card
+    this->sub_ranking.push_back(straight_map_iter->second);
+}
+
+void Hand::rankTwoPair(const StraightMap& straight_map, const PairList& pair_list)
+{
+    // The ranking is two pair
+    this->ranking = Ranking::TwoPair;
+
+    // The first subranking is the value of the highest pair
+    auto pair_list_iter = pair_list.begin();
+    this->sub_ranking.push_back(*pair_list_iter);
+
+    // The second subranking is the value of the second highest pair
+    pair_list_iter++;
+    this->sub_ranking.push_back(*pair_list_iter);
+
+    // Determine the remaining high card from the straight map (excluding the value of both pairs)
+    auto straight_map_iter = straight_map.begin();
+    while (straight_map_iter->second->getValue() == this->sub_ranking[0]->getValue() ||
+           straight_map_iter->second->getValue() == this->sub_ranking[1]->getValue())
+        straight_map_iter++;
+
+    // The thirst subranking is the highest card of the remaining set
+    this->sub_ranking.push_back(straight_map_iter->second);
+}
+
+void Hand::rankPair(const StraightMap& straight_map, const LargestSet& largest_set)
+{
+    // The ranking is pair
+    this->ranking = Ranking::Pair;
+
+    // The first subranking is the value of the pair
+    this->sub_ranking.push_back(largest_set.second);
+
+    // The 4 remaining sub rankings are just ordered high cards excluding the value of the set
+    auto straight_map_iter = straight_map.begin();
+    for (auto i = 0; i < 4; i++)
+    {
+        // Determine the first remaining high card from the straight map (excluding the value of the set)
+        if (straight_map_iter->second->getValue() == largest_set.second->getValue())
+            straight_map_iter++;
+
+        // The subranking is the first remaining high card
+        this->sub_ranking.push_back(straight_map_iter->second);
+
+        // Increment the iterator
+        straight_map_iter++;
+    }
+}
+
+void Hand::rankHighCard(const StraightMap& straight_map)
+{
+    // The ranking is high card
+    this->ranking = Ranking::HighCard;
+
+    // The sub rankings are just ordered high cards
+    auto straight_map_iter = straight_map.begin();
+    for (auto i = 0; i < 5; i++)
+    {
+        // The subranking is the first remaining high card
+        this->sub_ranking.push_back(straight_map_iter->second);
+
+        // Increment the iterator
+        straight_map_iter++;
+    }
 }

@@ -39,7 +39,7 @@ class Player
      */
     const std::string& getName() const;
 
-    /** Set the player's hand by index TODO a better API
+    /** Set the player's hand by index
      * @param index The index to set
      * @param card The card to set
      */
@@ -94,6 +94,7 @@ class Player
         CheckOrCall = 1,
         Bet = 2,
         Fold = 3,
+        Quit = 4,
     };
 
     /** AI decision function, makes a decision based on input

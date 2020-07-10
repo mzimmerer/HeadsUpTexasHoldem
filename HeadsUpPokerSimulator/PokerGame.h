@@ -63,7 +63,7 @@ class PokerGame
 
     /// Round end callback definition
     using RoundEndCallback =
-        std::function<void(bool draw, const std::string& winner, Hand::Ranking ranking, const PokerGame::State& state)>;
+        std::function<bool(bool draw, const std::string& winner, Hand::Ranking ranking, const PokerGame::State& state)>;
 
     /// Game end callback definition
     using GameEndCallback = std::function<void(const std::string& winner)>;
@@ -86,6 +86,9 @@ class PokerGame
     void play();
 
    private:
+    /// True if the game should continue running
+    bool run{true};
+
     /// The small blind
     const int small_blind;
 
@@ -140,10 +143,36 @@ class PokerGame
      */
     void dealCards();
 
+    /** Handle check or call actions
+     *  @param player The player that checked or called
+     *  @param action The first element is the action, the second is the bet, if any
+     */
+    void checkOrCall(int player, const std::pair<Player::PlayerAction, int>& action);
+
+    /** Handle bet actions
+     *  @param player The player that checked or called
+     *  @param action The first element is the action, the second is the bet, if any
+     *  @param True if the round should continue, false otherwise
+     */
+    bool bet(int player, const std::pair<Player::PlayerAction, int>& action);
+
+    /** Handle fold actions
+     *  @param player The player that checked or called
+     *  @param action The first element is the action, the second is the bet, if any
+     */
+    void fold(int player, const std::pair<Player::PlayerAction, int>& action);
+
+    /** Betting round wrapper, handles final callback
+     *  @param starting_player The player that starts the betting round
+     *  @param players_acted The number of players that have acted
+     *  @return True if the round should progress, false otherwise
+     */
+    bool bettingRoundWrapper(int starting_player, int players_acted);
+
     /** Run through a betting round. This function is recursive.
      *  @param starting_player The player that starts the betting round
      *  @param players_acted The number of players that have acted
-     *  @return True if the round is over, false if the round should progress
+     *  @return True if the round should progress, false otherwise
      */
     bool bettingRound(int starting_player, int players_acted);
 
@@ -177,6 +206,7 @@ class PokerGame
      *  @param draw True if the round ended in a draw, false otherwise
      *  @param winner The round winner
      *  @param ranking The ranking of the winning hand
+     *  @param True if the round should continue, false otherwise
      */
-    void callbackWithRoundEnd(bool draw, const std::string& winner, Hand::Ranking ranking);
+    bool callbackWithRoundEnd(bool draw, const std::string& winner, Hand::Ranking ranking);
 };
