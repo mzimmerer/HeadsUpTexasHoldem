@@ -30,13 +30,13 @@
     <ClCompile Include="..\Dependencies\googletest\googletest\src\gtest-all.cc">
       <Filter>GoogleTestSource</Filter>
     </ClCompile>
-    <ClCompile Include="..\HeadsUpPokerSimulator\Hand.cpp">
-      <Filter>SourceUnderTest</Filter>
-    </ClCompile>
     <ClCompile Include="..\HeadsUpPokerSimulator\Card.cpp">
       <Filter>SourceUnderTest</Filter>
     </ClCompile>
     <ClCompile Include="HandTestWrapper.cpp">
+      <Filter>SourceUnderTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\HeadsUpPokerSimulator\RankedHand.cpp">
       <Filter>SourceUnderTest</Filter>
     </ClCompile>
   </ItemGroup>

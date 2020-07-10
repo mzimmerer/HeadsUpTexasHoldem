@@ -32,7 +32,7 @@ void HandTestWrapper::rankNow()
     this->rankHand();
 }
 
-Hand::Ranking HandTestWrapper::getRanking()
+RankedHand::Ranking HandTestWrapper::getRanking()
 {
     return this->ranking;
 }

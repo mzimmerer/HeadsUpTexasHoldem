@@ -78,6 +78,24 @@ int Player::getPotInvestment() const
 
 std::pair<Player::PlayerAction, int> Player::decision(const std::list<std::shared_ptr<Card>>& board, int current_pot)
 {
+    // Construct a full board filling the extra slots with random cards
+
+    // Rank the hand
+
+    // Convert the hand ranking to a check/folding %
+
+    // Convert the hand ranking to a betting %
+
+    // Convert the hand ranking to a calling %
+
+    // Convert the hand ranking to rerase %
+
+    // Add some random input into the percentages
+
+    // Convert the hand ranking and current pot size to a bet amount
+
+    // Take the action
+
     static int action = 1;
     action++;
     if (action > 3)

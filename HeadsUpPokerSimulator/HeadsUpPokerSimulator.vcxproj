@@ -152,17 +152,17 @@
     <ClCompile Include="Card.cpp" />
     <ClCompile Include="ConsoleIO.cpp" />
     <ClCompile Include="Deck.cpp" />
-    <ClCompile Include="Hand.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PokerGame.cpp" />
     <ClCompile Include="Random.cpp" />
+    <ClCompile Include="RankedHand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Card.h" />
     <ClInclude Include="ConsoleIO.h" />
     <ClInclude Include="Deck.h" />
-    <ClInclude Include="Hand.h" />
+    <ClInclude Include="RankedHand.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PokerGame.h" />
     <ClInclude Include="Random.h" />

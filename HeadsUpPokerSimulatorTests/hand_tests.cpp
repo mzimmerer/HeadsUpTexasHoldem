@@ -32,7 +32,7 @@ TEST(HandTests, RoyalFlushRanking)
 
     hand.rankNow();
 
-    EXPECT_EQ(Hand::Ranking::RoyalFlush, hand.getRanking());
+    EXPECT_EQ(RankedHand::Ranking::RoyalFlush, hand.getRanking());
 
     EXPECT_EQ(0, hand.getSubRanking().size());
 }
@@ -50,7 +50,7 @@ TEST(HandTests, StraightFlushRanking)
 
     hand.rankNow();
 
-    EXPECT_EQ(Hand::Ranking::StraightFlush, hand.getRanking());
+    EXPECT_EQ(RankedHand::Ranking::StraightFlush, hand.getRanking());
     EXPECT_EQ(1, hand.getSubRanking().size());
     EXPECT_EQ(Card::Value::King, hand.getSubRanking()[0]->getValue());
 }
@@ -68,7 +68,7 @@ TEST(HandTests, FourOfAKindRanking)
 
     hand.rankNow();
 
-    EXPECT_EQ(Hand::Ranking::FourOfAKind, hand.getRanking());
+    EXPECT_EQ(RankedHand::Ranking::FourOfAKind, hand.getRanking());
 
     EXPECT_EQ(2, hand.getSubRanking().size());
     EXPECT_EQ(Card::Value::Two, hand.getSubRanking()[0]->getValue());
@@ -88,7 +88,7 @@ TEST(HandTests, FullHouseRanking)
 
     hand.rankNow();
 
-    EXPECT_EQ(Hand::Ranking::FullHouse, hand.getRanking());
+    EXPECT_EQ(RankedHand::Ranking::FullHouse, hand.getRanking());
 
     EXPECT_EQ(2, hand.getSubRanking().size());
     EXPECT_EQ(Card::Value::Two, hand.getSubRanking()[0]->getValue());
@@ -108,7 +108,7 @@ TEST(HandTests, FlushRanking)
 
     hand.rankNow();
 
-    EXPECT_EQ(Hand::Ranking::Flush, hand.getRanking());
+    EXPECT_EQ(RankedHand::Ranking::Flush, hand.getRanking());
 
     EXPECT_EQ(5, hand.getSubRanking().size());
     EXPECT_EQ(Card::Value::Queen, hand.getSubRanking()[0]->getValue());
@@ -131,7 +131,7 @@ TEST(HandTests, StraightRanking)
 
     hand.rankNow();
 
-    EXPECT_EQ(Hand::Ranking::Straight, hand.getRanking());
+    EXPECT_EQ(RankedHand::Ranking::Straight, hand.getRanking());
 
     EXPECT_EQ(5, hand.getSubRanking().size());
     EXPECT_EQ(Card::Value::Five, hand.getSubRanking()[0]->getValue());
@@ -154,7 +154,7 @@ TEST(HandTests, ThreeOfAKindRanking)
 
     hand.rankNow();
 
-    EXPECT_EQ(Hand::Ranking::ThreeOfAKind, hand.getRanking());
+    EXPECT_EQ(RankedHand::Ranking::ThreeOfAKind, hand.getRanking());
 
     EXPECT_EQ(3, hand.getSubRanking().size());
     EXPECT_EQ(Card::Value::Three, hand.getSubRanking()[0]->getValue());
@@ -175,7 +175,7 @@ TEST(HandTests, TwoPairRanking)
 
     hand.rankNow();
 
-    EXPECT_EQ(Hand::Ranking::TwoPair, hand.getRanking());
+    EXPECT_EQ(RankedHand::Ranking::TwoPair, hand.getRanking());
 
     EXPECT_EQ(3, hand.getSubRanking().size());
     EXPECT_EQ(Card::Value::Ace, hand.getSubRanking()[0]->getValue());
@@ -196,7 +196,7 @@ TEST(HandTests, PairRanking)
 
     hand.rankNow();
 
-    EXPECT_EQ(Hand::Ranking::Pair, hand.getRanking());
+    EXPECT_EQ(RankedHand::Ranking::Pair, hand.getRanking());
 
     EXPECT_EQ(5, hand.getSubRanking().size());
     EXPECT_EQ(Card::Value::Two, hand.getSubRanking()[0]->getValue());
@@ -219,7 +219,7 @@ TEST(HandTests, HighCardRanking)
 
     hand.rankNow();
 
-    EXPECT_EQ(Hand::Ranking::HighCard, hand.getRanking());
+    EXPECT_EQ(RankedHand::Ranking::HighCard, hand.getRanking());
 
     EXPECT_EQ(5, hand.getSubRanking().size());
     EXPECT_EQ(Card::Value::Ace, hand.getSubRanking()[0]->getValue());

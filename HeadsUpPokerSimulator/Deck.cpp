@@ -74,3 +74,8 @@ unsigned int Deck::cardsDealt() const
 {
     return this->deal_cursor;
 }
+
+std::shared_ptr<Card> Deck::operator[](size_t index) const
+{
+    return this->cards[index];
+}

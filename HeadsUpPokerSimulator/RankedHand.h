@@ -25,9 +25,9 @@
 
 #include "Card.h"
 
-/** Hand class. This class is intended to rank and compare texas holdem poker hands
+/** RankedHand class. This class is intended to rank and compare texas holdem poker hands
  */
-class Hand
+class RankedHand
 {
    public:
     /// Enumeration of possible hand ranking
@@ -48,25 +48,25 @@ class Hand
 
     /** Default constructor
      */
-    Hand();
+    RankedHand();
 
     /** Constructor
      *  @param hand The players hold cards
      *  @param board The board cards
      */
-    Hand(const std::array<std::shared_ptr<Card>, 2>& hand, const std::array<std::shared_ptr<Card>, 5>& board);
+    RankedHand(const std::array<std::shared_ptr<Card>, 2>& hand, const std::array<std::shared_ptr<Card>, 5>& board);
 
     /** Less than operator.
      *  @param other The hand to compare against
      *  @return True if this hand ranks lower than the other hand
      */
-    bool operator<(const Hand& other);
+    bool operator<(const RankedHand& other);
 
     /** Equality comparison operator.
      *  @param other The hand to compare against
      *  @return True if both hands rank identically
      */
-    bool operator==(const Hand& other);
+    bool operator==(const RankedHand& other);
 
     /** Get the hands major ranking
      *  @return The ranking

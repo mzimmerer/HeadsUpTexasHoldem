@@ -114,7 +114,8 @@ void ConsoleIO::subRoundChange(PokerGame::SubRound new_sub_round, const PokerGam
     this->updateScreen();
 }
 
-bool ConsoleIO::roundEnd(bool draw, const std::string& winner, Hand::Ranking ranking, const PokerGame::State& state)
+bool ConsoleIO::roundEnd(bool draw, const std::string& winner, RankedHand::Ranking ranking,
+                         const PokerGame::State& state)
 {
     // Insert the event text into the event text queue
     std::string event_text = this->roundEndToString(draw, winner, ranking, state.current_pot);
@@ -244,36 +245,36 @@ std::string ConsoleIO::newSubRoundToString(PokerGame::SubRound new_sub_round)
     }
 }
 
-std::string ConsoleIO::printRanking(Hand::Ranking ranking)
+std::string ConsoleIO::printRanking(RankedHand::Ranking ranking)
 {
     switch (ranking)
     {
-        case Hand::Ranking::RoyalFlush:
+        case RankedHand::Ranking::RoyalFlush:
             return "royal flush";
-        case Hand::Ranking::StraightFlush:
+        case RankedHand::Ranking::StraightFlush:
             return "straight flush";
-        case Hand::Ranking::FourOfAKind:
+        case RankedHand::Ranking::FourOfAKind:
             return "four of a kind";
-        case Hand::Ranking::FullHouse:
+        case RankedHand::Ranking::FullHouse:
             return "full house";
-        case Hand::Ranking::Flush:
+        case RankedHand::Ranking::Flush:
             return "flush";
-        case Hand::Ranking::Straight:
+        case RankedHand::Ranking::Straight:
             return "straight";
-        case Hand::Ranking::ThreeOfAKind:
+        case RankedHand::Ranking::ThreeOfAKind:
             return "three of a kind";
-        case Hand::Ranking::TwoPair:
+        case RankedHand::Ranking::TwoPair:
             return "two pair";
-        case Hand::Ranking::Pair:
+        case RankedHand::Ranking::Pair:
             return "pair";
-        case Hand::Ranking::HighCard:
+        case RankedHand::Ranking::HighCard:
             return "high card";
         default:
             return "";
     }
 }
 
-std::string ConsoleIO::roundEndToString(bool draw, const std::string& winner, Hand::Ranking ranking, int pot)
+std::string ConsoleIO::roundEndToString(bool draw, const std::string& winner, RankedHand::Ranking ranking, int pot)
 {
     if (draw == true)
         return "Round draw with " + ConsoleIO::printRanking(ranking);
@@ -282,7 +283,7 @@ std::string ConsoleIO::roundEndToString(bool draw, const std::string& winner, Ha
     if (winner == "You")
     {
         // Support hidden rankings
-        if (ranking == Hand::Ranking::Unranked)
+        if (ranking == RankedHand::Ranking::Unranked)
             return "You win " + std::to_string(pot) + ".";
         else
             return "You win " + std::to_string(pot) + " with " + ConsoleIO::printRanking(ranking) + ".";
@@ -290,7 +291,7 @@ std::string ConsoleIO::roundEndToString(bool draw, const std::string& winner, Ha
     else
     {
         // Support hidden rankings
-        if (ranking == Hand::Ranking::Unranked)
+        if (ranking == RankedHand::Ranking::Unranked)
             return winner + " wins " + std::to_string(pot) + ".";
         else
             return winner + " wins " + std::to_string(pot) + " with " + ConsoleIO::printRanking(ranking) + ".";
@@ -367,11 +368,11 @@ void ConsoleIO::printBoard(int x, int y)
     }
 }
 
-void ConsoleIO::printHand(int x, int y, const std::array<std::shared_ptr<Card>, 2>& hand)
+void ConsoleIO::printHand(int x, int y, const std::array<std::shared_ptr<Card>, 2>& RankedHand)
 {
     // Print both cards at the specified location with a 10 space spacing
-    printCard(x - 5, y, *hand[0]);
-    printCard(x + 5, y, *hand[1]);
+    printCard(x - 5, y, *RankedHand[0]);
+    printCard(x + 5, y, *RankedHand[1]);
 }
 
 void ConsoleIO::printChipStackCount(int x, int y, int count)
@@ -436,10 +437,10 @@ void ConsoleIO::updateScreen()
     }
     std::fill(this->screen_buffer[HEIGHT - 1].begin(), this->screen_buffer[HEIGHT - 1].end(), '#');
 
-    // Draw the user's hand
+    // Draw the user's RankedHand
     this->printHand(HEIGHT + 3, HEIGHT - 3, this->cached_state.player_hand);
 
-    // Draw the opponent's hand
+    // Draw the opponent's RankedHand
     this->printHand(HEIGHT + 3, 1, this->cached_state.ai_hand);
 
     // Draw the users chip stack count

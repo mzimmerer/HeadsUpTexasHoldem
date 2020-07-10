@@ -129,8 +129,8 @@ bool PokerGame::playRound()
         return false;
 
     // Determine winner
-    Hand player_hand(this->players[0]->getHand(), this->board);
-    Hand ai_hand(this->players[1]->getHand(), this->board);
+    RankedHand player_hand(this->players[0]->getHand(), this->board);
+    RankedHand ai_hand(this->players[1]->getHand(), this->board);
     if (player_hand == ai_hand)
     {
         // Round draw
@@ -277,9 +277,9 @@ bool PokerGame::bettingRoundWrapper(int player, int players_acted)
     {
         // Callback to indicate round end considering one of the players has folded
         if (this->players[0]->hasFolded() == true)
-            return this->callbackWithRoundEnd(false, this->players[1]->getName(), Hand::Ranking::Unranked);
+            return this->callbackWithRoundEnd(false, this->players[1]->getName(), RankedHand::Ranking::Unranked);
         else
-            return this->callbackWithRoundEnd(false, this->players[0]->getName(), Hand::Ranking::Unranked);
+            return this->callbackWithRoundEnd(false, this->players[0]->getName(), RankedHand::Ranking::Unranked);
         return true;
     }
 }
@@ -399,7 +399,7 @@ void PokerGame::callbackWithSubroundChange(SubRound new_subround)
     this->subround_change_callback(new_subround, state);
 }
 
-bool PokerGame::callbackWithRoundEnd(bool draw, const std::string& winner, Hand::Ranking ranking)
+bool PokerGame::callbackWithRoundEnd(bool draw, const std::string& winner, RankedHand::Ranking ranking)
 {
     // Construct state
     State state = this->constructState();

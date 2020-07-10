@@ -23,7 +23,7 @@
 #include <string>
 
 #include "Card.h"
-#include "Hand.h"
+#include "RankedHand.h"
 #include "Player.h"
 #include "PokerGame.h"
 
@@ -60,7 +60,7 @@ class ConsoleIO
      *  @param state The current game state
      *  @param True if the game should continue, false otherwise
      */
-    bool roundEnd(bool draw, const std::string& winner, Hand::Ranking ranking, const PokerGame::State& state);
+    bool roundEnd(bool draw, const std::string& winner, RankedHand::Ranking ranking, const PokerGame::State& state);
 
     /** Inform the user about the game ending
      *  @param winner The winner of the game
@@ -107,7 +107,7 @@ class ConsoleIO
      *  @param ranking The ranking
      *  @return The string
      */
-    static std::string printRanking(Hand::Ranking ranking);
+    static std::string printRanking(RankedHand::Ranking ranking);
 
     /** Convert a round end event to a string
      *  @param draw True if the round was a draw
@@ -116,7 +116,7 @@ class ConsoleIO
      *  @param The pot that was won
      *  @return The string
      */
-    std::string roundEndToString(bool draw, const std::string& winner, Hand::Ranking ranking, int pot);
+    std::string roundEndToString(bool draw, const std::string& winner, RankedHand::Ranking ranking, int pot);
 
     /** Print a suit as a string
      *  @param suit The suit

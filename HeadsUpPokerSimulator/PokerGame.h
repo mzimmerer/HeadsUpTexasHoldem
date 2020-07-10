@@ -21,9 +21,9 @@
 #include <list>
 
 #include "Deck.h"
-#include "Hand.h"
 #include "Player.h"
 #include "Random.h"
+#include "RankedHand.h"
 
 /** Texas Holdem poker game class. Implements heads up poker against an AI opponent
  */
@@ -62,8 +62,8 @@ class PokerGame
     using SubRoundChangeCallback = std::function<void(SubRound new_sub_round, const PokerGame::State& state)>;
 
     /// Round end callback definition
-    using RoundEndCallback =
-        std::function<bool(bool draw, const std::string& winner, Hand::Ranking ranking, const PokerGame::State& state)>;
+    using RoundEndCallback = std::function<bool(bool draw, const std::string& winner, RankedHand::Ranking ranking,
+                                                const PokerGame::State& state)>;
 
     /// Game end callback definition
     using GameEndCallback = std::function<void(const std::string& winner)>;
@@ -208,5 +208,5 @@ class PokerGame
      *  @param ranking The ranking of the winning hand
      *  @param True if the round should continue, false otherwise
      */
-    bool callbackWithRoundEnd(bool draw, const std::string& winner, Hand::Ranking ranking);
+    bool callbackWithRoundEnd(bool draw, const std::string& winner, RankedHand::Ranking ranking);
 };

@@ -18,11 +18,11 @@
 #pragma once
 
 #include "Card.h"
-#include "Hand.h"
+#include "RankedHand.h"
 
 /** Hand test wrapper class, implemented to ease unit-test implementation
  */
-class HandTestWrapper : public Hand
+class HandTestWrapper : public RankedHand
 {
    public:
     /** Access cards directly

@@ -48,6 +48,12 @@ class Deck
      */
     unsigned int cardsDealt() const;
 
+    /** Random access operator
+     *  @param index The index to access
+     *  @return A shared pointer containing the Card
+     */
+    std::shared_ptr<Card> operator[](size_t index) const; 
+
    private:
     /// The number of cards in a deck
     static constexpr int DECK_SIZE = 52;

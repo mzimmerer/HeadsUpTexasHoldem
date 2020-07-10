@@ -15,20 +15,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
-#include "Hand.h"
+#include "RankedHand.h"
 
-Hand::Hand() : ranking(Ranking::Unranked)
+RankedHand::RankedHand() : ranking(Ranking::Unranked)
 {
 }
 
-Hand::Hand(const std::array<std::shared_ptr<Card>, 2>& hand, const std::array<std::shared_ptr<Card>, 5>& board)
+RankedHand::RankedHand(const std::array<std::shared_ptr<Card>, 2>& hand,
+                       const std::array<std::shared_ptr<Card>, 5>& board)
     : cards(handAndBoardToCards(hand, board)), ranking(Ranking::Unranked)
 {
     // Rank the hand
     this->rankHand();
 }
 
-bool Hand::operator<(const Hand& other)
+bool RankedHand::operator<(const RankedHand& other)
 {
     // If the rankings are not equal then we can just compare them
     if (this->ranking != other.ranking)
@@ -56,7 +57,7 @@ bool Hand::operator<(const Hand& other)
     return false;
 }
 
-bool Hand::operator==(const Hand& other)
+bool RankedHand::operator==(const RankedHand& other)
 {
     // Check for ranking equality
     if (this->ranking != other.ranking)
@@ -84,12 +85,12 @@ bool Hand::operator==(const Hand& other)
     return true;
 }
 
-Hand::Ranking Hand::getRanking()
+RankedHand::Ranking RankedHand::getRanking()
 {
     return this->ranking;
 }
 
-std::array<std::shared_ptr<Card>, 7> Hand::handAndBoardToCards(const std::array<std::shared_ptr<Card>, 2>& hand,
+std::array<std::shared_ptr<Card>, 7> RankedHand::handAndBoardToCards(const std::array<std::shared_ptr<Card>, 2>& hand,
                                                                const std::array<std::shared_ptr<Card>, 5>& board)
 {
     std::array<std::shared_ptr<Card>, 7> result;
@@ -105,7 +106,7 @@ std::array<std::shared_ptr<Card>, 7> Hand::handAndBoardToCards(const std::array<
     return result;
 }
 
-void Hand::rankHand()
+void RankedHand::rankHand()
 {
     // Clear sub_ranking
     this->sub_ranking.clear();
@@ -206,7 +207,7 @@ void Hand::rankHand()
     this->rankHighCard(straight_map);
 }
 
-Hand::LargestSet Hand::constructLargestSet(const ValueMap& value_map)
+RankedHand::LargestSet RankedHand::constructLargestSet(const ValueMap& value_map)
 {
     LargestSet result(0, nullptr);
 
@@ -225,7 +226,7 @@ Hand::LargestSet Hand::constructLargestSet(const ValueMap& value_map)
     return result;
 }
 
-Hand::ValueMap Hand::constructValueMap()
+RankedHand::ValueMap RankedHand::constructValueMap()
 {
     ValueMap result;
 
@@ -236,7 +237,7 @@ Hand::ValueMap Hand::constructValueMap()
     return result;
 }
 
-Hand::SuitMap Hand::constructSuitMap()
+RankedHand::SuitMap RankedHand::constructSuitMap()
 {
     std::unordered_map<Card::Suit, std::list<std::shared_ptr<Card>>> result;
 
@@ -247,7 +248,7 @@ Hand::SuitMap Hand::constructSuitMap()
     return result;
 }
 
-Hand::PairList Hand::constructPairList(const ValueMap& value_map)
+RankedHand::PairList RankedHand::constructPairList(const ValueMap& value_map)
 {
     PairList result;
 
@@ -270,7 +271,7 @@ Hand::PairList Hand::constructPairList(const ValueMap& value_map)
     return result;
 }
 
-Hand::StraightMap Hand::constructStraightMap()
+RankedHand::StraightMap RankedHand::constructStraightMap()
 {
     StraightMap result;
 
@@ -285,7 +286,7 @@ Hand::StraightMap Hand::constructStraightMap()
     return result;
 }
 
-std::pair<bool, Card::Suit> Hand::isFlush(const SuitMap& suit_map)
+std::pair<bool, Card::Suit> RankedHand::isFlush(const SuitMap& suit_map)
 {
     std::pair<bool, Card::Suit> result(false, Card::Suit::Hearts);
 
@@ -307,7 +308,7 @@ std::pair<bool, Card::Suit> Hand::isFlush(const SuitMap& suit_map)
     return result;
 }
 
-bool Hand::isStraight(StraightMap& straight_map)
+bool RankedHand::isStraight(StraightMap& straight_map)
 {
     // Check for at least 5 unique card values
     if (straight_map.size() < 5)
@@ -367,13 +368,13 @@ bool Hand::isStraight(StraightMap& straight_map)
     return false;
 }
 
-void Hand::rankRoyalFlush()
+void RankedHand::rankRoyalFlush()
 {
     // The ranking is a royal flush, no subranking is necessary
     this->ranking = Ranking::RoyalFlush;
 }
 
-void Hand::rankStraightFlush(const StraightMap& straight_map)
+void RankedHand::rankStraightFlush(const StraightMap& straight_map)
 {
     // The ranking is straight flush
     this->ranking = Ranking::StraightFlush;
@@ -382,7 +383,7 @@ void Hand::rankStraightFlush(const StraightMap& straight_map)
     this->sub_ranking.push_back(straight_map.begin()->second);
 }
 
-void Hand::rankFourOfAKind(const StraightMap& straight_map, const LargestSet& largest_set)
+void RankedHand::rankFourOfAKind(const StraightMap& straight_map, const LargestSet& largest_set)
 {
     // The ranking is four of a kind
     this->ranking = Ranking::FourOfAKind;
@@ -399,7 +400,7 @@ void Hand::rankFourOfAKind(const StraightMap& straight_map, const LargestSet& la
     this->sub_ranking.push_back(straight_map_iter->second);
 }
 
-void Hand::rankFullHouse(const LargestSet& largest_set, const PairList& pair_list)
+void RankedHand::rankFullHouse(const LargestSet& largest_set, const PairList& pair_list)
 {
     // The ranking is full house
     this->ranking = Ranking::FullHouse;
@@ -411,7 +412,7 @@ void Hand::rankFullHouse(const LargestSet& largest_set, const PairList& pair_lis
     this->sub_ranking.push_back(pair_list.front());
 }
 
-void Hand::rankFlush(SuitMap& suit_map, const std::pair<bool, Card::Suit>& is_flush)
+void RankedHand::rankFlush(SuitMap& suit_map, const std::pair<bool, Card::Suit>& is_flush)
 {
     // The ranking is flush
     this->ranking = Ranking::Flush;
@@ -438,7 +439,7 @@ void Hand::rankFlush(SuitMap& suit_map, const std::pair<bool, Card::Suit>& is_fl
     }
 }
 
-void Hand::rankStraight(const StraightMap& straight_map)
+void RankedHand::rankStraight(const StraightMap& straight_map)
 {
     // The ranking is straight
     this->ranking = Ranking::Straight;
@@ -456,7 +457,7 @@ void Hand::rankStraight(const StraightMap& straight_map)
     }
 }
 
-void Hand::rankThreeOfAKind(const StraightMap& straight_map, const LargestSet& largest_set)
+void RankedHand::rankThreeOfAKind(const StraightMap& straight_map, const LargestSet& largest_set)
 {
     // The ranking is three of a kind
     this->ranking = Ranking::ThreeOfAKind;
@@ -481,7 +482,7 @@ void Hand::rankThreeOfAKind(const StraightMap& straight_map, const LargestSet& l
     this->sub_ranking.push_back(straight_map_iter->second);
 }
 
-void Hand::rankTwoPair(const StraightMap& straight_map, const PairList& pair_list)
+void RankedHand::rankTwoPair(const StraightMap& straight_map, const PairList& pair_list)
 {
     // The ranking is two pair
     this->ranking = Ranking::TwoPair;
@@ -504,7 +505,7 @@ void Hand::rankTwoPair(const StraightMap& straight_map, const PairList& pair_lis
     this->sub_ranking.push_back(straight_map_iter->second);
 }
 
-void Hand::rankPair(const StraightMap& straight_map, const LargestSet& largest_set)
+void RankedHand::rankPair(const StraightMap& straight_map, const LargestSet& largest_set)
 {
     // The ranking is pair
     this->ranking = Ranking::Pair;
@@ -528,7 +529,7 @@ void Hand::rankPair(const StraightMap& straight_map, const LargestSet& largest_s
     }
 }
 
-void Hand::rankHighCard(const StraightMap& straight_map)
+void RankedHand::rankHighCard(const StraightMap& straight_map)
 {
     // The ranking is high card
     this->ranking = Ranking::HighCard;
