@@ -1,10 +1,27 @@
+/**
+ *  A simple interactive texas holdem poker program.
+ *  Copyright (C) 2020, Matt Zimmerer, mzimmere@gmail.com
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ **/
 #include "Player.h"
 
 Player::Player(std::string name_in, int starting_stack_in) : name(name_in), stack(starting_stack_in)
 {
 }
 
-std::string Player::getName()
+const std::string& Player::getName() const
 {
     return this->name;
 }
@@ -44,19 +61,19 @@ bool Player::hasFolded() const
     return this->folded;
 }
 
-void Player::adjustBet(int adjustment)
+void Player::adjustPotInvestment(int adjustment)
 {
-    this->bet = +adjustment;
+    this->pot_investment += adjustment;
 }
 
-void Player::clearBet()
+void Player::clearPotInvestment()
 {
-    this->bet = 0;
+    this->pot_investment = 0;
 }
 
-int Player::getBet() const
+int Player::getPotInvestment() const
 {
-    return this->bet;
+    return this->pot_investment;
 }
 
 std::pair<Player::PlayerAction, int> Player::decision(const std::list<std::shared_ptr<Card>>& board, int current_pot)

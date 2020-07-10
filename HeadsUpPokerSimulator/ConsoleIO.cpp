@@ -1,4 +1,21 @@
-﻿#include "ConsoleIO.h"
+﻿/**
+ *  A simple interactive texas holdem poker program.
+ *  Copyright (C) 2020, Matt Zimmerer, mzimmere@gmail.com
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ **/
+#include "ConsoleIO.h"
 
 #include <cmath>
 #include <iostream>
@@ -109,7 +126,51 @@ void ConsoleIO::roundEnd(bool draw, const std::string& winner, Hand::Ranking ran
     this->cached_state = state;
 
     // Update the screen
+    this->hint_text = "Continue(c) or quit(q)?";
+
+    // Update the screen
     this->updateScreen();
+
+    // Ask user to continue or quit
+    char action;
+    do
+    {
+        // Get user input
+        std::cin >> action;
+
+        // If the user entered something invalid, ask again
+        if (action != 'c' && action != 'q')
+        {
+            this->hint_text = "Invalid entry. Continue(c) or quit(q)??";
+            this->updateScreen();
+        }
+        else
+        {
+            break;
+        }
+
+    } while (1);
+
+    // XXX
+    if (action == 'q')  // TODO
+        exit(1);        // XXX
+}
+
+void ConsoleIO::gameEnd(const std::string& winner)
+{
+    // Clear the terminal
+    std::cout << "\033[2J\033[1;1H";
+
+    // Correct for grammer
+    if (winner == "You")
+        std::cout << "You win!" << std::endl;
+    else
+        std::cout << "Computer wins!" << std::endl;
+
+    // Final message
+    std::cout << "If you would like to get in contact with the author you can reach him here:" << std::endl;
+    std::cout << "mzimmere@gmail.com" << std::endl;
+    std::cout << "Thanks for playing!" << std::endl;
 }
 
 std::string ConsoleIO::actionToString(const std::string& player_name, Player::PlayerAction action, int bet)
@@ -409,14 +470,4 @@ void ConsoleIO::updateScreen()
 
     // Sleep for some time
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
-
-// Consume any characters the user entered while sleeping
-#if 0
-    if (std::cin.peek() != EOF)
-    {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
-#endif
-    // TODO
 }
