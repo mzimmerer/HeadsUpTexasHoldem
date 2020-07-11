@@ -23,7 +23,7 @@
 Deck::Deck(Random& rng_in) : rng(rng_in)
 {
     // Construct a fresh deck of cards
-    for (int i = 0; i < this->cards.size(); i++)
+    for (size_t i = 0; i < this->cards.size(); i++)
     {
         // Values are from [1..13], loop through this range 4 times
         Card::Value value = static_cast<Card::Value>(i % 13 + 1);
@@ -42,7 +42,7 @@ void Deck::shuffle()
     // algorithm
 
     // For each card in the range [51..1]
-    for (int cursor = DECK_SIZE - 1; cursor > 0; cursor--)
+    for (size_t cursor = DECK_SIZE - 1; cursor > 0; cursor--)
     {
         // Find a random card in the range [0..cursor] to replace it
         int random_card = this->rng.getRandomNumberInRange(0, cursor);
@@ -64,7 +64,7 @@ void Deck::shuffle()
 std::shared_ptr<Card> Deck::dealCard()
 {
     // Ensure that the entire deck has not already been dealt
-    if (this->deal_cursor + 1 >= this->cards.size())
+    if (static_cast<size_t>(this->deal_cursor + 1) >= this->cards.size())
         throw std::runtime_error("There are no more cards to deal!");
 
     return this->cards[this->deal_cursor++];

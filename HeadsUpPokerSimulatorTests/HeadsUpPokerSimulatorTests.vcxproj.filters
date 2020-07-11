@@ -30,18 +30,18 @@
     <ClCompile Include="..\Source\Card.cpp">
       <Filter>SourceUnderTest</Filter>
     </ClCompile>
-    <ClCompile Include="HandTestWrapper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HandTests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\RankedHand.cpp">
       <Filter>SourceUnderTest</Filter>
     </ClCompile>
+    <ClCompile Include="..\Tests\HandTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\HandTestWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="HandTestWrapper.h">
+    <ClInclude Include="..\Tests\HandTestWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

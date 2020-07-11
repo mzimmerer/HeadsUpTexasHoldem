@@ -23,469 +23,484 @@
 
 std::pair<Player::PlayerAction, int> ConsoleIO::userDecision(const PokerGame::State& state)
 {
-    // Copy the state
-    this->cached_state = state;
+	// Copy the state
+	this->cached_state = state;
 
-    // Switch the text 'Check' with 'Call' depending on whether or not there is a bet
-    std::string checkorcall;
-    if (state.current_bet > 0)
-        checkorcall = "Call";
-    else
-        checkorcall = "Check";
+	// Switch the text 'Check' with 'Call' depending on whether or not there is a bet
+	std::string checkorcall;
+	if (state.current_bet > 0)
+		checkorcall = "Call";
+	else
+		checkorcall = "Check";
 
-    // Update the screen
-    this->hint_text = checkorcall + "(c), bet(b), fold(f), or quit(q)?";
-    this->updateScreen();
+	// Update the screen
+	this->hint_text = checkorcall + "(c), bet(b), fold(f), or quit(q)?";
+	this->updateScreen();
 
-    // Ask user what action to perform
-    char action;
-    do
-    {
-        // Get user input
-        std::cin >> action;
+	// Ask user what action to perform
+	char action;
+	do
+	{
+		// Get user input
+		std::cin >> action;
 
-        // If the user entered something invalid, ask again
-        if (action != 'c' && action != 'b' && action != 'f' && action != 'q')
-        {
-            this->hint_text = "Invalid entry. " + checkorcall + "(c), bet(b), fold(f) or quit(q)?";
-            this->updateScreen();
-        }
-        else
-        {
-            break;
-        }
+		// If the user entered something invalid, ask again
+		if (action != 'c' && action != 'b' && action != 'f' && action != 'q')
+		{
+			this->hint_text = "Invalid entry. " + checkorcall + "(c), bet(b), fold(f) or quit(q)?";
+			this->updateScreen();
+		}
+		else
+		{
+			break;
+		}
 
-    } while (1);
+	} while (1);
 
-    // If the user is betting, ask for an amount
-    int bet_amt = 0;
-    if (action == 'b')
-    {
-        // Update the screen
-        this->hint_text = "Enter an amount to bet.";
-        this->updateScreen();
+	// If the user is betting, ask for an amount
+	int bet_amt = 0;
+	if (action == 'b')
+	{
+		// Update the screen
+		this->hint_text = "Enter an amount to bet.";
+		this->updateScreen();
 
-        // Get user input
-        std::cin >> bet_amt;
-    }
+		// Get user input
+		std::cin >> bet_amt;
+	}
 
-    // Translate user inputs into PlayerAction enum class values
-    Player::PlayerAction player_action = static_cast<Player::PlayerAction>(0);
-    if (action == 'c')
-        player_action = Player::PlayerAction::CheckOrCall;
-    else if (action == 'b')
-        player_action = Player::PlayerAction::Bet;
-    else
-        player_action = Player::PlayerAction::Quit;
+	// Translate user inputs into PlayerAction enum class values
+	Player::PlayerAction player_action = static_cast<Player::PlayerAction>(0);
+	if (action == 'c')
+		player_action = Player::PlayerAction::CheckOrCall;
+	else if (action == 'b')
+		player_action = Player::PlayerAction::Bet;
+	else
+		player_action = Player::PlayerAction::Quit;
 
-    std::pair<Player::PlayerAction, int> result(player_action, bet_amt);
+	std::pair<Player::PlayerAction, int> result(player_action, bet_amt);
 
-    return result;
+	return result;
 }
 
 void ConsoleIO::playerAction(const std::string& player_name, Player::PlayerAction action, int bet,
-                             const PokerGame::State& state)
+	const PokerGame::State& state)
 {
-    // Insert the event text into the event text queue
-    std::string event_text = this->actionToString(player_name, action, bet);
-    this->event_string_queue.push_front(event_text);
-    if (this->event_string_queue.size() > MAX_EVENT_STRING_QUEUE_LEN)
-        this->event_string_queue.pop_back();
+	// Insert the event text into the event text queue
+	std::string event_text = this->actionToString(player_name, action, bet);
+	this->event_string_queue.push_front(event_text);
+	if (this->event_string_queue.size() > MAX_EVENT_STRING_QUEUE_LEN)
+		this->event_string_queue.pop_back();
 
-    // Copy the state
-    this->cached_state = state;
+	// Copy the state
+	this->cached_state = state;
 
-    // Update the screen
-    this->updateScreen();
+	// Update the screen
+	this->updateScreen();
 }
 
 void ConsoleIO::subRoundChange(PokerGame::SubRound new_sub_round, const PokerGame::State& state)
 {
-    // Insert the event text into the event text queue
-    std::string event_text = this->newSubRoundToString(new_sub_round);
-    this->event_string_queue.push_front(event_text);
-    if (this->event_string_queue.size() > MAX_EVENT_STRING_QUEUE_LEN)
-        this->event_string_queue.pop_back();
+	// Insert the event text into the event text queue
+	std::string event_text = this->newSubRoundToString(new_sub_round);
+	this->event_string_queue.push_front(event_text);
+	if (this->event_string_queue.size() > MAX_EVENT_STRING_QUEUE_LEN)
+		this->event_string_queue.pop_back();
 
-    // Copy the state
-    this->cached_state = state;
+	// Copy the state
+	this->cached_state = state;
 
-    // Update the screen
-    this->updateScreen();
+	// Update the screen
+	this->updateScreen();
 }
 
 bool ConsoleIO::roundEnd(bool draw, const std::string& winner, RankedHand::Ranking ranking,
-                         const PokerGame::State& state)
+	const PokerGame::State& state)
 {
-    // Insert the event text into the event text queue
-    std::string event_text = this->roundEndToString(draw, winner, ranking, state.current_pot);
-    this->event_string_queue.push_front(event_text);
-    if (this->event_string_queue.size() > MAX_EVENT_STRING_QUEUE_LEN)
-        this->event_string_queue.pop_back();
+	// Insert the event text into the event text queue
+	std::string event_text = this->roundEndToString(draw, winner, ranking, state.current_pot);
+	this->event_string_queue.push_front(event_text);
+	if (this->event_string_queue.size() > MAX_EVENT_STRING_QUEUE_LEN)
+		this->event_string_queue.pop_back();
 
-    // Copy the state
-    this->cached_state = state;
+	// Copy the state
+	this->cached_state = state;
 
-    // Update the screen
-    this->hint_text = "Continue(c) or quit(q)?";
+	// Update the screen
+	this->hint_text = "Continue(c) or quit(q)?";
 
-    // Update the screen
-    this->updateScreen();
+	// Update the screen
+	this->updateScreen();
 
-    // Ask user to continue or quit
-    char action;
-    do
-    {
-        // Get user input
-        std::cin >> action;
+	// Ask user to continue or quit
+	char action;
+	do
+	{
+		// Get user input
+		std::cin >> action;
 
-        // If the user entered something invalid, ask again
-        if (action != 'c' && action != 'q')
-        {
-            this->hint_text = "Invalid entry. Continue(c) or quit(q)??";
-            this->updateScreen();
-        }
-        else
-        {
-            break;
-        }
+		// If the user entered something invalid, ask again
+		if (action != 'c' && action != 'q')
+		{
+			this->hint_text = "Invalid entry. Continue(c) or quit(q)??";
+			this->updateScreen();
+		}
+		else
+		{
+			break;
+		}
 
-    } while (1);
+	} while (1);
 
-    // If the user wants to quit, return false
-    if (action == 'q')
-        return false;
+	// If the user wants to quit, return false
+	if (action == 'q')
+		return false;
 
-    return true;
+	return true;
 }
 
 void ConsoleIO::gameEnd(const std::string& winner)
 {
-    // Clear the terminal
-    std::cout << "\033[2J\033[1;1H";
+	// Clear the terminal
+	std::cout << "\033[2J\033[1;1H";
 
-    // Correct for grammer
-    if (winner == "You")
-        std::cout << "You win!" << std::endl;
-    else
-        std::cout << "Computer wins!" << std::endl;
+	// Correct for grammer
+	if (winner == "You")
+		std::cout << "You win!" << std::endl;
+	else
+		std::cout << "Computer wins!" << std::endl;
 
-    // Final message
-    std::cout << "If you would like to get in contact with the author you can reach him here:" << std::endl;
-    std::cout << "mzimmere@gmail.com" << std::endl;
-    std::cout << "Thanks for playing!" << std::endl;
+	// Final message
+	std::cout << "If you would like to get in contact with the author you can reach him here:" << std::endl;
+	std::cout << "mzimmere@gmail.com" << std::endl;
+	std::cout << "Thanks for playing!" << std::endl;
 }
 
 std::string ConsoleIO::actionToString(const std::string& player_name, Player::PlayerAction action, int bet)
 {
-    std::string result;
+	std::string result;
 
-    // Populate result with a string constructed from the input variables
-    switch (action)
-    {
-        // Check or call
-        case Player::PlayerAction::CheckOrCall:
-            if (bet > 0)
-            {
-                // Correct for grammer
-                if (player_name == "You")
-                    result = "You call.";
-                else
-                    result = player_name + " calls.";
-            }
-            else
-            {
-                // Correct for grammer
-                if (player_name == "You")
-                    result = "You check.";
-                else
-                    result = player_name + " checks.";
-            }
-            break;
+	// Populate result with a string constructed from the input variables
+	switch (action)
+	{
+		// Check or call
+	case Player::PlayerAction::CheckOrCall:
+		if (bet > 0)
+		{
+			// Correct for grammer
+			if (player_name == "You")
+				result = "You call.";
+			else
+				result = player_name + " calls.";
+		}
+		else
+		{
+			// Correct for grammer
+			if (player_name == "You")
+				result = "You check.";
+			else
+				result = player_name + " checks.";
+		}
+		break;
 
-        // Bet
-        case Player::PlayerAction::Bet:
+		// Bet
+	case Player::PlayerAction::Bet:
 
-            // Correct for grammer
-            if (player_name == "You")
-                result = "You bet " + std::to_string(bet) + ".";
-            else
-                result = player_name + " bets " + std::to_string(bet) + ".";
-            break;
+		// Correct for grammer
+		if (player_name == "You")
+			result = "You bet " + std::to_string(bet) + ".";
+		else
+			result = player_name + " bets " + std::to_string(bet) + ".";
+		break;
 
-        // Fold
-        case Player::PlayerAction::Fold:
+		// Fold
+	case Player::PlayerAction::Fold:
 
-            // Correct for grammer
-            if (player_name == "You")
-                result = "You fold.";
-            else
-                result = player_name + " folds.";
-            break;
-    }
+		// Correct for grammer
+		if (player_name == "You")
+			result = "You fold.";
+		else
+			result = player_name + " folds.";
+		break;
 
-    return result;
+		// Quit
+	case Player::PlayerAction::Quit:
+		return "";
+	}
+
+	return result;
 }
 
 std::string ConsoleIO::newSubRoundToString(PokerGame::SubRound new_sub_round)
 {
-    switch (new_sub_round)
-    {
-        case PokerGame::SubRound::PreFlop:
-            return "Cards dealt.";
+	switch (new_sub_round)
+	{
+	case PokerGame::SubRound::PreFlop:
+		return "Cards dealt.";
 
-        case PokerGame::SubRound::Flop:
-            return "The flop.";
+	case PokerGame::SubRound::Flop:
+		return "The flop.";
 
-        case PokerGame::SubRound::Turn:
-            return "The turn.";
+	case PokerGame::SubRound::Turn:
+		return "The turn.";
 
-        case PokerGame::SubRound::River:
-            return "The river.";
-    }
+	case PokerGame::SubRound::River:
+		return "The river.";
+	}
+
+	return "";
 }
 
 std::string ConsoleIO::printRanking(RankedHand::Ranking ranking)
 {
-    switch (ranking)
-    {
-        case RankedHand::Ranking::RoyalFlush:
-            return "royal flush";
-        case RankedHand::Ranking::StraightFlush:
-            return "straight flush";
-        case RankedHand::Ranking::FourOfAKind:
-            return "four of a kind";
-        case RankedHand::Ranking::FullHouse:
-            return "full house";
-        case RankedHand::Ranking::Flush:
-            return "flush";
-        case RankedHand::Ranking::Straight:
-            return "straight";
-        case RankedHand::Ranking::ThreeOfAKind:
-            return "three of a kind";
-        case RankedHand::Ranking::TwoPair:
-            return "two pair";
-        case RankedHand::Ranking::Pair:
-            return "pair";
-        case RankedHand::Ranking::HighCard:
-            return "high card";
-        default:
-            return "";
-    }
+	switch (ranking)
+	{
+	case RankedHand::Ranking::RoyalFlush:
+		return "royal flush";
+	case RankedHand::Ranking::StraightFlush:
+		return "straight flush";
+	case RankedHand::Ranking::FourOfAKind:
+		return "four of a kind";
+	case RankedHand::Ranking::FullHouse:
+		return "full house";
+	case RankedHand::Ranking::Flush:
+		return "flush";
+	case RankedHand::Ranking::Straight:
+		return "straight";
+	case RankedHand::Ranking::ThreeOfAKind:
+		return "three of a kind";
+	case RankedHand::Ranking::TwoPair:
+		return "two pair";
+	case RankedHand::Ranking::Pair:
+		return "pair";
+	case RankedHand::Ranking::HighCard:
+		return "high card";
+	default:
+		return "";
+	}
 }
 
 std::string ConsoleIO::roundEndToString(bool draw, const std::string& winner, RankedHand::Ranking ranking, int pot)
 {
-    if (draw == true)
-        return "Round draw with " + ConsoleIO::printRanking(ranking);
+	if (draw == true)
+		return "Round draw with " + ConsoleIO::printRanking(ranking);
 
-    // Correct for grammer
-    if (winner == "You")
-    {
-        // Support hidden rankings
-        if (ranking == RankedHand::Ranking::Unranked)
-            return "You win " + std::to_string(pot) + ".";
-        else
-            return "You win " + std::to_string(pot) + " with " + ConsoleIO::printRanking(ranking) + ".";
-    }
-    else
-    {
-        // Support hidden rankings
-        if (ranking == RankedHand::Ranking::Unranked)
-            return winner + " wins " + std::to_string(pot) + ".";
-        else
-            return winner + " wins " + std::to_string(pot) + " with " + ConsoleIO::printRanking(ranking) + ".";
-    }
+	// Correct for grammer
+	if (winner == "You")
+	{
+		// Support hidden rankings
+		if (ranking == RankedHand::Ranking::Unranked)
+			return "You win " + std::to_string(pot) + ".";
+		else
+			return "You win " + std::to_string(pot) + " with " + ConsoleIO::printRanking(ranking) + ".";
+	}
+	else
+	{
+		// Support hidden rankings
+		if (ranking == RankedHand::Ranking::Unranked)
+			return winner + " wins " + std::to_string(pot) + ".";
+		else
+			return winner + " wins " + std::to_string(pot) + " with " + ConsoleIO::printRanking(ranking) + ".";
+	}
 }
 
 std::string ConsoleIO::printSuit(Card::Suit suit)
 {
-    switch (suit)
-    {
-        case Card::Suit::Clubs:
-            return "clubs";
-        case Card::Suit::Diamonds:
-            return "diamonds";
-        case Card::Suit::Hearts:
-            return "hearts";
-        case Card::Suit::Spades:
-            return "spades";
-    }
+	switch (suit)
+	{
+	case Card::Suit::Clubs:
+		return "clubs";
+	case Card::Suit::Diamonds:
+		return "diamonds";
+	case Card::Suit::Hearts:
+		return "hearts";
+	case Card::Suit::Spades:
+		return "spades";
+	case Card::Suit::Unrevealed:
+		return "";
+	}
+
+	return "";
 }
 
 std::string ConsoleIO::printValue(Card::Value value)
 {
-    switch (value)
-    {
-        case Card::Value::Ace:
-            return "A";
-        case Card::Value::Two:
-            return "2";
-        case Card::Value::Three:
-            return "3";
-        case Card::Value::Four:
-            return "4";
-        case Card::Value::Five:
-            return "5";
-        case Card::Value::Six:
-            return "6";
-        case Card::Value::Seven:
-            return "7";
-        case Card::Value::Eight:
-            return "8";
-        case Card::Value::Nine:
-            return "9";
-        case Card::Value::Ten:
-            return "10";
-        case Card::Value::Jack:
-            return "J";
-        case Card::Value::Queen:
-            return "Q";
-        case Card::Value::King:
-            return "K";
-    }
+	switch (value)
+	{
+	case Card::Value::Ace:
+		return "A";
+	case Card::Value::Two:
+		return "2";
+	case Card::Value::Three:
+		return "3";
+	case Card::Value::Four:
+		return "4";
+	case Card::Value::Five:
+		return "5";
+	case Card::Value::Six:
+		return "6";
+	case Card::Value::Seven:
+		return "7";
+	case Card::Value::Eight:
+		return "8";
+	case Card::Value::Nine:
+		return "9";
+	case Card::Value::Ten:
+		return "10";
+	case Card::Value::Jack:
+		return "J";
+	case Card::Value::Queen:
+		return "Q";
+	case Card::Value::King:
+		return "K";
+
+	case Card::Value::Unrevealed:
+		return "";
+	}
+
+	return "";
 }
 
 void ConsoleIO::printCard(int x, int y, const Card& card)
 {
-    // Get strings for value and suit
-    std::string value = printValue(card.getValue());
-    std::string suit = printSuit(card.getSuit());
+	// Get strings for value and suit
+	std::string value = printValue(card.getValue());
+	std::string suit = printSuit(card.getSuit());
 
-    // Copy these strings to the screen buffer, centered at the X/Y parameters provided
-    ConsoleIO::screenBufferCopy(value.begin(), value.end(), y, x - value.size() / 2);
-    ConsoleIO::screenBufferCopy(suit.begin(), suit.end(), y + 1, x - suit.size() / 2);
+	// Copy these strings to the screen buffer, centered at the X/Y parameters provided
+	ConsoleIO::screenBufferCopy(value.begin(), value.end(), y, x - value.size() / 2);
+	ConsoleIO::screenBufferCopy(suit.begin(), suit.end(), y + 1, x - suit.size() / 2);
 }
 
 void ConsoleIO::printBoard(int x, int y)
 {
-    // Pring each dealt card with a 9 space spacing between each card around the coordinates provided
-    double offset = -18;
-    for (const auto& board_card : this->cached_state.board)
-    {
-        printCard(x + offset, y, *board_card);
-        offset += 9;
-    }
+	// Pring each dealt card with a 9 space spacing between each card around the coordinates provided
+	double offset = -18;
+	for (const auto& board_card : this->cached_state.board)
+	{
+		printCard(x + offset, y, *board_card);
+		offset += 9;
+	}
 }
 
 void ConsoleIO::printHand(int x, int y, const std::array<std::shared_ptr<Card>, 2>& RankedHand)
 {
-    // Print both cards at the specified location with a 10 space spacing
-    printCard(x - 5, y, *RankedHand[0]);
-    printCard(x + 5, y, *RankedHand[1]);
+	// Print both cards at the specified location with a 10 space spacing
+	printCard(x - 5, y, *RankedHand[0]);
+	printCard(x + 5, y, *RankedHand[1]);
 }
 
 void ConsoleIO::printChipStackCount(int x, int y, int count)
 {
-    // Copy the chip count into the screen buffer
-    std::string chip_stack("chip stack");
-    ConsoleIO::screenBufferCopy(chip_stack.begin(), chip_stack.end(), y, x - chip_stack.size() / 2);
+	// Copy the chip count into the screen buffer
+	std::string chip_stack("chip stack");
+	ConsoleIO::screenBufferCopy(chip_stack.begin(), chip_stack.end(), y, x - chip_stack.size() / 2);
 
-    // Copy the chip count into the screen buffer
-    std::string chip_count = std::to_string(count);
-    ConsoleIO::screenBufferCopy(chip_count.begin(), chip_count.end(), y + 1, x - chip_count.size() / 2);
+	// Copy the chip count into the screen buffer
+	std::string chip_count = std::to_string(count);
+	ConsoleIO::screenBufferCopy(chip_count.begin(), chip_count.end(), y + 1, x - chip_count.size() / 2);
 }
 
 void ConsoleIO::printPotStackCount(int x, int y)
 {
-    // Copy the chip count into the screen buffer
-    std::string pot("pot");
-    ConsoleIO::screenBufferCopy(pot.begin(), pot.end(), y, x - pot.size() / 2);
+	// Copy the chip count into the screen buffer
+	std::string pot("pot");
+	ConsoleIO::screenBufferCopy(pot.begin(), pot.end(), y, x - pot.size() / 2);
 
-    // Copy the chip count into the screen buffer
-    std::string chip_count = std::to_string(this->cached_state.current_pot);
-    ConsoleIO::screenBufferCopy(chip_count.begin(), chip_count.end(), y + 1, x - chip_count.size() / 2);
+	// Copy the chip count into the screen buffer
+	std::string chip_count = std::to_string(this->cached_state.current_pot);
+	ConsoleIO::screenBufferCopy(chip_count.begin(), chip_count.end(), y + 1, x - chip_count.size() / 2);
 }
 
 void ConsoleIO::printToCall(int x, int y)
 {
-    // Copy the to call message into the screen buffer
-    std::string to_call("to call");
-    ConsoleIO::screenBufferCopy(to_call.begin(), to_call.end(), y, x - to_call.size() / 2);
+	// Copy the to call message into the screen buffer
+	std::string to_call("to call");
+	ConsoleIO::screenBufferCopy(to_call.begin(), to_call.end(), y, x - to_call.size() / 2);
 
-    // Copy the chip count into the screen buffer
-    std::string chip_count = std::to_string(this->cached_state.current_bet);
-    ConsoleIO::screenBufferCopy(chip_count.begin(), chip_count.end(), y + 1, x - chip_count.size() / 2);
+	// Copy the chip count into the screen buffer
+	std::string chip_count = std::to_string(this->cached_state.current_bet);
+	ConsoleIO::screenBufferCopy(chip_count.begin(), chip_count.end(), y + 1, x - chip_count.size() / 2);
 }
 
 void ConsoleIO::printEventText(int x, int y)
 {
-    // Print each event text to the screen buffer
-    for (const auto& event_text : this->event_string_queue)
-    {
-        // Copy the chip count into the screen buffer
-        ConsoleIO::screenBufferCopy(event_text.begin(), event_text.end(), y++, x);
-    }
+	// Print each event text to the screen buffer
+	for (const auto& event_text : this->event_string_queue)
+	{
+		// Copy the chip count into the screen buffer
+		ConsoleIO::screenBufferCopy(event_text.begin(), event_text.end(), y++, x);
+	}
 }
 
 void ConsoleIO::updateScreen()
 {
-    // Clear the terminal
-    std::cout << "\033[2J\033[1;1H";
+	// Clear the terminal
+	std::cout << "\033[2J\033[1;1H";
 
-    // Initialize screen_buffer with all spaces
-    for (auto y = 0; y < HEIGHT; y++)
-        for (auto x = 0; x < WIDTH; x++)
-            this->screen_buffer[y][x] = ' ';
+	// Initialize screen_buffer with all spaces
+	for (auto y = 0; y < HEIGHT; y++)
+		for (auto x = 0; x < WIDTH; x++)
+			this->screen_buffer[y][x] = ' ';
 
-    // Add a border
-    std::fill(this->screen_buffer[0].begin(), this->screen_buffer[0].end(), '#');
-    for (auto y = 1; y < HEIGHT - 1; y++)
-    {
-        this->screen_buffer[y][0] = '#';
-        this->screen_buffer[y][WIDTH - 1] = '#';
-    }
-    std::fill(this->screen_buffer[HEIGHT - 1].begin(), this->screen_buffer[HEIGHT - 1].end(), '#');
+	// Add a border
+	std::fill(this->screen_buffer[0].begin(), this->screen_buffer[0].end(), '#');
+	for (auto y = 1; y < HEIGHT - 1; y++)
+	{
+		this->screen_buffer[y][0] = '#';
+		this->screen_buffer[y][WIDTH - 1] = '#';
+	}
+	std::fill(this->screen_buffer[HEIGHT - 1].begin(), this->screen_buffer[HEIGHT - 1].end(), '#');
 
-    // Draw the user's RankedHand
-    this->printHand(HEIGHT + 3, HEIGHT - 3, this->cached_state.player_hand);
+	// Draw the user's RankedHand
+	this->printHand(HEIGHT + 3, HEIGHT - 3, this->cached_state.player_hand);
 
-    // Draw the opponent's RankedHand
-    this->printHand(HEIGHT + 3, 1, this->cached_state.ai_hand);
+	// Draw the opponent's RankedHand
+	this->printHand(HEIGHT + 3, 1, this->cached_state.ai_hand);
 
-    // Draw the users chip stack count
-    this->printChipStackCount(7 * HEIGHT / 4 + 3, HEIGHT - 3, this->cached_state.player_stack);
+	// Draw the users chip stack count
+	this->printChipStackCount(7 * HEIGHT / 4 + 3, HEIGHT - 3, this->cached_state.player_stack);
 
-    // Draw the opponents chip stack count
-    this->printChipStackCount(7 * HEIGHT / 4 + 3, 1, this->cached_state.ai_stack);
+	// Draw the opponents chip stack count
+	this->printChipStackCount(7 * HEIGHT / 4 + 3, 1, this->cached_state.ai_stack);
 
-    // Draw the pot chip stack count
-    this->printPotStackCount(HEIGHT + 3, HEIGHT / 2 + 2);
+	// Draw the pot chip stack count
+	this->printPotStackCount(HEIGHT + 3, HEIGHT / 2 + 2);
 
-    // Draw the to call message
-    this->printToCall(HEIGHT + 3, 3 * HEIGHT / 4 + 1);
+	// Draw the to call message
+	this->printToCall(HEIGHT + 3, 3 * HEIGHT / 4 + 1);
 
-    // Draw the board
-    this->printBoard(HEIGHT + 3, HEIGHT / 2 - 1);
+	// Draw the board
+	this->printBoard(HEIGHT + 3, HEIGHT / 2 - 1);
 
-    // Print event text
-    this->printEventText(WIDTH - 40, 1);
+	// Print event text
+	this->printEventText(WIDTH - 40, 1);
 
-    // Draw the screen
-    for (auto y = 0; y < HEIGHT; y++)
-    {
-        std::string line(&this->screen_buffer[y][0], sizeof(this->screen_buffer[y]));
-        std::cout << line << std::endl;
-    }
+	// Draw the screen
+	for (auto y = 0; y < HEIGHT; y++)
+	{
+		std::string line(&this->screen_buffer[y][0], sizeof(this->screen_buffer[y]));
+		std::cout << line << std::endl;
+	}
 
-    // Print hint text
-    std::cout << this->hint_text << std::endl;
+	// Print hint text
+	std::cout << this->hint_text << std::endl;
 
-    // Sleep for some time
-    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+	// Sleep for some time
+	std::this_thread::sleep_for(std::chrono::milliseconds(250));
 }
 
 void ConsoleIO::screenBufferCopy(std::string::const_iterator src_begin, std::string::const_iterator src_end, int y,
-                                 int x)
+	int x)
 {
-    // Copy the source to the destination, skipping out of bound writes
-    for (; src_begin != src_end; src_begin++)
-    {
-        // Continue instead of writing out of bounds
-        if (y < 0 || y >= HEIGHT || x < 0 || x >= WIDTH)
-            continue;
+	// Copy the source to the destination, skipping out of bound writes
+	for (; src_begin != src_end; src_begin++)
+	{
+		// Continue instead of writing out of bounds
+		if (y < 0 || y >= HEIGHT || x < 0 || x >= WIDTH)
+			continue;
 
-        // Copy
-        this->screen_buffer[y][x++] = *src_begin;
-    }
+		// Copy
+		this->screen_buffer[y][x++] = *src_begin;
+	}
 }

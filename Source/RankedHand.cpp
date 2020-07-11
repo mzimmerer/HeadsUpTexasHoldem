@@ -41,7 +41,7 @@ bool RankedHand::operator<(const RankedHand& other)
         // Otherwise we need to compare the subranking lists
         auto this_iter = this->sub_ranking.begin();
         auto other_iter = other.sub_ranking.begin();
-        for (auto i = 0; i < this->sub_ranking.size(); i++)
+        for (size_t i = 0; i < this->sub_ranking.size(); i++)
         {
             // Compare subranking entries
             if ((*this_iter)->getValue() != (*other_iter)->getValue())
@@ -69,7 +69,7 @@ bool RankedHand::operator==(const RankedHand& other)
         // Otherwise we need to compare the subranking lists
         auto this_iter = this->sub_ranking.begin();
         auto other_iter = other.sub_ranking.begin();
-        for (auto i = 0; i < this->sub_ranking.size(); i++)
+        for (size_t i = 0; i < this->sub_ranking.size(); i++)
         {
             // Compare subranking entries
             if ((*this_iter)->getValue() != (*other_iter)->getValue())
@@ -96,11 +96,11 @@ std::array<std::shared_ptr<Card>, 7> RankedHand::handAndBoardToCards(const std::
     std::array<std::shared_ptr<Card>, 7> result;
 
     // Copy over board cards
-    for (auto i = 0; i < board.size(); i++)
+    for (size_t i = 0; i < board.size(); i++)
         result[i] = board[i];
 
     // Copy over hand
-    for (auto i = 0; i < hand.size(); i++)
+    for (size_t i = 0; i < hand.size(); i++)
         result[i + board.size()] = hand[i];
 
     return result;
@@ -185,6 +185,7 @@ void RankedHand::rankHand()
     {
         // The ranking is three of a kind
         this->rankThreeOfAKind(straight_map, largest_set);
+        return;
     }
 
     // Check for two pair
@@ -215,7 +216,7 @@ RankedHand::LargestSet RankedHand::constructLargestSet(const ValueMap& value_map
     for (const auto& card_list : value_map)
     {
         // If the number of cards listed is greater than the largest seen count
-        if (card_list.second.size() > result.first)
+        if (card_list.second.size() > static_cast<size_t>(result.first))
         {
             // Update the largest set
             result.first = card_list.second.size();

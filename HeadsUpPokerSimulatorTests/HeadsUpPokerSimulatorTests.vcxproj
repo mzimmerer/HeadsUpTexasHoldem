@@ -146,11 +146,11 @@
     <ClCompile Include="..\Dependencies\googletest\googletest\src\gtest_main.cc" />
     <ClCompile Include="..\Source\Card.cpp" />
     <ClCompile Include="..\Source\RankedHand.cpp" />
-    <ClCompile Include="HandTestWrapper.cpp" />
-    <ClCompile Include="HandTests.cpp" />
+    <ClCompile Include="..\Tests\HandTests.cpp" />
+    <ClCompile Include="..\Tests\HandTestWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="HandTestWrapper.h" />
+    <ClInclude Include="..\Tests\HandTestWrapper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
