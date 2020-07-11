@@ -361,7 +361,7 @@ std::string ConsoleIO::printValue(Card::Value value)
 	return "";
 }
 
-void ConsoleIO::printCard(int x, int y, const Card& card)
+void ConsoleIO::printCard(size_t x, size_t y, const Card& card)
 {
 	// Get strings for value and suit
 	std::string value = printValue(card.getValue());
@@ -372,10 +372,10 @@ void ConsoleIO::printCard(int x, int y, const Card& card)
 	ConsoleIO::screenBufferCopy(suit.begin(), suit.end(), y + 1, x - suit.size() / 2);
 }
 
-void ConsoleIO::printBoard(int x, int y)
+void ConsoleIO::printBoard(size_t x, size_t y)
 {
 	// Pring each dealt card with a 9 space spacing between each card around the coordinates provided
-	double offset = -18;
+	int offset = -18;
 	for (const auto& board_card : this->cached_state.board)
 	{
 		printCard(x + offset, y, *board_card);
@@ -383,14 +383,14 @@ void ConsoleIO::printBoard(int x, int y)
 	}
 }
 
-void ConsoleIO::printHand(int x, int y, const std::array<std::shared_ptr<Card>, 2>& RankedHand)
+void ConsoleIO::printHand(size_t x, size_t y, const std::array<std::shared_ptr<Card>, 2>& RankedHand)
 {
 	// Print both cards at the specified location with a 10 space spacing
 	printCard(x - 5, y, *RankedHand[0]);
 	printCard(x + 5, y, *RankedHand[1]);
 }
 
-void ConsoleIO::printChipStackCount(int x, int y, int count)
+void ConsoleIO::printChipStackCount(size_t x, size_t y, int count)
 {
 	// Copy the chip count into the screen buffer
 	std::string chip_stack("chip stack");
@@ -401,7 +401,7 @@ void ConsoleIO::printChipStackCount(int x, int y, int count)
 	ConsoleIO::screenBufferCopy(chip_count.begin(), chip_count.end(), y + 1, x - chip_count.size() / 2);
 }
 
-void ConsoleIO::printPotStackCount(int x, int y)
+void ConsoleIO::printPotStackCount(size_t x, size_t y)
 {
 	// Copy the chip count into the screen buffer
 	std::string pot("pot");
@@ -412,7 +412,7 @@ void ConsoleIO::printPotStackCount(int x, int y)
 	ConsoleIO::screenBufferCopy(chip_count.begin(), chip_count.end(), y + 1, x - chip_count.size() / 2);
 }
 
-void ConsoleIO::printToCall(int x, int y)
+void ConsoleIO::printToCall(size_t x, size_t y)
 {
 	// Copy the to call message into the screen buffer
 	std::string to_call("to call");
@@ -423,7 +423,7 @@ void ConsoleIO::printToCall(int x, int y)
 	ConsoleIO::screenBufferCopy(chip_count.begin(), chip_count.end(), y + 1, x - chip_count.size() / 2);
 }
 
-void ConsoleIO::printEventText(int x, int y)
+void ConsoleIO::printEventText(size_t x, size_t y)
 {
 	// Print each event text to the screen buffer
 	for (const auto& event_text : this->event_string_queue)
@@ -490,8 +490,8 @@ void ConsoleIO::updateScreen()
 	std::this_thread::sleep_for(std::chrono::milliseconds(250));
 }
 
-void ConsoleIO::screenBufferCopy(std::string::const_iterator src_begin, std::string::const_iterator src_end, int y,
-	int x)
+void ConsoleIO::screenBufferCopy(std::string::const_iterator src_begin, std::string::const_iterator src_end, size_t y,
+	size_t x)
 {
 	// Copy the source to the destination, skipping out of bound writes
 	for (; src_begin != src_end; src_begin++)

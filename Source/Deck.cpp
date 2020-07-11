@@ -45,7 +45,7 @@ void Deck::shuffle()
     for (size_t cursor = DECK_SIZE - 1; cursor > 0; cursor--)
     {
         // Find a random card in the range [0..cursor] to replace it
-        int random_card = this->rng.getRandomNumberInRange(0, cursor);
+        int random_card = this->rng.getRandomNumberInRange(0, static_cast<int>(cursor));
 
         // Temporarily store a pointer to the card that is being replaced
         std::shared_ptr<Card> tmp = this->cards[cursor];
@@ -64,7 +64,7 @@ void Deck::shuffle()
 std::shared_ptr<Card> Deck::dealCard()
 {
     // Ensure that the entire deck has not already been dealt
-    if (static_cast<size_t>(this->deal_cursor + 1) >= this->cards.size())
+    if (static_cast<size_t>(this->deal_cursor) + 1 >= this->cards.size())
         throw std::runtime_error("There are no more cards to deal!");
 
     return this->cards[this->deal_cursor++];

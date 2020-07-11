@@ -46,7 +46,7 @@ GTEST_SRC := $(GOOGLETESTDIR)/src/gtest-all.cc
 GTEST_SRC += $(GOOGLETESTDIR)/src/gtest_main.cc
 GTEST_OBJ := $(GTEST_SRC:%.cc=$(TEST_OBJECTDIR)/%.o) 
 
-CXXFLAGS := -Wall -std=gnu++17 -I./Include
+CXXFLAGS := -Wall -Werror -std=gnu++17 -I./Include
 TEST_CXXFLAGS := -I$(GOOGLETESTDIR)/include -I$(GOOGLETESTDIR)
 LDFLAGS :=
 

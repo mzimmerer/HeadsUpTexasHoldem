@@ -219,7 +219,7 @@ RankedHand::LargestSet RankedHand::constructLargestSet(const ValueMap& value_map
         if (card_list.second.size() > static_cast<size_t>(result.first))
         {
             // Update the largest set
-            result.first = card_list.second.size();
+            result.first = static_cast<int>(card_list.second.size());
             result.second = *card_list.second.begin();
         }
     }

@@ -8,5 +8,6 @@ HeadsUpPokerSimulator/Release/*
 HeadsUpPokerSimulatorTests/x64/*
 HeadsUpPokerSimulatorTests/Debug/*
 HeadsUpPokerSimulatorTests/Release/*
-texas_holdem
+texas_holdem*
+run_tests*
 Obj/*
