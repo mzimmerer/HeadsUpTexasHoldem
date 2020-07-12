@@ -9,7 +9,7 @@
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See theq
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
@@ -17,7 +17,7 @@
  **/
 #pragma once
 
-#include <random>
+#include <utl/random>
 
 /** Random number generator wrapper
  */
@@ -25,17 +25,16 @@ class Random
 {
    public:
     /** Random number generator constructor
+     *  @param seed The random seed
      */
-    Random();
+    Random(uint32_t seed);
 
     /** Generate a random integer between a lower and upper bound, inclusive.
      */
     int getRandomNumberInRange(int lower, int upper);
 
-   private:
-    /// Random device
-    std::random_device rd;
+private:
 
-    /// Random number generator algorithm (32-bit Mersenne Twister)
-    std::mt19937 gen;
+    /// Linear shift feedback register random number generator
+    utl::random rng;
 };

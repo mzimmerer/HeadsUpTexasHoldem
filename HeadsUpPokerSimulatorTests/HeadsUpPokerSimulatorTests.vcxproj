@@ -100,7 +100,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Include;..\Dependencies\googletest\googletest;..\Dependencies\googletest\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Include;..\Dependencies\utl\include;..\Dependencies\googletest\googletest;..\Dependencies\googletest\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,7 +133,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Include;..\Dependencies\googletest\googletest;..\Dependencies\googletest\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Include;..\Dependencies\utl\include;..\Dependencies\googletest\googletest;..\Dependencies\googletest\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,6 +147,7 @@
     <ClCompile Include="..\Dependencies\googletest\googletest\src\gtest-all.cc" />
     <ClCompile Include="..\Dependencies\googletest\googletest\src\gtest_main.cc" />
     <ClCompile Include="..\Source\Card.cpp" />
+    <ClCompile Include="..\Source\Exception.cpp" />
     <ClCompile Include="..\Source\RankedHand.cpp" />
     <ClCompile Include="..\Tests\HandTests.cpp" />
     <ClCompile Include="..\Tests\HandTestWrapper.cpp" />

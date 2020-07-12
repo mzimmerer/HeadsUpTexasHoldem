@@ -17,196 +17,186 @@
  **/
 #pragma once
 
-#include <functional>
-#include <list>
+#include <utl/array>
+#include <utl/list>
+#include <utl/utility>
+#include <utl/vector>
 
 #include "Deck.h"
 #include "Player.h"
+#include "PokerGameState.h"
 #include "Random.h"
 #include "RankedHand.h"
 
-/** Texas Holdem poker game class. Implements heads up poker against an AI opponent
- */
+ /** Texas Holdem poker game class. Implements heads up poker against an AI opponent
+  */
 class PokerGame
 {
-   public:
-    /// Poker game state provided with state update callbacks
-    struct State
-    {
-        std::array<std::shared_ptr<Card>, 2> player_hand;
-        std::array<std::shared_ptr<Card>, 2> ai_hand;
-        std::list<std::shared_ptr<Card>> board;
-        int current_pot;
-        int current_bet;
-        int player_stack;
-        int ai_stack;
-    };
+public:
 
-    /// Decision callback definition
-    using DecisionCallback = std::function<std::pair<Player::PlayerAction, int>(const State& state)>;
+	/// Decision callback definition
+	using DecisionCallback = utl::pair<Player::PlayerAction, int>(*)(const PokerGameState& state, void* opaque);
 
-    /// Player action callback definition
-    using PlayerActionCallback =
-        std::function<void(const std::string& player_name, Player::PlayerAction action, int bet, const State& state)>;
+	/// Player action callback definition
+	using PlayerActionCallback =
+		void(*)(const utl::string<Player::MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet, const PokerGameState& state, void* opaque);
 
-    /// Subround definitions
-    enum class SubRound : int
-    {
-        PreFlop = 1,
-        Flop = 2,
-        Turn = 3,
-        River = 4,
-    };
+	/// Subround definitions
+	enum class SubRound : int
+	{
+		PreFlop = 1,
+		Flop = 2,
+		Turn = 3,
+		River = 4,
+	};
 
-    /// Sub round change callback definition
-    using SubRoundChangeCallback = std::function<void(SubRound new_sub_round, const PokerGame::State& state)>;
+	/// Sub round change callback definition
+	using SubRoundChangeCallback = void(*)(SubRound new_sub_round, const PokerGameState& state, void* opaque);
 
-    /// Round end callback definition
-    using RoundEndCallback = std::function<bool(bool draw, const std::string& winner, RankedHand::Ranking ranking,
-                                                const PokerGame::State& state)>;
+	/// Round end callback definition
+	using RoundEndCallback = bool(*)(bool draw, const utl::string<Player::MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking,
+		const PokerGameState& state, void* opaque);
 
-    /// Game end callback definition
-    using GameEndCallback = std::function<void(const std::string& winner)>;
+	/// Game end callback definition
+	using GameEndCallback = void(*)(const utl::string<Player::MAX_NAME_SIZE>& winner, void* opaque);
 
-    /** Poker game constructor
-     *  @param small_blind The small blind amount
-     *  @param starting_stack_size The starting stack size for each player
-     *  @param decision_callback Called when human input is required
-     *  @param player_action_callback Called to notify of a player action
-     *  @param subround_change_callback Called to notify of a subround change
-     *  @param round_end_callback Called to notify of a round end
-     *  @param game_end_callback Called to notify of game end
-     */
-    PokerGame(int small_blind, int starting_stack_size, DecisionCallback decision_callback,
-              PlayerActionCallback player_action_callback, SubRoundChangeCallback subround_change_callback,
-              RoundEndCallback round_end_callback, GameEndCallback game_end_callback);
+	/** Poker game constructor
+	 *  @param random_seed A random seed to used for random number generation
+	 *  @param small_blind The small blind amount
+	 *  @param starting_stack_size The starting stack size for each player
+	 *  @param decision_callback Called when human input is required
+	 *  @param player_action_callback Called to notify of a player action
+	 *  @param subround_change_callback Called to notify of a subround change
+	 *  @param round_end_callback Called to notify of a round end
+	 *  @param game_end_callback Called to notify of game end
+	 *  @param opaque A pointer that is provided to all callbacks
+	 */
+	PokerGame(uint32_t random_seed, int small_blind, int starting_stack_size, DecisionCallback decision_callback,
+		PlayerActionCallback player_action_callback, SubRoundChangeCallback subround_change_callback,
+		RoundEndCallback round_end_callback, GameEndCallback game_end_callback, void* opaque);
 
-    /** Play the game!
-     */
-    void play();
+	/** Play the game!
+	 */
+	void play();
 
-   private:
-    /// True if the game should continue running
-    bool run{true};
+private:
+	/// True if the game should continue running
+	bool run{ true };
 
-    /// The small blind
-    const int small_blind;
+	/// The small blind
+	const int small_blind;
 
-    /// The decision callback
-    DecisionCallback decision_callback;
+	/// The decision callback
+	DecisionCallback decision_callback;
 
-    /// The player action callback
-    PlayerActionCallback player_action_callback;
+	/// The player action callback
+	PlayerActionCallback player_action_callback;
 
-    /// The subround change callback
-    SubRoundChangeCallback subround_change_callback;
+	/// The subround change callback
+	SubRoundChangeCallback subround_change_callback;
 
-    /// The round end callback
-    RoundEndCallback round_end_callback;
+	/// The round end callback
+	RoundEndCallback round_end_callback;
 
-    /// The game end callback
-    GameEndCallback game_end_callback;
+	/// The game end callback
+	GameEndCallback game_end_callback;
 
-    /// A random number generator
-    Random rng;
+	/// User provided pointer
+	void* opaque;
 
-    /// The deck
-    Deck deck;
+	/// A random number generator
+	Random rng;
 
-    /// The current dealer
-    int current_dealer{0};
+	/// The deck
+	Deck deck;
 
-    /// The current subround
-    SubRound current_sub_round{SubRound::PreFlop};
+	/// The current dealer
+	int current_dealer{ 0 };
 
-    /// The number of board cards flipped
-    int board_cards_flipped{0};
+	/// The current subround
+	SubRound current_sub_round{ SubRound::PreFlop };
 
-    /// The board
-    std::array<std::shared_ptr<Card>, 5> board;
+	/// The board
+	utl::vector<Card, 5> board;
 
-    /// The current pot
-    int current_pot{0};
+	/// The current pot
+	int current_pot{ 0 };
 
-    /// The current bet
-    int current_bet{0};
+	/// The current bet
+	int current_bet{ 0 };
 
-    /// The player table
-    std::vector<std::unique_ptr<Player>> players;
+	/// The player table
+	utl::vector<Player, 2> players;
 
-    /** Play a round of texas holdem poker!
-     *  @return True if the program should continue, false otherwise
-     */
-    bool playRound();
+	/** Play a round of texas holdem poker!
+	 *  @return True if the program should continue, false otherwise
+	 */
+	bool playRound();
 
-    /** Deal cards to each player
-     */
-    void dealCards();
+	/** Deal cards to each player
+	 */
+	void dealCards();
 
-    /** Handle check or call actions
-     *  @param player The player that checked or called
-     *  @param action The first element is the action, the second is the bet, if any
-     */
-    void checkOrCall(int player, const std::pair<Player::PlayerAction, int>& action);
+	/** Handle check or call actions
+	 *  @param player The player that checked or called
+	 *  @param action The first element is the action, the second is the bet, if any
+	 */
+	void checkOrCall(int player, const utl::pair<Player::PlayerAction, int>& action);
 
-    /** Handle bet actions
-     *  @param player The player that checked or called
-     *  @param action The first element is the action, the second is the bet, if any
-     *  @param True if the round should continue, false otherwise
-     */
-    bool bet(int player, const std::pair<Player::PlayerAction, int>& action);
+	/** Handle bet actions
+	 *  @param player The player that checked or called
+	 *  @param action The first element is the action, the second is the bet, if any
+	 *  @param True if the round should continue, false otherwise
+	 */
+	bool bet(int player, const utl::pair<Player::PlayerAction, int>& action);
 
-    /** Handle fold actions
-     *  @param player The player that checked or called
-     *  @param action The first element is the action, the second is the bet, if any
-     */
-    void fold(int player, const std::pair<Player::PlayerAction, int>& action);
+	/** Handle fold actions
+	 *  @param player The player that checked or called
+	 *  @param action The first element is the action, the second is the bet, if any
+	 */
+	void fold(int player, const utl::pair<Player::PlayerAction, int>& action);
 
-    /** Betting round wrapper, handles final callback
-     *  @param starting_player The player that starts the betting round
-     *  @param players_acted The number of players that have acted
-     *  @return True if the round should progress, false otherwise
-     */
-    bool bettingRoundWrapper(int starting_player, int players_acted);
+	/** Betting round wrapper, handles final callback
+	 *  @param starting_player The player that starts the betting round
+	 *  @param players_acted The number of players that have acted
+	 *  @return True if the round should progress, false otherwise
+	 */
+	bool bettingRoundWrapper(int starting_player, int players_acted);
 
-    /** Run through a betting round. This function is recursive.
-     *  @param starting_player The player that starts the betting round
-     *  @param players_acted The number of players that have acted
-     *  @return True if the round should progress, false otherwise
-     */
-    bool bettingRound(int starting_player, int players_acted);
+	/** Run through a betting round. This function is recursive.
+	 *  @param starting_player The player that starts the betting round
+	 *  @param players_acted The number of players that have acted
+	 *  @return True if the round should progress, false otherwise
+	 */
+	bool bettingRound(int starting_player, int players_acted);
 
-    /** Convert the current board to a list of visibile cards
-     *  @return The list of visible cards
-     */
-    std::list<std::shared_ptr<Card>> boardToList() const;
+	/** Construct a state struct
+	 *  @param opponent_hand_visible If true, the opponents's hand will be visible
+	 */
+	PokerGameState constructState(bool opponent_hand_visible, int player);
 
-    /** Construct a state struct
-     */
-    PokerGame::State constructState();
+	/** Callback to the user with a decision request
+	 *  @return The callback decision. The first element is the action, the second is the bet
+	 */
+	utl::pair<Player::PlayerAction, int> callbackWithDecision();
 
-    /** Callback to the user with a decision request
-     *  @return The callback decision. The first element is the action, the second is the bet
-     */
-    std::pair<Player::PlayerAction, int> callbackWithDecision();
+	/** Callback to the user with a player action notification
+	 *  @param player_name The player's name
+	 *  @param action The action the player performed
+	 *  @param bet The bet, if any
+	 */
+	void callbackWithPlayerAction(const utl::string<Player::MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet);
 
-    /** Callback to the user with a player action notification
-     *  @param player_name The player's name
-     *  @param action The action the player performed
-     *  @param bet The bet, if any
-     */
-    void callbackWithPlayerAction(const std::string& player_name, Player::PlayerAction action, int bet);
+	/** Callback to the user with a subround change notification
+	 *  @param new_subround The new subround
+	 */
+	void callbackWithSubroundChange(SubRound new_subround);
 
-    /** Callback to the user with a subround change notification
-     *  @param new_subround The new subround
-     */
-    void callbackWithSubroundChange(SubRound new_subround);
-
-    /** Callback to the user with a round end notification
-     *  @param draw True if the round ended in a draw, false otherwise
-     *  @param winner The round winner
-     *  @param ranking The ranking of the winning hand
-     *  @param True if the round should continue, false otherwise
-     */
-    bool callbackWithRoundEnd(bool draw, const std::string& winner, RankedHand::Ranking ranking);
+	/** Callback to the user with a round end notification
+	 *  @param draw True if the round ended in a draw, false otherwise
+	 *  @param winner The round winner
+	 *  @param ranking The ranking of the winning hand
+	 *  @param True if the round should continue, false otherwise
+	 */
+	bool callbackWithRoundEnd(bool draw, const utl::string<Player::MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking);
 };

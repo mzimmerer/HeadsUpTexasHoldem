@@ -17,10 +17,10 @@
  **/
 #pragma once
 
-#include <array>
-#include <list>
-#include <memory>
-#include <string>
+#include <utl/array>
+#include <utl/string>
+#include <utl/list>
+#include <utl/utility>
 
 #include "Card.h"
 #include "RankedHand.h"
@@ -32,26 +32,52 @@
 class ConsoleIO
 {
 public:
+
+	/// The drawing region width
+	static constexpr int WIDTH = 80;
+
+	///  Write line callback definition
+	using WriteLineCallback = void(*)(const utl::string<WIDTH>& string, void* opaque);
+
+	/// Maximum allowed user input size
+	static constexpr size_t MAX_USER_INPUT_LEN = 8;
+
+	///  Read line callback definition
+	using ReadLineCallback = utl::string<MAX_USER_INPUT_LEN>(*)(void* opaque);
+
+	/// Deleted default constructor
+	ConsoleIO() = delete;
+
+	/** Constructor
+	 *  @param write_line_callback The write line callback
+	 *  @param read_line_callback The read line callback
+	 *  @param opaque A user provided pointer that will be passed with callbacks
+	 */
+	ConsoleIO(WriteLineCallback write_line_callback, ReadLineCallback read_line_callback, void* opaque = nullptr);
+
 	/** Let the user decide what to do based on the current poker game state
 	 *  @param state The current game state
 	 *  @return The player action, where the first element is the action and the second is a bet, if any
+	 *  @param opaque A user provided pointer to a specific ConsoleIO instance
 	 */
-	std::pair<Player::PlayerAction, int> userDecision(const PokerGame::State& state);
+	static utl::pair<Player::PlayerAction, int> userDecision(const PokerGameState& state, void* opaque);
 
 	/** Inform the user about a player action
 	 *  @player_name The name of the player that acted
 	 *  @param action The player's action
 	 *  @param bet The bet, if any
 	 *  @param state The current game state
+	 *  @param opaque A user provided pointer to a specific ConsoleIO instance
 	 */
-	void playerAction(const std::string& player_name, Player::PlayerAction action, int bet,
-		const PokerGame::State& state);
+	static void playerAction(const utl::string<Player::MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet,
+		const PokerGameState& state, void* opaque);
 
 	/** Inform the user about a sub round change
 	 *  @param new_sub_round The new sub round
 	 *  @param state The current game state
+	 *  @param opaque A user provided pointer to a specific ConsoleIO instance
 	 */
-	void subRoundChange(PokerGame::SubRound new_sub_round, const PokerGame::State& state);
+	static void subRoundChange(PokerGame::SubRound new_sub_round, const PokerGameState& state, void* opaque);
 
 	/** Inform the user about the round ending
 	 *  @param draw True if the round was a draw
@@ -59,35 +85,53 @@ public:
 	 *  @param ranking The ranking of the winning hand
 	 *  @param state The current game state
 	 *  @param True if the game should continue, false otherwise
+	 *  @param opaque A user provided pointer to a specific ConsoleIO instance
 	 */
-	bool roundEnd(bool draw, const std::string& winner, RankedHand::Ranking ranking, const PokerGame::State& state);
+	static bool roundEnd(bool draw, const utl::string<Player::MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking, const PokerGameState& state, void* opaque);
 
 	/** Inform the user about the game ending
 	 *  @param winner The winner of the game
+	 *  @param opaque A user provided pointer to a specific ConsoleIO instance
 	 */
-	void gameEnd(const std::string& winner);
+	static void gameEnd(const utl::string<Player::MAX_NAME_SIZE>& winner, void* opaque);
 
 private:
+
+	/// The write line callback
+	WriteLineCallback write_line_callback;
+
+	/// The read line callback
+	ReadLineCallback read_line_callback;
+
+	/// User provided pointer
+	void* opaque;
+
 	/// The cached game state
-	PokerGame::State cached_state;
-
-	/// Some hint text to help the user play the game
-	std::string hint_text;
-
-	/// The drawing region height
-	static constexpr int HEIGHT = 25;
-
-	/// The drawing region width
-	static constexpr int WIDTH = 100;
+	PokerGameState cached_state;
 
 	/// The max information string queue length
-	static constexpr size_t MAX_EVENT_STRING_QUEUE_LEN = 23;
+	static constexpr size_t MAX_EVENT_STRING_QUEUE_LEN = 7;
+
+	/// The maximum length for information strings
+	static constexpr size_t MAX_EVENT_STRING_LEN = 39;
+
+	/// The event text offset
+	static constexpr size_t EVENT_TEXT_OFFSET = WIDTH - MAX_EVENT_STRING_LEN - 1;
 
 	/// The information string queue
-	std::list<std::string> event_string_queue;
+	utl::list<utl::string<MAX_EVENT_STRING_LEN>, MAX_EVENT_STRING_QUEUE_LEN> event_string_queue;
 
-	/// The screen buffer
-	std::array<std::array<char, WIDTH>, HEIGHT> screen_buffer;
+	/** Convert a line to a char
+	 *  @param input The user input
+	 *  @return The converted value
+	 */
+	static char userInputToChar(const utl::string<MAX_USER_INPUT_LEN>& input);
+
+	/** Convert a line to an int
+	 *  @param input The user input
+	 *  @return The converted value
+	 */
+	static int userInputToInt(const utl::string<MAX_USER_INPUT_LEN>& input);
 
 	/** Convert an action to a string
 	 *  @param player_name The player that acted
@@ -95,19 +139,19 @@ private:
 	 *  @param bet The bet, if any
 	 *  @return The string
 	 */
-	std::string actionToString(const std::string& player_name, Player::PlayerAction action, int bet);
+	utl::string<MAX_EVENT_STRING_LEN> actionToString(const utl::string<Player::MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet);
 
 	/** Convert a subround change event to string
 	 *  @param new_sub_round The new sub round
 	 *  @return The string
 	 */
-	std::string newSubRoundToString(PokerGame::SubRound new_sub_round);
+	utl::string<MAX_EVENT_STRING_LEN> newSubRoundToString(PokerGame::SubRound new_sub_round);
 
 	/** Convert a ranking to a string
 	 *  @param ranking The ranking
 	 *  @return The string
 	 */
-	static std::string printRanking(RankedHand::Ranking ranking);
+	static utl::string<MAX_EVENT_STRING_LEN> printRanking(RankedHand::Ranking ranking);
 
 	/** Convert a round end event to a string
 	 *  @param draw True if the round was a draw
@@ -116,75 +160,72 @@ private:
 	 *  @param The pot that was won
 	 *  @return The string
 	 */
-	std::string roundEndToString(bool draw, const std::string& winner, RankedHand::Ranking ranking, int pot);
+	utl::string<MAX_EVENT_STRING_LEN> roundEndToString(bool draw, const utl::string<Player::MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking, int pot);
 
 	/** Print a suit as a string
 	 *  @param suit The suit
 	 *  @return The string
 	 */
-	static std::string printSuit(Card::Suit suit);
+	static utl::string<10> printSuit(Card::Suit suit);
 
 	/** Print a value as a string
 	 *  @param value The value
 	 *  @return The string
 	 */
-	static std::string printValue(Card::Value value);
+	static utl::string<10> printValue(Card::Value value);
 
 	/** Print a card to the screen buffer
+	 *  @param dst The destination string
 	 *  @param x The x coordinate to draw to
-	 *  @param y The y coordinate to draw to
 	 *  @param card The card
 	 */
-	void printCard(size_t x, size_t y, const Card& card);
-
-	/** Print a board to the screen buffer
-	 *  @param x The x coordinate to draw to
-	 *  @param y The y coordinate to draw to
-	 */
-	void printBoard(size_t x, size_t y);
+	void printCard(utl::string<WIDTH>& dst, size_t x, const Card& card);
 
 	/** Print a hand to the screen buffer
+	 *  @param dst The destination string
 	 *  @param x The x coordinate to draw to
-	 *  @param y The y coordinate to draw to
 	 *  @param hand The hand
 	 */
-	void printHand(size_t x, size_t y, const std::array<std::shared_ptr<Card>, 2>& hand);
+	void printHand(utl::string<WIDTH>& dst, size_t x, const utl::array<Card, 2>& hand);
 
 	/** Print a chip stack count to the screen buffer
-	 *  @param x The x coordinate to draw to
-	 *  @param y The y coordinate to draw to
+	 *  @param dst The destination string
+     *  @param x The x coordinate to draw to
 	 *  @param count The chip stack count
 	 */
-	void printChipStackCount(size_t x, size_t y, int count);
+	void printChipStackCount(utl::string<WIDTH>& dst, size_t x,int count);
 
 	/** Print a pot stack count to the screen buffer
+	 *  @param dst The destination string
 	 *  @param x The x coordinate to draw to
-	 *  @param y The y coordinate to draw to
 	 */
-	void printPotStackCount(size_t x, size_t y);
+	void printPotStackCount(utl::string<WIDTH>& dst, size_t x);
 
 	/** Print a to call message to the screen buffer
+	 *  @param dst The destination string
 	 *  @param x The x coordinate to draw to
-	 *  @param y The y coordinate to draw to
 	 */
-	void printToCall(size_t x, size_t y);
+	void printToCall(utl::string<WIDTH>& dst, size_t x);
 
 	/** Print an event text queue to the screen buffer
+	 *  @param dst The destination string
 	 *  @param x The x coordinate to draw to
-	 *  @param y The y coordinate to draw to
+	 *  @param i The index into the event queue to draw
 	 */
-	void printEventText(size_t x, size_t y);
+	void printEventText(utl::string<WIDTH>& dst, size_t x, size_t i);
 
 	/** Update the screen by drawing the current screen buffer
+	 *  @tparam SIZE The maximum size of the hint_text string
+	 *  @param hint_text Some text to print after the screen is drawn
 	 */
-	void updateScreen();
+	template <const size_t SIZE = 1>
+	void updateScreen(const utl::string<SIZE>& hint_text = "");
 
-	/** Safe copy function, ignores writes outside of screen buffer
+	/** Safe copy function, ignores writes outside of line buffer TODO make it safe again
+	 *  @param dst The destination string
 	 *  @param src_begin Source begin iterator
 	 *  @param src_end Source end iterator
-	 *  @param y The destination y coordinate
 	 *  @param x The destination x coordinate
 	 */
-	void screenBufferCopy(std::string::const_iterator src_begin, const std::string::const_iterator src_end, size_t y,
-		size_t x);
+	void lineBufferCopy(utl::string<WIDTH>& dst, utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_begin, const utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_end, size_t x);
 };

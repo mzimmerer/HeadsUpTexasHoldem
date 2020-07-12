@@ -16,96 +16,166 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 #include "Player.h"
+#include "RankedHand.h"
 
-Player::Player(std::string name_in, int starting_stack_in) : name(name_in), stack(starting_stack_in)
+Player::Player(Random& rng_in, utl::string<MAX_NAME_SIZE> name_in, int starting_stack_in) : rng(rng_in), name(name_in), stack(starting_stack_in)
 {
 }
 
-const std::string& Player::getName() const
+const utl::string<Player::MAX_NAME_SIZE>& Player::getName() const
 {
-    return this->name;
+	return this->name;
 }
 
-void Player::setCard(int index, std::shared_ptr<Card> card)
+void Player::setCard(int index, const Card& card)
 {
-    this->hand[index] = card;
+	this->hand[index] = card;
 }
 
-const std::array<std::shared_ptr<Card>, 2>& Player::getHand() const
+const utl::array<Card, 2>& Player::getHand() const
 {
-    return this->hand;
+	return this->hand;
 }
 
 void Player::adjustChips(int adjustment)
 {
-    this->stack += adjustment;
+	this->stack += adjustment;
 }
 
 int Player::chipCount() const
 {
-    return this->stack;
+	return this->stack;
 }
 
 void Player::fold()
 {
-    this->folded = true;
+	this->folded = true;
 }
 
 void Player::clearFolded()
 {
-    this->folded = false;
+	this->folded = false;
 }
 
 bool Player::hasFolded() const
 {
-    return this->folded;
+	return this->folded;
 }
 
 void Player::adjustPotInvestment(int adjustment)
 {
-    this->pot_investment += adjustment;
+	this->pot_investment += adjustment;
 }
 
 void Player::clearPotInvestment()
 {
-    this->pot_investment = 0;
+	this->pot_investment = 0;
 }
 
 int Player::getPotInvestment() const
 {
-    return this->pot_investment;
+	return this->pot_investment;
 }
 
-std::pair<Player::PlayerAction, int> Player::decision(const std::list<std::shared_ptr<Card>>& board, int current_pot)
+// XXX
+template <const size_t IN_MIN, const size_t IN_MAX, const size_t OUT_MIN, const size_t OUT_MAX>
+static int normalizeValue(int input)
 {
-    // Construct a full board filling the extra slots with random cards
+	uint32_t result = static_cast<int32_t>(input);
+	result -= IN_MIN;
+	result *= OUT_MAX;
+	result /= IN_MAX;
+	result += OUT_MIN;
+	return static_cast<int>(result);
+}
+static constexpr int RANDOM_CHOICE_MAX_VALUE = 1000;
+static constexpr int MAX_HAND_VALUE = 3 * static_cast<int>(Card::Value::Ace);
+static constexpr int MIN_HAND_VALUE = 2 * static_cast<int>(Card::Value::Two);
+static constexpr int MAX_HAND_N_BOARD_VALUE = static_cast<int>(RankedHand::Ranking::RoyalFlush);
+static constexpr int MIN_HAND_N_BOARD_VALUE = static_cast<int>(RankedHand::Ranking::HighCard);
 
-    // Rank the hand
+int Player::determineMax(int decision_value, int max_bet)
+{
+	int bet = 20; // XXX from game state
+	int dice_value = this->rng.getRandomNumberInRange(0, RANDOM_CHOICE_MAX_VALUE);
+	while (dice_value < decision_value) {
+		dice_value = this->rng.getRandomNumberInRange(0, RANDOM_CHOICE_MAX_VALUE);
+		bet *= 2;
+	}
 
-    // Convert the hand ranking to a check/folding %
+	return bet;
+}
 
-    // Convert the hand ranking to a betting %
+utl::pair<Player::PlayerAction, int> Player::checkOrBet(int decision_value, int max_bet)
+{
+	// Roll the dice
+	int dice_value = this->rng.getRandomNumberInRange(0, RANDOM_CHOICE_MAX_VALUE);
 
-    // Convert the hand ranking to a calling %
+	// If the dice value is greater than the decision_value, call
+	if (dice_value > decision_value)
+		return utl::pair<Player::PlayerAction, int>(static_cast<PlayerAction>(Player::PlayerAction::CheckOrCall), 0);
 
-    // Convert the hand ranking to rerase %
+	// Determine bet amount
+	int bet = this->determineMax(decision_value, max_bet);
 
-    // Add some random input into the percentages
+	// Bet
+	return utl::pair<Player::PlayerAction, int>(static_cast<PlayerAction>(Player::PlayerAction::Bet), bet);
+}
 
-    // Convert the hand ranking and current pot size to a bet amount
+utl::pair<Player::PlayerAction, int> Player::decision(const PokerGameState& state)
+{
+	// Disclaimer: This is a very naive AI, but quick to implement
 
-    // Take the action
+	// Compute a value for the hole cards
+	int hand_value = static_cast<int>(this->hand[0].getValue());
+	hand_value += static_cast<int>(this->hand[1].getValue());
+	if (this->hand[0].getValue() == this->hand[1].getValue())
+	{
+		// If there is a pair, add the value again
+		hand_value += static_cast<int>(this->hand[0].getValue());
+	}
+	hand_value = normalizeValue<MIN_HAND_VALUE, MAX_HAND_VALUE, 0, RANDOM_CHOICE_MAX_VALUE>(hand_value);
 
-    static int action = 1;
-    action++;
-    if (action > 3)
-        action = 1;
+	// If the flop was dealt, consider the board as well
+	int decision_value = hand_value;
+	if (state.board.size() > 0) {
 
-    int bet_amt = 0;
-    if (action == 2)
-        bet_amt = 100;
+		// Compute a value for the hole cards and the board
+		RankedHand ranked_hand(this->hand, state.board);
+		RankedHand::Ranking ranking = ranked_hand.getRanking();
+		int hand_n_board_value = normalizeValue<MIN_HAND_N_BOARD_VALUE, MAX_HAND_N_BOARD_VALUE, 0, RANDOM_CHOICE_MAX_VALUE>(static_cast<int>(ranking));
 
-    std::pair<Player::PlayerAction, int> result(static_cast<PlayerAction>(action), bet_amt);
+		// Average
+		decision_value = hand_value + hand_n_board_value;
+		decision_value /= 2;
+	}
 
-    return result;
+	// Roll the dice (half the random range)
+	int dice_value = this->rng.getRandomNumberInRange(0, RANDOM_CHOICE_MAX_VALUE / 2);
+
+	// Add this randomness to the decision value
+	decision_value += dice_value;
+
+	// Apply a ceil function
+	if (decision_value > RANDOM_CHOICE_MAX_VALUE)
+		decision_value = RANDOM_CHOICE_MAX_VALUE;
+
+	// If there is a bet
+	if (state.current_bet > 0) {
+
+		// Determine how much we will call
+		int max_call = this->determineMax(decision_value, 1000); // TODO XXX FIXME 1000... the combined chip pool
+
+		// If the bet is larger than the maximum call value, fold
+		if (state.current_bet > max_call)
+			return utl::pair<Player::PlayerAction, int>(static_cast<PlayerAction>(Player::PlayerAction::Fold), 0);
+
+		// Check or bet
+		return this->checkOrBet(decision_value, state.player_stack);
+	}
+	else {
+
+		// Check or bet
+		return this->checkOrBet(decision_value, state.player_stack);
+	}
 }

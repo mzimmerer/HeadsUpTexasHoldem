@@ -17,194 +17,199 @@
  **/
 #pragma once
 
-#include <array>
-#include <list>
-#include <map>
-#include <unordered_map>
-#include <vector>
-#include <memory>
+#include <utl/array>
+#include <utl/cstddef>
+#include <utl/cstdint>
+#include <utl/list>
+#include <utl/utility>
+#include <utl/vector>
 
 #include "Card.h"
 
-/** RankedHand class. This class is intended to rank and compare texas holdem poker hands
- */
+ /** RankedHand class. This class is intended to rank and compare texas holdem poker hands
+  */
 class RankedHand
 {
-   public:
-    /// Enumeration of possible hand ranking
-    enum class Ranking : int
-    {
-        Unranked = 0,
-        HighCard = 1,
-        Pair = 2,
-        TwoPair = 3,
-        ThreeOfAKind = 4,
-        Straight = 5,
-        Flush = 6,
-        FullHouse = 7,
-        FourOfAKind = 8,
-        StraightFlush = 9,
-        RoyalFlush = 10,
-    };
+public:
+	/// Enumeration of possible hand ranking
+	enum class Ranking : int
+	{
+		Unranked = 0,
+		HighCard = 1,
+		Pair = 2,
+		TwoPair = 3,
+		ThreeOfAKind = 4,
+		Straight = 5,
+		Flush = 6,
+		FullHouse = 7,
+		FourOfAKind = 8,
+		StraightFlush = 9,
+		RoyalFlush = 10,
+	};
 
-    /** Default constructor
-     */
-    RankedHand();
+	/** Default constructor
+	 */
+	RankedHand();
 
-    /** Constructor
-     *  @param hand The players hold cards
-     *  @param board The board cards
-     */
-    RankedHand(const std::array<std::shared_ptr<Card>, 2>& hand, const std::array<std::shared_ptr<Card>, 5>& board);
+	/** Constructor
+	 *  @param hand The players hold cards
+	 *  @param board The board cards
+	 */
+	RankedHand(const utl::array<Card, 2>& hand, const utl::vector<Card, 5>& board);
 
-    /** Less than operator.
-     *  @param other The hand to compare against
-     *  @return True if this hand ranks lower than the other hand
-     */
-    bool operator<(const RankedHand& other);
+	/** Less than operator.
+	 *  @param other The hand to compare against
+	 *  @return True if this hand ranks lower than the other hand
+	 */
+	bool operator<(const RankedHand& other);
 
-    /** Equality comparison operator.
-     *  @param other The hand to compare against
-     *  @return True if both hands rank identically
-     */
-    bool operator==(const RankedHand& other);
+	/** Equality comparison operator.
+	 *  @param other The hand to compare against
+	 *  @return True if both hands rank identically
+	 */
+	bool operator==(const RankedHand& other);
 
-    /** Get the hands major ranking
-     *  @return The ranking
-     */
-    Ranking getRanking();
+	/** Get the hands major ranking
+	 *  @return The ranking
+	 */
+	Ranking getRanking();
 
-   protected:
-    /// Value map definition, used to assist in ranking
-    using ValueMap = std::unordered_map<Card::Value, std::list<std::shared_ptr<Card>>>;
+protected:
 
-    /// Suit map definition, used to assist in ranking
-    using SuitMap = std::unordered_map<Card::Suit, std::list<std::shared_ptr<Card>>>;
+	/// Value map definition, used to assist in ranking
+	using ValueMap = utl::array<utl::pair<uint8_t, Card>, 13>;
 
-    /// Pair list definition, used to assist in ranking
-    using PairList = std::list<std::shared_ptr<Card>>;
+	/// Suit map definition, used to assist in ranking
+	using SuitMap = utl::array<utl::pair<uint8_t, Card>, 4>;
 
-    /// Straight map definition, used to assist in ranking
-    using StraightMap = std::map<Card::Value, std::shared_ptr<Card>, std::greater<Card::Value>>;
+	/// Pair list definition, used to assist in ranking
+	using PairList = utl::list<Card, 3>;
 
-    /// Largest set definition, used to assist in ranking
-    using LargestSet = std::pair<int, std::shared_ptr<Card>>;
+	/// Straight map definition, used to assist in ranking
+	using StraightMap = utl::list<Card, 8>;
 
-    /// The hand as an array of seven cards
-    std::array<std::shared_ptr<Card>, 7> cards;
+	/// Largest set definition, used to assist in ranking
+	using LargestSet = utl::pair<int, Card>;
 
-    /// The hand's ranking
-    Ranking ranking;
+	/// The player's hole cards
+	utl::array<Card, 2> hand;
 
-    /**
-     * The hands sub ranking.
-     * A subranking is a list of card values that must be compared in case of a major ranking.
-     **/
-    std::vector<std::shared_ptr<Card>> sub_ranking;
+	/// The shared board of cards
+	utl::vector<Card, 5> board;
 
-    /** Convert hand and board inputs into an array of seven cards
-     *  @param hand The hand
-     *  @param board The board
-     *  @return An array of seven cards
-     */
-    std::array<std::shared_ptr<Card>, 7> handAndBoardToCards(const std::array<std::shared_ptr<Card>, 2>& hand,
-                                                             const std::array<std::shared_ptr<Card>, 5>& board);
+	/// The hand's ranking
+	Ranking ranking;
 
-    /** Rank this hand
-     */
-    void rankHand();
+	/**
+	 * The hands sub ranking.
+	 * A subranking is a list of card values that must be compared in case of a major ranking.
+	 **/
+	utl::vector<Card, 5> sub_ranking;
 
-    /** Construct a value map
-     *  @return The value map
-     */
-    ValueMap constructValueMap();
+	/** Rank this hand
+	 */
+	void rankHand();
 
-    /** Construct a suit map
-     *  @return The suit map
-     */
-    SuitMap constructSuitMap();
+	/** Construct a value map
+	 *  @return The value map
+	 */
+	ValueMap constructValueMap();
 
-    /** Construct a pair list
-     *  @param value_map A reference to the value map
-     *  @return The pair list
-     */
-    PairList constructPairList(const ValueMap& value_map);
+	/** Construct a suit map
+	 *  @return The suit map
+	 */
+	SuitMap constructSuitMap();
 
-    /** Construct the straight map
-     *  @return The straight map
-     */
-    StraightMap constructStraightMap();
+	/** Construct a pair list
+	 *  @param value_map A reference to the value map
+	 *  @return The pair list
+	 */
+	PairList constructPairList(const ValueMap& value_map);
 
-    /** Determine the largest set
-     *  @param value_map A reference to the value map
-     *  @return The largest set
-     */
-    LargestSet constructLargestSet(const ValueMap& value_map);
+	/** Construct the straight map
+	 *  @param value_map A reference to the value map
+	 *  @return The straight map
+	 */
+	StraightMap constructStraightMap(const ValueMap& value_map);
 
-    /** Check if this hand is a flush
-     *  @param A reference to the suit map
-     *  @return A pair with first element a bool indicating if this is a flush, and second element indicating the suit
-     */
-    std::pair<bool, Card::Suit> isFlush(const SuitMap& suit_map);
+	/** Determine the largest set
+	 *  @param value_map A reference to the value map
+	 *  @return The largest set
+	 */
+	LargestSet constructLargestSet(const ValueMap& value_map);
 
-    /** Check if the hand is a straight
-     *  @param A reference to the straight map
-     *  @return True if this hand is a straight, false otherwise
-     */
-    bool isStraight(StraightMap& straight_map);
+	/** Check if this hand is a flush
+	 *  @param A reference to the suit map
+	 *  @return A pair with first element a bool indicating if this is a flush, and second element indicating the suit
+	 */
+	utl::pair<bool, Card::Suit> isFlush(const SuitMap& suit_map);
 
-    /** Rank the hand as a royal flush
-     */
-    void rankRoyalFlush();
+	/** Check if the hand is a straight
+	 *  @param straight_map A reference to the straight map
+	 *  @return True if this hand is a straight, false otherwise
+	 */
+	bool isStraight(StraightMap& straight_map);
 
-    /** Rank the hand as a straight flush
-     *  @param straight_map A reference to the straight map
-     */
-    void rankStraightFlush(const StraightMap& straight_map);
+	/** Check if the hand is a straight flush
+	 *  @param is_flush A reference to the is_flush pair
+	 *  @param is_straight If true, a straight was detected
+	 *  @param straight_map A reference to the straight map
+	 *  @return True if this hand is a straight, false otherwise
+	 */
+	bool isStraightFlush(const utl::pair<bool, Card::Suit>& is_flush, bool is_straight, const StraightMap& straight_map);
 
-    /** Rank the hand as a four of a kind
-     *  @param straight_map A reference to the straight map
-     *  @param largest_set A reference to the largest set
-     */
-    void rankFourOfAKind(const StraightMap& straight_map, const LargestSet& largest_set);
+	/** Rank the hand as a royal flush
+	 */
+	void rankRoyalFlush();
 
-    /** Rank the hand as a full house
-     *  @param largest_set A reference to the largest set
-     *  @param pair_list A reference to the pair list
-     */
-    void rankFullHouse(const LargestSet& largest_set, const PairList& pair_list);
+	/** Rank the hand as a straight flush
+	 *  @param straight_map A reference to the straight map
+	 */
+	void rankStraightFlush(const StraightMap& straight_map);
 
-    /** Rank the hand as a flush
-     *  @param suit_map A reference to the suit map
-     *  @param is_flush A reference to the is_flush pair
-     */
-    void rankFlush(SuitMap& suit_map, const std::pair<bool, Card::Suit>& is_flush);
+	/** Rank the hand as a four of a kind
+	 *  @param straight_map A reference to the straight map
+	 *  @param largest_set A reference to the largest set
+	 */
+	void rankFourOfAKind(const StraightMap& straight_map, const LargestSet& largest_set);
 
-    /** Rank the hand as a straight
-     *  @param straight_map A reference to the straight map
-     */
-    void rankStraight(const StraightMap& straight_map);
+	/** Rank the hand as a full house
+	 *  @param largest_set A reference to the largest set
+	 *  @param pair_list A reference to the pair list
+	 */
+	void rankFullHouse(const LargestSet& largest_set, const PairList& pair_list);
 
-    /** Rank the hand as a three of a kind
-     *  @param straight_map A reference to the straight map
-     *  @param largest_set A reference to the largest set
-     */
-    void rankThreeOfAKind(const StraightMap& straight_map, const LargestSet& largest_set);
+	/** Rank the hand as a flush
+	 *  @param suit_map A reference to the suit map
+	 *  @param is_flush A reference to the is_flush pair
+	 */
+	void rankFlush(SuitMap& suit_map, const utl::pair<bool, Card::Suit>& is_flush);
 
-    /** Rank the hand as a two pair
-     *  @param straight_map A reference to the straight map
-     *  @param pair_list A reference to the pair list
-     */
-    void rankTwoPair(const StraightMap& straight_map, const PairList& pair_list);
+	/** Rank the hand as a straight
+	 *  @param straight_map A reference to the straight map
+	 */
+	void rankStraight(const StraightMap& straight_map);
 
-    /** Rank the hand as a pair
-     *  @param straight_map A reference to the straight map
-     *  @param largest_set A reference to the largest set
-     */
-    void rankPair(const StraightMap& straight_map, const LargestSet& largest_set);
+	/** Rank the hand as a three of a kind
+	 *  @param straight_map A reference to the straight map
+	 *  @param largest_set A reference to the largest set
+	 */
+	void rankThreeOfAKind(const StraightMap& straight_map, const LargestSet& largest_set);
 
-    /** Rank the hand as a high card
-     *  @param straight_map A reference to the straight map
-     */
-    void rankHighCard(const StraightMap& straight_map);
+	/** Rank the hand as a two pair
+	 *  @param straight_map A reference to the straight map
+	 *  @param pair_list A reference to the pair list
+	 */
+	void rankTwoPair(const StraightMap& straight_map, const PairList& pair_list);
+
+	/** Rank the hand as a pair
+	 *  @param straight_map A reference to the straight map
+	 *  @param largest_set A reference to the largest set
+	 */
+	void rankPair(const StraightMap& straight_map, const LargestSet& largest_set);
+
+	/** Rank the hand as a high card
+	 *  @param straight_map A reference to the straight map
+	 */
+	void rankHighCard(StraightMap& straight_map);
 };

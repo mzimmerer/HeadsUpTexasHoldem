@@ -17,8 +17,7 @@
  **/
 #pragma once
 
-#include <array>
-#include <memory>
+#include <utl/array>
 
 #include "Card.h"
 #include "Random.h"
@@ -43,17 +42,11 @@ class Deck
 
     /** Deal a card
      */
-    std::shared_ptr<Card> dealCard();
+    Card dealCard();
 
     /** Return the number of cards dealt
      */
     unsigned int cardsDealt() const;
-
-    /** Random access operator
-     *  @param index The index to access
-     *  @return A shared pointer containing the Card
-     */
-    std::shared_ptr<Card> operator[](size_t index) const; 
 
    private:
     /// The number of cards in a deck
@@ -66,5 +59,5 @@ class Deck
     int deal_cursor{0};
 
     /// An array of 52 cards
-    std::array<std::shared_ptr<Card>, DECK_SIZE> cards;
+    utl::array<Card, DECK_SIZE> cards;
 };

@@ -17,67 +17,73 @@
  **/
 #pragma once
 
-/**
- * Card class, this class implements a single card in a standard deck of 52 cards
- */
+ /**
+  * Card class, this class implements a single card in a standard deck of 52 cards
+  */
 class Card
 {
-   public:
-    /** Enumeration of possible card values
-     */
-    enum class Value : int
-    {
-        Unrevealed = 0,
-        Two = 1,
-        Three = 2,
-        Four = 3,
-        Five = 4,
-        Six = 5,
-        Seven = 6,
-        Eight = 7,
-        Nine = 8,
-        Ten = 9,
-        Jack = 10,
-        Queen = 11,
-        King = 12,
-        Ace = 13,
-    };
+public:
+	/** Enumeration of possible card values
+	 */
+	enum class Value : int
+	{
+		Two = 0,
+		Three = 1,
+		Four = 2,
+		Five = 3,
+		Six = 4,
+		Seven = 5,
+		Eight = 6,
+		Nine = 7,
+		Ten = 8,
+		Jack = 9,
+		Queen = 10,
+		King = 11,
+		Ace = 12,
+		Unrevealed = 13,
+	};
 
-    /** Enumeration of possible card suits
-     */
-    enum class Suit : int
-    {
-        Unrevealed = 0,
-        Spades = 1,
-        Clubs = 2,
-        Diamonds = 3,
-        Hearts = 4,
-    };
+	/** Enumeration of possible card suits
+	 */
+	enum class Suit : int
+	{
+		Spades = 0,
+		Clubs = 1,
+		Diamonds = 2,
+		Hearts = 3,
+		Unrevealed = 4,
+	};
 
-    /** Purposefully deleted default constructor
-     */
-    Card() = delete;
+	/** Default constructor
+	 */
+	Card();
 
-    /** Card constructor
-     *  @param value The new card's value
-     *  @param suit The new card's suit
-     */
-    Card(Value value, Suit suit);
+	/** Card constructor
+	 *  @param value The new card's value
+	 *  @param suit The new card's suit
+	 */
+	Card(Value value, Suit suit);
 
-    /** Get this card's value
-     * @return The cards value as a Value enumeration
-     */
-    Value getValue() const;
+	/** Copy operator
+	 *  @param other The card to copy
+	 *  @return A reference to this card
+	 */
+	Card& operator=(const Card& other);
 
-    /** Get this card's suit
-     * @return The cards suit as a Suit enumeration
-     */
-    Suit getSuit() const;
+	/** Get this card's value
+	 * @return The cards value as a Value enumeration
+	 */
+	Value getValue() const;
 
-   private:
-    /// This card's value
-    const Value value;
+	/** Get this card's suit
+	 * @return The cards suit as a Suit enumeration
+	 */
+	Suit getSuit() const;
 
-    /// This card's suit
-    const Suit suit;
+private:
+	/// This card's value
+	Value value;
+
+	/// This card's suit
+	Suit suit;
 };

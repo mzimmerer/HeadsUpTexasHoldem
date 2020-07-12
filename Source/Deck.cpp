@@ -17,8 +17,7 @@
  **/
 #include "Deck.h"
 
-#include <cstddef>
-#include <iostream>
+#include "Exception.h"
 
 Deck::Deck(Random& rng_in) : rng(rng_in)
 {
@@ -26,13 +25,13 @@ Deck::Deck(Random& rng_in) : rng(rng_in)
     for (size_t i = 0; i < this->cards.size(); i++)
     {
         // Values are from [1..13], loop through this range 4 times
-        Card::Value value = static_cast<Card::Value>(i % 13 + 1);
+        Card::Value value = static_cast<Card::Value>(i % 13);
 
         // Suits are from [1..4], repeat each suit 13 times
-        Card::Suit suit = static_cast<Card::Suit>(i / 13 + 1);
+        Card::Suit suit = static_cast<Card::Suit>(i / 13);
 
         // Construct the new card
-        this->cards[i] = std::make_unique<Card>(value, suit);
+        this->cards[i] = Card(value, suit);
     }
 }
 
@@ -48,7 +47,7 @@ void Deck::shuffle()
         int random_card = this->rng.getRandomNumberInRange(0, static_cast<int>(cursor));
 
         // Temporarily store a pointer to the card that is being replaced
-        std::shared_ptr<Card> tmp = this->cards[cursor];
+        Card tmp = this->cards[cursor];
 
         // Copy the random card into the cursor position
         this->cards[cursor] = this->cards[random_card];
@@ -61,11 +60,11 @@ void Deck::shuffle()
     this->deal_cursor = 0;
 }
 
-std::shared_ptr<Card> Deck::dealCard()
+Card Deck::dealCard()
 {
     // Ensure that the entire deck has not already been dealt
     if (static_cast<size_t>(this->deal_cursor) + 1 >= this->cards.size())
-        throw std::runtime_error("There are no more cards to deal!");
+        Exception::EXCEPTION("");
 
     return this->cards[this->deal_cursor++];
 }
@@ -73,9 +72,4 @@ std::shared_ptr<Card> Deck::dealCard()
 unsigned int Deck::cardsDealt() const
 {
     return this->deal_cursor;
-}
-
-std::shared_ptr<Card> Deck::operator[](size_t index) const
-{
-    return this->cards[index];
 }

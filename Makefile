@@ -16,15 +16,15 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ##
 
-TARGET := ./texas_holdem
-TEST_TARGET := ./run_tests
-CXX := g++
+APPLICATION := ./texas_holdem
+TEST_APPLICATION := ./run_tests
 
 SOURCEDIR := ./Source
 OBJECTDIR := ./Obj
 TESTOBJECTDIR := ./Obj/Tests
 TESTDIR := ./Tests
 
+UTLDIR := ./Dependencies/utl
 GOOGLETESTDIR := ./Dependencies/googletest/googletest
 
 MAIN_SRC := $(SOURCEDIR)/main.cpp
@@ -33,6 +33,7 @@ MAIN_OBJ := $(MAIN_SRC:%.cpp=$(OBJECTDIR)/%.o)
 APP_SRC := $(SOURCEDIR)/Card.cpp
 APP_SRC += $(SOURCEDIR)/ConsoleIO.cpp
 APP_SRC += $(SOURCEDIR)/Deck.cpp
+APP_SRC += $(SOURCEDIR)/Exception.cpp
 APP_SRC += $(SOURCEDIR)/Player.cpp
 APP_SRC += $(SOURCEDIR)/PokerGame.cpp
 APP_SRC += $(SOURCEDIR)/Random.cpp
@@ -40,26 +41,44 @@ APP_SRC += $(SOURCEDIR)/RankedHand.cpp
 APP_OBJ := $(APP_SRC:%.cpp=$(OBJECTDIR)/%.o) 
 
 TEST_SRC := $(shell find $(TESTDIR) -name '*.cpp')
-TEST_OBJ := $(TEST_SRC:%.cpp=$(TEST_OBJECTDIR)/%.o) 
+TEST_OBJ := $(TEST_SRC:%.cpp=$(TESTOBJECTDIR)/%.o) 
 
 GTEST_SRC := $(GOOGLETESTDIR)/src/gtest-all.cc
 GTEST_SRC += $(GOOGLETESTDIR)/src/gtest_main.cc
-GTEST_OBJ := $(GTEST_SRC:%.cc=$(TEST_OBJECTDIR)/%.o) 
+GTEST_OBJ := $(GTEST_SRC:%.cc=$(TESTOBJECTDIR)/%.o) 
 
-CXXFLAGS := -Wall -Werror -std=gnu++17 -I./Include
+CXXFLAGS := -std=gnu++17 -Wall -Werror -I./Include -I$(UTLDIR)/include -Os
+
 TEST_CXXFLAGS := -I$(GOOGLETESTDIR)/include -I$(GOOGLETESTDIR)
-LDFLAGS :=
+
+ifeq ($(TARGET),atmega328p)
+    CXX := avr-g++
+    CXXFLAGS += -mmcu=atmega328p
+    CXXFLAGS += -ffunction-sections
+    CXXFLAGS += -fdata-sections
+    CXXFLAGS += -DEMBEDDED_BUILD
+    LDFLAGS += -mmcu=atmega328p
+    LDFLAGS += -ffunction-sections
+    LDFLAGS += -fdata-sections
+    LDFLAGS += -Wl,-Map,texas_holdem.map
+    APP_OBJ += $(OBJECTDIR)/Dependencies/utl/new.o
+    APPLICATION := $(APPLICATION).elf
+
+else
+    CXX := g++
+endif
 
 .PHONY: all
-all: $(TARGET) $(TEST_TARGET)
+all: $(APPLICATION)
 
 .PHONY: tests
-tests: $(TEST_TARGET)
+tests: $(TEST_APPLICATION)
 
-$(TARGET): $(APP_OBJ) $(MAIN_OBJ)
+$(APPLICATION): $(APP_OBJ) $(MAIN_OBJ)
 	$(CXX) $^ -o $@ $(LDFLAGS)
+	avr-size $(APPLICATION)
 
-$(TEST_OBJECTDIR)/%.o: %.cpp
+$(TESTOBJECTDIR)/%.o: %.cpp
 	@mkdir -p '$(@D)'
 	$(CXX) $< -c -o $@ $(CXXFLAGS) $(TEST_CXXFLAGS)
 
@@ -67,13 +86,13 @@ $(OBJECTDIR)/%.o: %.cpp
 	@mkdir -p '$(@D)'
 	$(CXX) $< -c -o $@ $(CXXFLAGS)
 
-$(TEST_OBJECTDIR)/%.o: %.cc
+$(TESTOBJECTDIR)/%.o: %.cc
 	@mkdir -p '$(@D)'
 	$(CXX) $< -c -o $@ -std=gnu++17 $(TEST_CXXFLAGS)
 
-$(TEST_TARGET): $(TEST_OBJ) $(APP_OBJ) $(GTEST_OBJ)
-	$(CXX) $^ -o $(TEST_TARGET) $(LDFLAGS)
+$(TEST_APPLICATION): $(TEST_OBJ) $(APP_OBJ) $(GTEST_OBJ)
+	$(CXX) $^ -o $(TEST_APPLICATION) $(LDFLAGS)
 
 .PHONY: clean
 clean:
-	rm -rf $(OBJECTDIR) $(TARGET)* $(TEST_TARGET)*
+	rm -rf $(OBJECTDIR) $(APPLICATION)* $(TEST_APPLICATION)*

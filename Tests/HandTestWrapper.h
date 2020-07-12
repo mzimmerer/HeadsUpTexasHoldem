@@ -1,5 +1,5 @@
 /**
- *  A simple interactive texas holdem poker program.
+ *  Micro template library
  *  Copyright (C) 2020, Matt Zimmerer, mzimmere@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -17,6 +17,8 @@
  **/
 #pragma once
 
+#include <utl/vector>
+
 #include "Card.h"
 #include "RankedHand.h"
 
@@ -25,10 +27,6 @@
 class HandTestWrapper : public RankedHand
 {
    public:
-    /** Access cards directly
-     *  @return A reference to the 7 card array
-     */
-    std::array<std::shared_ptr<Card>, 7>& accessCards();
 
     /** Add a card to this hand
      *  @param value The value of the new card
@@ -48,7 +46,7 @@ class HandTestWrapper : public RankedHand
     /** Access the hand's sub-ranking
      *  @return The hand's sub-ranking
      */
-    const std::vector<std::shared_ptr<Card>>& getSubRanking();
+    const utl::vector<Card, 5>& getSubRanking();
 
    private:
     /// The number of cards that have been added via tha 'addCard' function

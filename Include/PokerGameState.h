@@ -15,31 +15,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
+#pragma once
+
+#include <utl/array>
+#include <utl/vector>
+
 #include "Card.h"
 
-#include "Exception.h"
-
-Card::Card() : value(Value::Unrevealed), suit(Suit::Unrevealed)
+struct PokerGameState
 {
-}
-
-Card::Card(Value value_in, Suit suit_in) : value(value_in), suit(suit_in)
-{
-}
-
-Card& Card::operator=(const Card& other)
-{
-	this->value = other.value;
-	this->suit = other.suit;
-	return *this;
-}
-
-Card::Value Card::getValue() const
-{
-	return this->value;
-}
-
-Card::Suit Card::getSuit() const
-{
-	return this->suit;
-}
+	utl::array<Card, 2> player_hand;
+	utl::array<Card, 2> opponent_hand;
+	utl::vector<Card, 5> board;
+	int current_pot;
+	int current_bet;
+	int player_stack;
+	int opponent_stack;
+};

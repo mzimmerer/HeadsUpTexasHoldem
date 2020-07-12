@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="UTL Header Files">
+      <UniqueIdentifier>{cf23bc44-0b4e-4040-a9f1-59d02dabfa41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UTL Source Files">
+      <UniqueIdentifier>{a0202bc0-cb67-4390-990f-297626fd21ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Card.h">
@@ -34,6 +40,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\RankedHand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGameState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -62,5 +74,52 @@
     <ClCompile Include="..\Source\Deck.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Exception.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\utl\new.cpp">
+      <Filter>UTL Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Dependencies\utl\include\utl\algorithm">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\array">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\cstddef">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\cstdint">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\cstdlib">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\fifo">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\list">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\new">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\random">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\string">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\unordered_map">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\utility">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\vector">
+      <Filter>UTL Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
