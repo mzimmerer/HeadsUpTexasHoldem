@@ -146,6 +146,8 @@
   <ItemGroup>
     <ClCompile Include="..\Dependencies\googletest\googletest\src\gtest-all.cc" />
     <ClCompile Include="..\Dependencies\googletest\googletest\src\gtest_main.cc" />
+    <ClCompile Include="..\Dependencies\utl\new.cpp" />
+    <ClCompile Include="..\Dependencies\utl\string.cpp" />
     <ClCompile Include="..\Source\Card.cpp" />
     <ClCompile Include="..\Source\Exception.cpp" />
     <ClCompile Include="..\Source\RankedHand.cpp" />
@@ -154,6 +156,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Tests\HandTestWrapper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Dependencies\utl\include\utl\algorithm" />
+    <None Include="..\Dependencies\utl\include\utl\array" />
+    <None Include="..\Dependencies\utl\include\utl\cstddef" />
+    <None Include="..\Dependencies\utl\include\utl\cstdint" />
+    <None Include="..\Dependencies\utl\include\utl\cstdlib" />
+    <None Include="..\Dependencies\utl\include\utl\fifo" />
+    <None Include="..\Dependencies\utl\include\utl\list" />
+    <None Include="..\Dependencies\utl\include\utl\new" />
+    <None Include="..\Dependencies\utl\include\utl\random" />
+    <None Include="..\Dependencies\utl\include\utl\string" />
+    <None Include="..\Dependencies\utl\include\utl\unordered_map" />
+    <None Include="..\Dependencies\utl\include\utl\utility" />
+    <None Include="..\Dependencies\utl\include\utl\vector" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

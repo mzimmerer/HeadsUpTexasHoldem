@@ -19,6 +19,7 @@
 
 #include <utl/array>
 #include <utl/list>
+#include <utl/string>
 #include <utl/utility>
 #include <utl/vector>
 

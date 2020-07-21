@@ -62,6 +62,7 @@ ifeq ($(TARGET),atmega328p)
     LDFLAGS += -fdata-sections
     LDFLAGS += -Wl,-Map,texas_holdem.map
     APP_OBJ += $(OBJECTDIR)/Dependencies/utl/new.o
+    APP_OBJ += $(OBJECTDIR)/Dependencies/utl/string.o
     APPLICATION := $(APPLICATION).elf
 
 else

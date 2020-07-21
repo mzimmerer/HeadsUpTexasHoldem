@@ -19,6 +19,12 @@
     <Filter Include="SourceUnderTest">
       <UniqueIdentifier>{86c09dd7-f324-49c7-955f-6a0ba2107137}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UTL Header Files">
+      <UniqueIdentifier>{95b3d463-f921-4273-8cbd-107bbeeb7b91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UTL Source Files">
+      <UniqueIdentifier>{ee1c45cd-3550-406e-9e8c-4cb939b9eca4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\googletest\googletest\src\gtest_main.cc">
@@ -42,10 +48,57 @@
     <ClCompile Include="..\Tests\HandTestWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Dependencies\utl\new.cpp">
+      <Filter>UTL Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\utl\string.cpp">
+      <Filter>UTL Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Tests\HandTestWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Dependencies\utl\include\utl\algorithm">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\array">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\cstddef">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\cstdint">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\cstdlib">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\fifo">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\list">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\new">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\random">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\string">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\unordered_map">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\utility">
+      <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Dependencies\utl\include\utl\vector">
+      <Filter>UTL Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

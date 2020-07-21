@@ -218,8 +218,8 @@ private:
 	 *  @tparam SIZE The maximum size of the hint_text string
 	 *  @param hint_text Some text to print after the screen is drawn
 	 */
-	template <const size_t SIZE = 1>
-	void updateScreen(const utl::string<SIZE>& hint_text = "");
+	template <const size_t SIZE>
+	void updateScreen(const utl::string<SIZE>& hint_text);
 
 	/** Safe copy function, ignores writes outside of line buffer TODO make it safe again
 	 *  @param dst The destination string

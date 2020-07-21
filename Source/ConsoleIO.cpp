@@ -35,14 +35,14 @@ utl::pair<Player::PlayerAction, int> ConsoleIO::userDecision(const PokerGameStat
 	// Switch the text 'Check' with 'Call' depending on whether or not there is a bet
 	utl::string<8> checkorcall;
 	if (state.current_bet > 0)
-		checkorcall = USTR<16>(PSTR("Call"));
+		checkorcall = utl::const_string<32>(PSTR("Call"));
 	else
-		checkorcall = USTR<8>(PSTR("Check"));
+		checkorcall = utl::const_string<32>(PSTR("Check"));
 
 	// Update the screen
 	{
 		utl::string<64> hint_text = checkorcall;
-		hint_text += USTR<64>(PSTR("(c), bet(b), fold(f), or quit(q)?"));
+		hint_text += utl::const_string<64>(PSTR("(c), bet(b), fold(f), or quit(q)?"));
 		self->updateScreen<64>(hint_text);
 	}
 
@@ -58,9 +58,9 @@ utl::pair<Player::PlayerAction, int> ConsoleIO::userDecision(const PokerGameStat
 		// If the user entered something invalid, ask again
 		if (action != 'c' && action != 'b' && action != 'f' && action != 'q')
 		{
-			utl::string<64> hint_text = USTR<16>(PSTR("Invalid entry. "));
+			utl::string<64> hint_text = utl::const_string<32>(PSTR("Invalid entry. "));
 			hint_text += checkorcall;
-			hint_text += USTR<64>(PSTR("(c), bet(b), fold(f) or quit(q)?"));
+			hint_text += utl::const_string<64>(PSTR("(c), bet(b), fold(f) or quit(q)?"));
 			self->updateScreen<64>(hint_text);
 		}
 		else
@@ -75,7 +75,7 @@ utl::pair<Player::PlayerAction, int> ConsoleIO::userDecision(const PokerGameStat
 	if (action == 'b')
 	{
 		// Update the screen
-		utl::string<64> hint_text = USTR<64>(PSTR("Enter an amount to bet."));
+		utl::string<64> hint_text = utl::const_string<64>(PSTR("Enter an amount to bet."));
 		self->updateScreen<64>(hint_text);
 
 		// Get user input
@@ -120,7 +120,8 @@ void ConsoleIO::playerAction(const utl::string<Player::MAX_NAME_SIZE>& player_na
 	self->cached_state = state;
 
 	// Update the screen
-	self->updateScreen();
+	utl::string<32> hint_text = utl::const_string<32>(PSTR(""));
+	self->updateScreen<32>(hint_text);
 }
 
 void ConsoleIO::subRoundChange(PokerGame::SubRound new_sub_round, const PokerGameState& state, void* opaque)
@@ -137,7 +138,8 @@ void ConsoleIO::subRoundChange(PokerGame::SubRound new_sub_round, const PokerGam
 	self->cached_state = state;
 
 	// Update the screen
-	self->updateScreen();
+	utl::string<32> hint_text = utl::const_string<32>(PSTR(""));
+	self->updateScreen<32>(hint_text);
 }
 
 bool ConsoleIO::roundEnd(bool draw, const utl::string<Player::MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking,
@@ -156,7 +158,7 @@ bool ConsoleIO::roundEnd(bool draw, const utl::string<Player::MAX_NAME_SIZE>& wi
 
 	// Update the screen
 	{
-		utl::string<32> hint_text = USTR<32>(PSTR("Continue(c) or quit(q)?"));
+		utl::string<32> hint_text = utl::const_string<32>(PSTR("Continue(c) or quit(q)?"));
 
 		// Update the screen
 		self->updateScreen<32>(hint_text);
@@ -174,7 +176,7 @@ bool ConsoleIO::roundEnd(bool draw, const utl::string<Player::MAX_NAME_SIZE>& wi
 		// If the user entered something invalid, ask again
 		if (action != 'c' && action != 'q')
 		{
-			utl::string<64> hint_text = USTR<64>(PSTR("Invalid entry. Continue(c) or quit(q)??"));
+			utl::string<64> hint_text = utl::const_string<64>(PSTR("Invalid entry. Continue(c) or quit(q)??"));
 			self->updateScreen<64>(hint_text);
 		}
 		else
@@ -196,16 +198,16 @@ void ConsoleIO::gameEnd(const utl::string<Player::MAX_NAME_SIZE>& winner, void* 
 	ConsoleIO* self = reinterpret_cast<ConsoleIO*>(opaque);
 
 	// Clear the terminal
-	self->write_line_callback(USTR<MAX_EVENT_STRING_LEN>(PSTR("\033[2J\033[1;1H")), self->opaque);
+	self->write_line_callback(utl::const_string<32>(PSTR("\033[2J\033[1;1H")), self->opaque);
 
 	// Correct for grammer
-	if (winner == USTR<32>(PSTR("You")))
-		self->write_line_callback(USTR<32>(PSTR("You win!")), self->opaque);
+	if (winner == utl::const_string<32>(PSTR("You")))
+		self->write_line_callback(utl::const_string<32>(PSTR("You win!")), self->opaque);
 	else
-		self->write_line_callback(USTR<32>(PSTR("Computer wins!")), self->opaque);
+		self->write_line_callback(utl::const_string<32>(PSTR("Computer wins!")), self->opaque);
 
 	// Final message
-	self->write_line_callback(USTR<32>(PSTR("Thanks for playing!")), self->opaque);
+	self->write_line_callback(utl::const_string<32>(PSTR("Thanks for playing!")), self->opaque);
 }
 
 char ConsoleIO::userInputToChar(const utl::string<MAX_USER_INPUT_LEN>& input)
@@ -238,22 +240,22 @@ utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::actionToString(const utl
 		if (bet > 0)
 		{
 			// Correct for grammer
-			if (player_name == USTR<MAX_EVENT_STRING_LEN>(PSTR("You")))
-				result = USTR<MAX_EVENT_STRING_LEN>(PSTR("You call."));
+			if (player_name == utl::const_string<32>(PSTR("You")))
+				result = utl::const_string<32>(PSTR("You call."));
 			else
 			{
 				result = player_name;
-				result += USTR<MAX_EVENT_STRING_LEN>(PSTR(" calls."));
+				result += utl::const_string<32>(PSTR(" calls."));
 			}
 		}
 		else
 		{
 			// Correct for grammer
-			if (player_name == USTR<MAX_EVENT_STRING_LEN>(PSTR("You")))
-				result = USTR<MAX_EVENT_STRING_LEN>(PSTR("You check."));
+			if (player_name == utl::const_string<32>(PSTR("You")))
+				result = utl::const_string<32>(PSTR("You check."));
 			else {
 				result = player_name;
-				result += USTR<MAX_EVENT_STRING_LEN>(PSTR(" checks."));
+				result += utl::const_string<32>(PSTR(" checks."));
 			}
 		}
 		break;
@@ -262,18 +264,18 @@ utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::actionToString(const utl
 	case Player::PlayerAction::Bet:
 
 		// Correct for grammer
-		if (player_name == USTR<MAX_EVENT_STRING_LEN>(PSTR("You"))) {
-			result = USTR<MAX_EVENT_STRING_LEN>(PSTR("You bet "));
+		if (player_name == utl::const_string<32>(PSTR("You"))) {
+			result = utl::const_string<32>(PSTR("You bet "));
 			utl::string<MAX_EVENT_STRING_LEN> bet_string = utl::to_string<MAX_EVENT_STRING_LEN>(bet);
 			result += bet_string;
-			result += USTR<MAX_EVENT_STRING_LEN>(PSTR("."));
+			result += utl::const_string<32>(PSTR("."));
 		}
 		else {
 			result = player_name;
-			result += USTR<MAX_EVENT_STRING_LEN>(PSTR(" bets "));
+			result += utl::const_string<32>(PSTR(" bets "));
 			utl::string<MAX_EVENT_STRING_LEN> bet_string = utl::to_string<MAX_EVENT_STRING_LEN>(bet);
 			result += bet_string;
-			result += USTR<MAX_EVENT_STRING_LEN>(PSTR("."));
+			result += utl::const_string<32>(PSTR("."));
 		}
 		break;
 
@@ -281,17 +283,17 @@ utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::actionToString(const utl
 	case Player::PlayerAction::Fold:
 
 		// Correct for grammer
-		if (player_name == USTR<MAX_EVENT_STRING_LEN>(PSTR("You")))
-			result = USTR<MAX_EVENT_STRING_LEN>(PSTR("You fold."));
+		if (player_name == utl::const_string<32>(PSTR("You")))
+			result = utl::const_string<32>(PSTR("You fold."));
 		else {
 			result = player_name;
-			result += USTR<MAX_EVENT_STRING_LEN>(PSTR(" folds."));
+			result += utl::const_string<32>(PSTR(" folds."));
 		}
 		break;
 
 		// Quit
 	case Player::PlayerAction::Quit:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR(""));
+		return utl::const_string<32>(PSTR(""));
 	}
 
 	return result;
@@ -302,15 +304,15 @@ utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::newSubRoundToString(Poke
 	switch (new_sub_round)
 	{
 	case PokerGame::SubRound::PreFlop:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("Cards dealt."));
+		return utl::const_string<32>(PSTR("Cards dealt."));
 	case PokerGame::SubRound::Flop:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("The flop."));
+		return utl::const_string<32>(PSTR("The flop."));
 	case PokerGame::SubRound::Turn:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("The turn."));
+		return utl::const_string<32>(PSTR("The turn."));
 	case PokerGame::SubRound::River:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("The river."));
+		return utl::const_string<32>(PSTR("The river."));
 	default:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR(""));
+		return utl::const_string<32>(PSTR(""));
 	}
 }
 
@@ -319,27 +321,27 @@ utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::printRanking(RankedHand:
 	switch (ranking)
 	{
 	case RankedHand::Ranking::RoyalFlush:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("royal flush"));
+		return utl::const_string<32>(PSTR("royal flush"));
 	case RankedHand::Ranking::StraightFlush:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("straight flush"));
+		return utl::const_string<32>(PSTR("straight flush"));
 	case RankedHand::Ranking::FourOfAKind:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("four of a kind"));
+		return utl::const_string<32>(PSTR("four of a kind"));
 	case RankedHand::Ranking::FullHouse:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("full house"));
+		return utl::const_string<32>(PSTR("full house"));
 	case RankedHand::Ranking::Flush:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("flush"));
+		return utl::const_string<32>(PSTR("flush"));
 	case RankedHand::Ranking::Straight:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("straight"));
+		return utl::const_string<32>(PSTR("straight"));
 	case RankedHand::Ranking::ThreeOfAKind:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("three of a kind"));
+		return utl::const_string<32>(PSTR("three of a kind"));
 	case RankedHand::Ranking::TwoPair:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("two pair"));
+		return utl::const_string<32>(PSTR("two pair"));
 	case RankedHand::Ranking::Pair:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("pair"));
+		return utl::const_string<32>(PSTR("pair"));
 	case RankedHand::Ranking::HighCard:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("high card"));
+		return utl::const_string<32>(PSTR("high card"));
 	default:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR(""));
+		return utl::const_string<32>(PSTR(""));
 	}
 }
 
@@ -348,31 +350,31 @@ utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::roundEndToString(bool dr
 	// If the round was a draw
 	if (draw == true) {
 		utl::string<MAX_EVENT_STRING_LEN> result;
-		result = USTR<MAX_EVENT_STRING_LEN>(PSTR("Round draw with "));
+		result = utl::const_string<32>(PSTR("Round draw with "));
 		result += ConsoleIO::printRanking(ranking);
 		return result;
 	}
 
 	// Correct for grammer
-	if (winner == "You")
+	if (winner == utl::const_string<32>(PSTR("You")))
 	{
 		// Support hidden rankings
 		if (ranking == RankedHand::Ranking::Unranked) {
 			utl::string<MAX_EVENT_STRING_LEN> result;
-			result = USTR<MAX_EVENT_STRING_LEN>(PSTR("You win "));
+			result = utl::const_string<32>(PSTR("You win "));
 			utl::string<MAX_EVENT_STRING_LEN> pot_string = utl::to_string<MAX_EVENT_STRING_LEN>(pot);
 			result += pot_string;
-			result += USTR<MAX_EVENT_STRING_LEN>(PSTR("."));
+			result += utl::const_string<32>(PSTR("."));
 			return result;
 		}
 		else {
 			utl::string<MAX_EVENT_STRING_LEN> result;
-			result += USTR<MAX_EVENT_STRING_LEN>(PSTR("You win "));
+			result += utl::const_string<32>(PSTR("You win "));
 			utl::string<MAX_EVENT_STRING_LEN> pot_string = utl::to_string<MAX_EVENT_STRING_LEN>(pot);
 			result += pot_string;
-			result += USTR<MAX_EVENT_STRING_LEN>(PSTR(" with "));
+			result += utl::const_string<32>(PSTR(" with "));
 			result += ConsoleIO::printRanking(ranking);
-			result += USTR<MAX_EVENT_STRING_LEN>(PSTR("."));
+			result += utl::const_string<32>(PSTR("."));
 			return result;
 		}
 	}
@@ -382,21 +384,21 @@ utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::roundEndToString(bool dr
 		if (ranking == RankedHand::Ranking::Unranked) {
 			utl::string<MAX_EVENT_STRING_LEN> result;
 			result = winner;
-			result += USTR<MAX_EVENT_STRING_LEN>(PSTR(" wins "));
+			result += utl::const_string<32>(PSTR(" wins "));
 			utl::string<MAX_EVENT_STRING_LEN> pot_string = utl::to_string<MAX_EVENT_STRING_LEN>(pot);
 			result += pot_string;
-			result += USTR<MAX_EVENT_STRING_LEN>(PSTR("."));
+			result += utl::const_string<32>(PSTR("."));
 			return result;
 		}
 		else {
 			utl::string<MAX_EVENT_STRING_LEN> result;
 			result = winner;
-			result += USTR<MAX_EVENT_STRING_LEN>(PSTR(" wins "));
+			result += utl::const_string<32>(PSTR(" wins "));
 			utl::string<MAX_EVENT_STRING_LEN> pot_string = utl::to_string<MAX_EVENT_STRING_LEN>(pot);
 			result += pot_string;
-			result += USTR<MAX_EVENT_STRING_LEN>(PSTR(" with "));
+			result += utl::const_string<32>(PSTR(" with "));
 			result += ConsoleIO::printRanking(ranking);
-			result += USTR<MAX_EVENT_STRING_LEN>(PSTR("."));
+			result += utl::const_string<32>(PSTR("."));
 			return result;
 		}
 	}
@@ -407,17 +409,17 @@ utl::string<10> ConsoleIO::printSuit(Card::Suit suit)
 	switch (suit)
 	{
 	case Card::Suit::Clubs:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("c"));
+		return utl::const_string<32>(PSTR("c"));
 	case Card::Suit::Diamonds:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("d"));
+		return utl::const_string<32>(PSTR("d"));
 	case Card::Suit::Hearts:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("h"));
+		return utl::const_string<32>(PSTR("h"));
 	case Card::Suit::Spades:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("s"));
+		return utl::const_string<32>(PSTR("s"));
 	case Card::Suit::Unrevealed:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("?"));
+		return utl::const_string<32>(PSTR("?"));
 	default:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR(""));
+		return utl::const_string<32>(PSTR(""));
 	}
 }
 
@@ -426,35 +428,35 @@ utl::string<10> ConsoleIO::printValue(Card::Value value)
 	switch (value)
 	{
 	case Card::Value::Ace:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("A"));
+		return utl::const_string<32>(PSTR("A"));
 	case Card::Value::Two:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("2"));
+		return utl::const_string<32>(PSTR("2"));
 	case Card::Value::Three:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("3"));
+		return utl::const_string<32>(PSTR("3"));
 	case Card::Value::Four:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("4"));
+		return utl::const_string<32>(PSTR("4"));
 	case Card::Value::Five:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("5"));
+		return utl::const_string<32>(PSTR("5"));
 	case Card::Value::Six:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("6"));
+		return utl::const_string<32>(PSTR("6"));
 	case Card::Value::Seven:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("7"));
+		return utl::const_string<32>(PSTR("7"));
 	case Card::Value::Eight:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("8"));
+		return utl::const_string<32>(PSTR("8"));
 	case Card::Value::Nine:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("9"));
+		return utl::const_string<32>(PSTR("9"));
 	case Card::Value::Ten:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("10"));
+		return utl::const_string<32>(PSTR("10"));
 	case Card::Value::Jack:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("J"));
+		return utl::const_string<32>(PSTR("J"));
 	case Card::Value::Queen:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("Q"));
+		return utl::const_string<32>(PSTR("Q"));
 	case Card::Value::King:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("K"));
+		return utl::const_string<32>(PSTR("K"));
 	case Card::Value::Unrevealed:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR("?"));
+		return utl::const_string<32>(PSTR("?"));
 	default:
-		return USTR<MAX_EVENT_STRING_LEN>(PSTR(""));
+		return utl::const_string<32>(PSTR(""));
 	}
 }
 
@@ -480,7 +482,7 @@ void ConsoleIO::printHand(utl::string<WIDTH>& dst, size_t x, const utl::array<Ca
 void ConsoleIO::printChipStackCount(utl::string<WIDTH>& dst, size_t x, int count)
 {
 	// Copy the chip count into the screen buffer
-	utl::string<MAX_EVENT_STRING_LEN> count_string = USTR<MAX_EVENT_STRING_LEN>(PSTR("$"));
+	utl::string<MAX_EVENT_STRING_LEN> count_string = utl::const_string<32>(PSTR("$"));
 	count_string += utl::to_string<MAX_EVENT_STRING_LEN>(count);
 	ConsoleIO::lineBufferCopy(dst, count_string.begin(), count_string.end(), x - count_string.size() / 2);
 }
@@ -488,7 +490,7 @@ void ConsoleIO::printChipStackCount(utl::string<WIDTH>& dst, size_t x, int count
 void ConsoleIO::printPotStackCount(utl::string<WIDTH>& dst, size_t x)
 {
 	// Copy the chip count into the screen buffer
-	utl::string<MAX_EVENT_STRING_LEN> count_string = USTR<MAX_EVENT_STRING_LEN>(PSTR("pot: $"));
+	utl::string<MAX_EVENT_STRING_LEN> count_string = utl::const_string<32>(PSTR("pot: $"));
 	count_string += utl::to_string<MAX_EVENT_STRING_LEN>(this->cached_state.current_pot);
 	ConsoleIO::lineBufferCopy(dst, count_string.begin(), count_string.end(), x);
 }
@@ -496,7 +498,7 @@ void ConsoleIO::printPotStackCount(utl::string<WIDTH>& dst, size_t x)
 void ConsoleIO::printToCall(utl::string<WIDTH>& dst, size_t x)
 {
 	// Copy the chip count into the screen buffer
-	utl::string<MAX_EVENT_STRING_LEN> count_string = USTR<MAX_EVENT_STRING_LEN>(PSTR("to call: $"));
+	utl::string<MAX_EVENT_STRING_LEN> count_string = utl::const_string<32>(PSTR("to call: $"));
 	count_string += utl::to_string<MAX_EVENT_STRING_LEN>(this->cached_state.current_bet);
 	ConsoleIO::lineBufferCopy(dst, count_string.begin(), count_string.end(), x);
 }
@@ -523,7 +525,7 @@ template <const size_t SIZE>
 void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 {
 	// Clear the terminal
-	this->write_line_callback(USTR<MAX_EVENT_STRING_LEN>(PSTR("\033[2J\033[1;1H")), this->opaque);
+	this->write_line_callback(utl::const_string<32>(PSTR("\033[2J\033[1;1H")), this->opaque);
 
 	// Construct line buffer
 	utl::string<WIDTH> line_buffer;
@@ -661,10 +663,6 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 
 	// Print hint text
 	this->write_line_callback(hint_text, this->opaque);
-
-#ifdef EMBEDDED_BUILD
-	//PRINT_MEM_INFO(USTR<8>(PSTR(""))); // XXX
-#endif
 }
 
 void ConsoleIO::lineBufferCopy(utl::string<WIDTH>& dst, utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_begin, utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_end, size_t x)
@@ -677,7 +675,6 @@ void ConsoleIO::lineBufferCopy(utl::string<WIDTH>& dst, utl::string<MAX_EVENT_ST
 			continue;
 
 		// Copy
-		//this->screen_buffer[y][x++] = *src_begin;
 		dst[x++] = *src_begin;
 	}
 }

@@ -32,8 +32,8 @@ PokerGame::PokerGame(uint32_t random_seed_in, int small_blind_in, int starting_s
 	deck(rng)
 {
 	// Construct players
-	this->players.emplace_back(this->rng, USTR<10>(PSTR("You")), starting_stack_size_in);
-	this->players.emplace_back(this->rng, USTR<10>(PSTR("Computer")), starting_stack_size_in);
+	this->players.emplace_back(this->rng, utl::const_string<32>(PSTR("You")), starting_stack_size_in);
+	this->players.emplace_back(this->rng, utl::const_string<32>(PSTR("Computer")), starting_stack_size_in);
 }
 
 void PokerGame::play()
@@ -142,7 +142,7 @@ bool PokerGame::playRound()
 		{
 			// Round draw
 			draw = true;
-			winner = USTR<10>(PSTR("draw"));
+			winner = utl::const_string<32>(PSTR("draw"));
 			ranking = player_hand.getRanking();
 			this->players[0].adjustChips(this->current_pot / 2);
 			this->players[1].adjustChips(this->current_pot / 2);

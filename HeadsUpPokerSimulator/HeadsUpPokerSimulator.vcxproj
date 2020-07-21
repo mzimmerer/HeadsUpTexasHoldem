@@ -31,6 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\utl\new.cpp" />
+    <ClCompile Include="..\Dependencies\utl\string.cpp" />
     <ClCompile Include="..\Source\Card.cpp" />
     <ClCompile Include="..\Source\ConsoleIO.cpp" />
     <ClCompile Include="..\Source\Deck.cpp" />

@@ -147,27 +147,6 @@ void memcpy(char* l, char* r, size_t sz)
 	}
 }
 
-#if 1
-void PRINT_MEM_INFO(const utl::string<16>& hint_string)
-{
-	size_t stack_size = RAMEND - SP;
-
-	utl::string<32> mem_info_string(hint_string);
-	//writeString<32>(mem_info_string);
-
-	//mem_info_string = USTR<32>(PSTR(" - sp: "));
-	//mem_info_string += utl::to_string<32>(SP);
-//	writeString<32>(mem_info_string);
-
-	//mem_info_string = USTR<32>(PSTR(" - stack_size: "));
-	mem_info_string = utl::to_string<32>(stack_size);
-	writeString<32>(mem_info_string);
-
-	mem_info_string = USTR<32>(PSTR("\r\n"));
-	writeString<32>(mem_info_string);
-}
-#endif
-
 
 static void TEST_FUNCTION()
 {
@@ -229,7 +208,7 @@ static void writeLineCallback(const utl::string<ConsoleIO::WIDTH>& line, void* o
 {
 #ifdef EMBEDDED_BUILD
 	writeString<ConsoleIO::WIDTH>(line);
-	utl::string<32> new_line = USTR<32>(PSTR("\r\n"));
+	utl::string<32> new_line = utl::const_string<32>(PSTR("\r\n"));
 	writeString<32>(new_line);
 
 #else
