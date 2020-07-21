@@ -19,28 +19,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Include\Card.h" />
-    <ClInclude Include="..\Include\ConsoleIO.h" />
-    <ClInclude Include="..\Include\Deck.h" />
-    <ClInclude Include="..\Include\Exception.h" />
-    <ClInclude Include="..\Include\Player.h" />
-    <ClInclude Include="..\Include\PokerGame.h" />
-    <ClInclude Include="..\Include\PokerGameState.h" />
-    <ClInclude Include="..\Include\Random.h" />
-    <ClInclude Include="..\Include\RankedHand.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\Dependencies\utl\new.cpp" />
     <ClCompile Include="..\Dependencies\utl\string.cpp" />
-    <ClCompile Include="..\Source\Card.cpp" />
-    <ClCompile Include="..\Source\ConsoleIO.cpp" />
-    <ClCompile Include="..\Source\Deck.cpp" />
     <ClCompile Include="..\Source\Exception.cpp" />
     <ClCompile Include="..\Source\main.cpp" />
-    <ClCompile Include="..\Source\Player.cpp" />
-    <ClCompile Include="..\Source\PokerGame.cpp" />
-    <ClCompile Include="..\Source\Random.cpp" />
-    <ClCompile Include="..\Source\RankedHand.cpp" />
+    <ClCompile Include="..\Source\Platform\desktop\PlatformDesktop.cpp" />
+    <ClCompile Include="..\Source\Platform\Platform.cpp" />
+    <ClCompile Include="..\Source\PokerGame\Card.cpp" />
+    <ClCompile Include="..\Source\PokerGame\ConsoleIO.cpp" />
+    <ClCompile Include="..\Source\PokerGame\Deck.cpp" />
+    <ClCompile Include="..\Source\PokerGame\Player.cpp" />
+    <ClCompile Include="..\Source\PokerGame\PokerGame.cpp" />
+    <ClCompile Include="..\Source\PokerGame\Random.cpp" />
+    <ClCompile Include="..\Source\PokerGame\RankedHand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Dependencies\utl\include\utl\algorithm" />
@@ -56,6 +47,20 @@
     <None Include="..\Dependencies\utl\include\utl\unordered_map" />
     <None Include="..\Dependencies\utl\include\utl\utility" />
     <None Include="..\Dependencies\utl\include\utl\vector" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Include\Exception.h" />
+    <ClInclude Include="..\Include\Platform\atmega328p\PlatformAtmega328p.h" />
+    <ClInclude Include="..\Include\Platform\desktop\PlatformDesktop.h" />
+    <ClInclude Include="..\Include\Platform\Platform.h" />
+    <ClInclude Include="..\Include\PokerGame\Card.h" />
+    <ClInclude Include="..\Include\PokerGame\ConsoleIO.h" />
+    <ClInclude Include="..\Include\PokerGame\Deck.h" />
+    <ClInclude Include="..\Include\PokerGame\Player.h" />
+    <ClInclude Include="..\Include\PokerGame\PokerGame.h" />
+    <ClInclude Include="..\Include\PokerGame\PokerGameState.h" />
+    <ClInclude Include="..\Include\PokerGame\Random.h" />
+    <ClInclude Include="..\Include\PokerGame\RankedHand.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

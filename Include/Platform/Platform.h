@@ -15,14 +15,43 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
-#include "Random.h"
 
-Random::Random(uint32_t seed) : rng(seed)
-{
-}
+#pragma once
 
-int Random::getRandomNumberInRange(int lower_in, int upper_in)
-{
-	// Return a random value from the rng
-	return this->rng.range(lower_in, upper_in);
+#ifdef PLATFORM_ATMEGA328P
+#include "Platform/atmega328p/PlatformAtmega328p.h"
+#else
+#include "Platform/desktop/PlatformDesktop.h"
+#endif
+
+#include <utl/cstdint>
+#include <utl/string>
+
+namespace Platform {
+
+    void init();
+
+    uint32_t randomSeed();
+
+    void delayMilliSeconds(uint16_t delay);
+
+    template <const size_t SIZE>
+    void writeString(const utl::string<SIZE>& str)
+    {
+#ifdef PLATFORM_ATMEGA328P
+        writeStringAtmega328p<SIZE>(str);
+#else
+        writeStringDesktop<SIZE>(str);
+#endif
+    }
+
+    template <const size_t SIZE>
+    utl::string<SIZE> readString()
+    {
+#ifdef PLATFORM_ATMEGA328P
+        return readStringAtmega328p<SIZE>();
+#else
+        return readStringDesktop<SIZE>();
+#endif
+    }
 }

@@ -5,10 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -19,69 +15,62 @@
     <Filter Include="UTL Source Files">
       <UniqueIdentifier>{a0202bc0-cb67-4390-990f-297626fd21ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="PokerGame Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{6080578a-2935-41ad-8568-c2518d3df433}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PokerGame Source Files">
+      <UniqueIdentifier>{d454ba83-a4d3-4dfd-9aee-7b9464911386}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform Headers">
+      <UniqueIdentifier>{fe95c5c9-13d8-4736-a718-1bcc3227847a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform Source">
+      <UniqueIdentifier>{efc4c0ea-34f5-45f8-8604-323824ffb2da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Include\Card.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\ConsoleIO.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Deck.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\PokerGame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Random.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\RankedHand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Exception.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\PokerGameState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Source\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\PokerGame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Random.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\RankedHand.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Card.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\ConsoleIO.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Deck.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Exception.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Dependencies\utl\new.cpp">
       <Filter>UTL Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependencies\utl\string.cpp">
       <Filter>UTL Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Exception.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\Card.cpp">
+      <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\ConsoleIO.cpp">
+      <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\Deck.cpp">
+      <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\Player.cpp">
+      <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\PokerGame.cpp">
+      <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\Random.cpp">
+      <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\RankedHand.cpp">
+      <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\Platform.cpp">
+      <Filter>Platform Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\desktop\PlatformDesktop.cpp">
+      <Filter>Platform Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -124,5 +113,43 @@
     <None Include="..\Dependencies\utl\include\utl\vector">
       <Filter>UTL Header Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Include\PokerGame\Card.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGame\ConsoleIO.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGame\Deck.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGame\Player.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGame\PokerGame.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGame\PokerGameState.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGame\Random.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGame\RankedHand.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\Platform.h">
+      <Filter>Platform Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\desktop\PlatformDesktop.h">
+      <Filter>Platform Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\atmega328p\PlatformAtmega328p.h">
+      <Filter>Platform Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

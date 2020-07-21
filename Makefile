@@ -30,14 +30,15 @@ GOOGLETESTDIR := ./Dependencies/googletest/googletest
 MAIN_SRC := $(SOURCEDIR)/main.cpp
 MAIN_OBJ := $(MAIN_SRC:%.cpp=$(OBJECTDIR)/%.o) 
 
-APP_SRC := $(SOURCEDIR)/Card.cpp
-APP_SRC += $(SOURCEDIR)/ConsoleIO.cpp
-APP_SRC += $(SOURCEDIR)/Deck.cpp
-APP_SRC += $(SOURCEDIR)/Exception.cpp
-APP_SRC += $(SOURCEDIR)/Player.cpp
-APP_SRC += $(SOURCEDIR)/PokerGame.cpp
-APP_SRC += $(SOURCEDIR)/Random.cpp
-APP_SRC += $(SOURCEDIR)/RankedHand.cpp
+APP_SRC := $(SOURCEDIR)/Exception.cpp
+APP_SRC += $(SOURCEDIR)/Platform/Platform.cpp
+APP_SRC += $(SOURCEDIR)/Pokergame/Card.cpp
+APP_SRC += $(SOURCEDIR)/Pokergame/ConsoleIO.cpp
+APP_SRC += $(SOURCEDIR)/Pokergame/Deck.cpp
+APP_SRC += $(SOURCEDIR)/Pokergame/Player.cpp
+APP_SRC += $(SOURCEDIR)/Pokergame/PokerGame.cpp
+APP_SRC += $(SOURCEDIR)/Pokergame/Random.cpp
+APP_SRC += $(SOURCEDIR)/Pokergame/RankedHand.cpp
 APP_OBJ := $(APP_SRC:%.cpp=$(OBJECTDIR)/%.o) 
 
 TEST_SRC := $(shell find $(TESTDIR) -name '*.cpp')
@@ -56,17 +57,20 @@ ifeq ($(TARGET),atmega328p)
     CXXFLAGS += -mmcu=atmega328p
     CXXFLAGS += -ffunction-sections
     CXXFLAGS += -fdata-sections
-    CXXFLAGS += -DEMBEDDED_BUILD
+    CXXFLAGS += -DEMBEDDED_BUILD # TODO remove this
+    CXXFLAGS += -DPLATFORM_ATMEGA328P
     LDFLAGS += -mmcu=atmega328p
     LDFLAGS += -ffunction-sections
     LDFLAGS += -fdata-sections
     LDFLAGS += -Wl,-Map,texas_holdem.map
     APP_OBJ += $(OBJECTDIR)/Dependencies/utl/new.o
     APP_OBJ += $(OBJECTDIR)/Dependencies/utl/string.o
+    APP_OBJ += $(OBJECTDIR)/Source/Platform/atmega328p/PlatformAtmega328p.o
     APPLICATION := $(APPLICATION).elf
-
 else
     CXX := g++
+    CXXFLAGS += -DPLATFORM_DESKTOP
+    APP_OBJ += $(OBJECTDIR)/Source/Platform/atmega328p/PlatformDesktop.o
 endif
 
 .PHONY: all

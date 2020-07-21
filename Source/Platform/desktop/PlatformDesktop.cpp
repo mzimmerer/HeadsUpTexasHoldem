@@ -15,31 +15,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
-#include "Card.h"
 
-#include "Exception.h"
+#include "Platform/desktop/PlatformDesktop.h"
+#include <ctime>
 
-Card::Card() : value(Value::Unrevealed), suit(Suit::Unrevealed)
+void Platform::initDesktop()
 {
 }
 
-Card::Card(Value value_in, Suit suit_in) : value(value_in), suit(suit_in)
+uint32_t Platform::randSeedDesktop()
 {
+    return time(nullptr);
 }
 
-Card& Card::operator=(const Card& other)
+void Platform::delayMilliSecondsDesktop(uint16_t delay)
 {
-	this->value = other.value;
-	this->suit = other.suit;
-	return *this;
-}
-
-Card::Value Card::getValue() const
-{
-	return this->value;
-}
-
-Card::Suit Card::getSuit() const
-{
-	return this->suit;
 }

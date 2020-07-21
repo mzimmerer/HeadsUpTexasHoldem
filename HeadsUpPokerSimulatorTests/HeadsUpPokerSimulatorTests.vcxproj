@@ -148,9 +148,8 @@
     <ClCompile Include="..\Dependencies\googletest\googletest\src\gtest_main.cc" />
     <ClCompile Include="..\Dependencies\utl\new.cpp" />
     <ClCompile Include="..\Dependencies\utl\string.cpp" />
-    <ClCompile Include="..\Source\Card.cpp" />
-    <ClCompile Include="..\Source\Exception.cpp" />
-    <ClCompile Include="..\Source\RankedHand.cpp" />
+    <ClCompile Include="..\Source\PokerGame\Card.cpp" />
+    <ClCompile Include="..\Source\PokerGame\RankedHand.cpp" />
     <ClCompile Include="..\Tests\HandTests.cpp" />
     <ClCompile Include="..\Tests\HandTestWrapper.cpp" />
   </ItemGroup>

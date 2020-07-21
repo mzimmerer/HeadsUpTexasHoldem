@@ -26,6 +26,7 @@
 #include "Card.h"
 #include "PokerGameState.h"
 #include "Random.h"
+#include "RankedHand.h"
 
  /** Player class. This class stores player specic information, and implements AI for non human players
   */
@@ -112,6 +113,22 @@ public:
 	utl::pair<PlayerAction, int> decision(const PokerGameState& state);
 
 private:
+
+	/// The maximum value for random choice numbers
+	static constexpr int RANDOM_CHOICE_MAX_VALUE = 1000;
+
+	// The maximum hand value
+	static constexpr int MAX_HAND_VALUE = 3 * static_cast<int>(Card::Value::Ace);
+
+	// The minimum hand value
+	static constexpr int MIN_HAND_VALUE = 2 * static_cast<int>(Card::Value::Two);
+
+	// The maximum hand + board value
+	static constexpr int MAX_HAND_N_BOARD_VALUE = static_cast<int>(RankedHand::Ranking::RoyalFlush);
+
+	// The minimum hand + board value
+	static constexpr int MIN_HAND_N_BOARD_VALUE = static_cast<int>(RankedHand::Ranking::HighCard);
+
 	/// A reference to a random number generator
 	Random& rng;
 
@@ -131,16 +148,29 @@ private:
 	utl::array<Card, 2> hand;
 
 	/** Decide whether to check or bet, and determine the amount
+	 *  @param starting_bet The starting bet value
 	 *  @param decision_value The pre computed decision value
 	 *  @param max_bet The maximum amount to bet
 	 *  @return The decision. The first element is the action, the second is the bet, if any
 	 */
-	utl::pair<PlayerAction, int> checkOrBet(int decision_value, int max_bet);
+	utl::pair<PlayerAction, int> checkOrBet(int starting_bet, int decision_value, int max_bet);
 
 	/** Determine how much to call or bet
+	 *  @param starting_bet The starting bet value
 	 *  @param decision_value The pre computed decision value
 	 *  @param max The maximum amount to call or bet
 	 *  @return The maximum amount to call or bet
 	 */
-	int determineMax(int decision_value, int max);
+	int determineMax(int starting_bet, int decision_value, int max);
+
+	/** Normalize an integer value from its own input range to a user specified output range
+	 *  @tparam IN_MIN The minimum input value
+	 *  @tparam IN_MAX The maximum input value
+	 *  @tparam OUT_MIN The minimum output value
+	 *  @tparam OUT_MAX The maximum output value
+	 *  @param input The input value
+	 *  @result The transposed and scaled value
+	  */
+	template <const size_t IN_MIN, const size_t IN_MAX, const size_t OUT_MIN, const size_t OUT_MAX>
+	static int normalizeValue(int input);
 };

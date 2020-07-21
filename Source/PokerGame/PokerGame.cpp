@@ -15,14 +15,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
-#include "PokerGame.h"
+#include "PokerGame/PokerGame.h"
 
 #include "Exception.h"
 
 PokerGame::PokerGame(uint32_t random_seed_in, int small_blind_in, int starting_stack_size_in, DecisionCallback decision_callback_in,
 	PlayerActionCallback player_action_callback_in, SubRoundChangeCallback subround_change_callback_in,
 	RoundEndCallback round_end_callback_in, GameEndCallback game_end_callback_in, void* opaque_in)
-	: small_blind(small_blind_in), decision_callback(decision_callback_in),
+	: small_blind(small_blind_in), starting_stack_size(starting_stack_size_in), decision_callback(decision_callback_in),
 	player_action_callback(player_action_callback_in),
 	subround_change_callback(subround_change_callback_in),
 	round_end_callback(round_end_callback_in),
@@ -377,8 +377,8 @@ bool PokerGame::bettingRound(int starting_player, int players_acted)
 
 			// Invalid actions
 		default:
-			while (1); // TODO exceptions
-			//Exception::EXCEPTION(static_cast<int>(action.first));
+
+			Exception::EXCEPTION(utl::const_string<32>(PSTR("Invalid action")));
 		}
 
 		// Increment deciding player
@@ -392,9 +392,14 @@ PokerGameState PokerGame::constructState(bool opponent_hand_visible, int player)
 {
 	PokerGameState state{};
 
-	// Populate struct
+	// Copy big blind and table chip count
+	state.big_blind = this->small_blind * 2;
+	state.table_chip_count = this->starting_stack_size * 2;
+
+	// Get this players hand
 	state.player_hand = this->players[player].getHand();
 
+	// Get the other players hand, providing 'Unrevealed' cards if their hand is not visible
 	if (opponent_hand_visible == true)
 		state.opponent_hand = this->players[(player + 1) % 2].getHand();
 	else {

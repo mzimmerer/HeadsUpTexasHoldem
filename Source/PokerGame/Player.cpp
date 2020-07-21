@@ -15,8 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
-#include "Player.h"
-#include "RankedHand.h"
+#include "PokerGame/Player.h"
 
 Player::Player(Random& rng_in, utl::string<MAX_NAME_SIZE> name_in, int starting_stack_in) : rng(rng_in), name(name_in), stack(starting_stack_in)
 {
@@ -77,26 +76,10 @@ int Player::getPotInvestment() const
 	return this->pot_investment;
 }
 
-// XXX
-template <const size_t IN_MIN, const size_t IN_MAX, const size_t OUT_MIN, const size_t OUT_MAX>
-static int normalizeValue(int input)
+int Player::determineMax(int starting_bet, int decision_value, int max_bet)
 {
-	uint32_t result = static_cast<int32_t>(input);
-	result -= IN_MIN;
-	result *= OUT_MAX;
-	result /= IN_MAX;
-	result += OUT_MIN;
-	return static_cast<int>(result);
-}
-static constexpr int RANDOM_CHOICE_MAX_VALUE = 1000;
-static constexpr int MAX_HAND_VALUE = 3 * static_cast<int>(Card::Value::Ace);
-static constexpr int MIN_HAND_VALUE = 2 * static_cast<int>(Card::Value::Two);
-static constexpr int MAX_HAND_N_BOARD_VALUE = static_cast<int>(RankedHand::Ranking::RoyalFlush);
-static constexpr int MIN_HAND_N_BOARD_VALUE = static_cast<int>(RankedHand::Ranking::HighCard);
-
-int Player::determineMax(int decision_value, int max_bet)
-{
-	int bet = 20; // XXX from game state
+	// Keep rolling the dice, each time the decision value is greater than the dice value, double the max bet
+	int bet = starting_bet;
 	int dice_value = this->rng.getRandomNumberInRange(0, RANDOM_CHOICE_MAX_VALUE);
 	while (dice_value < decision_value) {
 		dice_value = this->rng.getRandomNumberInRange(0, RANDOM_CHOICE_MAX_VALUE);
@@ -106,7 +89,7 @@ int Player::determineMax(int decision_value, int max_bet)
 	return bet;
 }
 
-utl::pair<Player::PlayerAction, int> Player::checkOrBet(int decision_value, int max_bet)
+utl::pair<Player::PlayerAction, int> Player::checkOrBet(int starting_bet, int decision_value, int max_bet)
 {
 	// Roll the dice
 	int dice_value = this->rng.getRandomNumberInRange(0, RANDOM_CHOICE_MAX_VALUE);
@@ -116,7 +99,7 @@ utl::pair<Player::PlayerAction, int> Player::checkOrBet(int decision_value, int 
 		return utl::pair<Player::PlayerAction, int>(static_cast<PlayerAction>(Player::PlayerAction::CheckOrCall), 0);
 
 	// Determine bet amount
-	int bet = this->determineMax(decision_value, max_bet);
+	int bet = this->determineMax(starting_bet, decision_value, max_bet);
 
 	// Bet
 	return utl::pair<Player::PlayerAction, int>(static_cast<PlayerAction>(Player::PlayerAction::Bet), bet);
@@ -164,18 +147,29 @@ utl::pair<Player::PlayerAction, int> Player::decision(const PokerGameState& stat
 	if (state.current_bet > 0) {
 
 		// Determine how much we will call
-		int max_call = this->determineMax(decision_value, 1000); // TODO XXX FIXME 1000... the combined chip pool
+		int max_call = this->determineMax(state.big_blind, decision_value, state.table_chip_count);
 
 		// If the bet is larger than the maximum call value, fold
 		if (state.current_bet > max_call)
 			return utl::pair<Player::PlayerAction, int>(static_cast<PlayerAction>(Player::PlayerAction::Fold), 0);
 
 		// Check or bet
-		return this->checkOrBet(decision_value, state.player_stack);
+		return this->checkOrBet(state.big_blind, decision_value, state.player_stack);
 	}
 	else {
 
 		// Check or bet
-		return this->checkOrBet(decision_value, state.player_stack);
+		return this->checkOrBet(state.big_blind, decision_value, state.player_stack);
 	}
+}
+
+template <const size_t IN_MIN, const size_t IN_MAX, const size_t OUT_MIN, const size_t OUT_MAX>
+int Player::normalizeValue(int input)
+{
+	uint32_t result = static_cast<int32_t>(input);
+	result -= IN_MIN;
+	result *= OUT_MAX;
+	result /= IN_MAX;
+	result += OUT_MIN;
+	return static_cast<int>(result);
 }

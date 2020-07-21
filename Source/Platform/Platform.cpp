@@ -15,20 +15,32 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
-#pragma once
 
-#include <utl/array>
-#include <utl/vector>
+#include "Platform/Platform.h"
 
-#include "Card.h"
-
-struct PokerGameState
+void Platform::init()
 {
-	utl::array<Card, 2> player_hand;
-	utl::array<Card, 2> opponent_hand;
-	utl::vector<Card, 5> board;
-	int current_pot;
-	int current_bet;
-	int player_stack;
-	int opponent_stack;
-};
+#ifdef PLATFORM_ATMEGA328P
+    initAtmega328p();
+#else
+    initDesktop();
+#endif
+}
+
+uint32_t Platform::randomSeed()
+{
+#ifdef PLATFORM_ATMEGA328P
+    return randSeedAtmega328p();
+#else
+    return randSeedDesktop();
+#endif
+}
+
+void Platform::delayMilliSeconds(uint16_t delay)
+{
+#ifdef PLATFORM_ATMEGA328P
+    delayMilliSecondsAtmega328p(delay);
+#else
+    delayMilliSecondsDesktop(delay);
+#endif
+}

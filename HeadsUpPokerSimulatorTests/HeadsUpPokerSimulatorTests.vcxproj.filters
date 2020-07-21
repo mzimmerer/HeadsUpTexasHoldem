@@ -33,17 +33,8 @@
     <ClCompile Include="..\Dependencies\googletest\googletest\src\gtest-all.cc">
       <Filter>GoogleTestSource</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Card.cpp">
-      <Filter>SourceUnderTest</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Exception.cpp">
-      <Filter>SourceUnderTest</Filter>
-    </ClCompile>
     <ClCompile Include="..\Tests\HandTests.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\RankedHand.cpp">
-      <Filter>SourceUnderTest</Filter>
     </ClCompile>
     <ClCompile Include="..\Tests\HandTestWrapper.cpp">
       <Filter>Source Files</Filter>
@@ -53,6 +44,12 @@
     </ClCompile>
     <ClCompile Include="..\Dependencies\utl\string.cpp">
       <Filter>UTL Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\Card.cpp">
+      <Filter>SourceUnderTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\RankedHand.cpp">
+      <Filter>SourceUnderTest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

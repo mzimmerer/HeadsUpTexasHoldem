@@ -87,6 +87,9 @@ private:
 	/// The small blind
 	const int small_blind;
 
+	/// The starting stack size
+	const int starting_stack_size;
+
 	/// The decision callback
 	DecisionCallback decision_callback;
 

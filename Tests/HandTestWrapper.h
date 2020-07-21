@@ -19,8 +19,8 @@
 
 #include <utl/vector>
 
-#include "Card.h"
-#include "RankedHand.h"
+#include "PokerGame/Card.h"
+#include "PokerGame/RankedHand.h"
 
 /** Hand test wrapper class, implemented to ease unit-test implementation
  */

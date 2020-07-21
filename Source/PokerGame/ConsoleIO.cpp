@@ -15,7 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
-#include "ConsoleIO.h"
+#include "PokerGame/ConsoleIO.h"
 
 #include <utl/algorithm>
 #include <utl/cstdlib>
@@ -225,7 +225,7 @@ int ConsoleIO::userInputToInt(const utl::string<MAX_USER_INPUT_LEN>& input)
 	if (input.size() == 0)
 		return 0;
 
-	return utl::strtol(input.c_str(), nullptr, 10);
+	return strtol(input.c_str(), nullptr, 10);
 }
 
 utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::actionToString(const utl::string<Player::MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet)
