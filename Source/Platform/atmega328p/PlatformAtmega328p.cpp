@@ -25,6 +25,10 @@
 #include <utl/fifo>
 #include <utl/utility>
 
+static utl::fifo<char, 4> isr_fifo;
+static utl::fifo<char, 8> local_fifo;
+static utl::fifo<utl::string<8>, 4> line_fifo;
+
 void Platform::writeCharAtmega328p(char chr)
 {
 	while (!(UCSR0A & (1 << UDRE0)))
@@ -81,32 +85,31 @@ static void processRxBufferInternal(utl::fifo<char, 8>& buffer)
 	} while (0);
 }
 
-void Platform::processRxBuffer()
+utl::string<8> Platform::processRxBuffer()
 {
-	cli();
-	while (isr_fifo.empty() == false)
-	{
-		if (local_fifo.full() == true)
-			local_fifo.pop();
-		local_fifo.push(isr_fifo.pop());
-	}
-	sei();
+	while (line_fifo.empty() == true) {
 
-	processRxBufferInternal(local_fifo);
-}
+		cli();
+		while (isr_fifo.empty() == false)
+		{
+			if (local_fifo.full() == true)
+				local_fifo.pop();
+			local_fifo.push(isr_fifo.pop());
+		}
+		sei();
 
-void memcpy(char* l, char* r, size_t sz)
-{
-	for (size_t i = 0; i < sz; ++i)
-	{
-		l[i] = r[i];
+		processRxBufferInternal(local_fifo);
 	}
+
+	return line_fifo.pop();
 }
 
 ISR(USART_RX_vect)
 {
 	if (isr_fifo.full() == true)
 		isr_fifo.pop();
+	
+	//PORTD ^= (1 << PIND5); // XXX remove me
 
 	isr_fifo.push(UDR0);
 }
@@ -120,7 +123,12 @@ void Platform::initAtmega328p()
     UCSR0B = (1 << TXEN0) | (1 << RXEN0) | (1 << RXCIE0);
     UCSR0C = (1 << UCSZ00) | (1 << UCSZ01);
 
-    sei();
+
+	DDRD = (1 << PIND5); // XXX remove me
+//	PORTD |= (1 << PIND5); // XXX remove me
+	PORTD &= ~(1 << PIND5); // XXX remove me
+	
+    sei();	
 }
 
 static void writeRandomSeed(uint32_t seed)

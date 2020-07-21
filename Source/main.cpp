@@ -19,14 +19,12 @@
 #include "Platform/Platform.h"
 
 #ifndef EMBEDDED_BUILD
-#include <chrono>
-#include <thread>
 #include <stdexcept>
 #include <iostream>
-#include <string>
 #endif
 
 #include <utl/string>
+
 #include "PokerGame/ConsoleIO.h"
 #include "PokerGame/PokerGame.h"
 

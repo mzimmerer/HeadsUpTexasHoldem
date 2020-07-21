@@ -65,12 +65,12 @@ ifeq ($(TARGET),atmega328p)
     LDFLAGS += -Wl,-Map,texas_holdem.map
     APP_OBJ += $(OBJECTDIR)/Dependencies/utl/new.o
     APP_OBJ += $(OBJECTDIR)/Dependencies/utl/string.o
-    APP_OBJ += $(OBJECTDIR)/Source/Platform/atmega328p/PlatformAtmega328p.o
+    APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/PlatformAtmega328p.o
     APPLICATION := $(APPLICATION).elf
 else
     CXX := g++
     CXXFLAGS += -DPLATFORM_DESKTOP
-    APP_OBJ += $(OBJECTDIR)/Source/Platform/atmega328p/PlatformDesktop.o
+    APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/PlatformDesktop.o
 endif
 
 .PHONY: all

@@ -24,10 +24,6 @@
 
 #define F_CPU 16000000UL
 
-static utl::fifo<char, 4> isr_fifo;
-static utl::fifo<char, 8> local_fifo;
-static utl::fifo<utl::string<8>, 4> line_fifo;
-
 namespace Platform {
 
     static constexpr double F_CPUD = static_cast<double>(F_CPU);
@@ -61,19 +57,16 @@ namespace Platform {
         writeStringAtmega328pInternal<2>(new_line);
     }
 
-    void processRxBuffer();
+    utl::string<8> processRxBuffer();
 
     template <const size_t SIZE>
     utl::string<SIZE> readStringAtmega328p()
     {
         utl::string<SIZE> result;
+		
+			PORTD ^= (1 << PIND5); // XXX remove me
 
         // Wait for a line
-        while (line_fifo.empty() == true)
-            processRxBuffer();
-
-        result = line_fifo.pop();
-
-        return result;
+        return processRxBuffer();
     }
 }
