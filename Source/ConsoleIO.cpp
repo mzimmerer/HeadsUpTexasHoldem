@@ -503,22 +503,17 @@ void ConsoleIO::printToCall(utl::string<WIDTH>& dst, size_t x)
 	ConsoleIO::lineBufferCopy(dst, count_string.begin(), count_string.end(), x);
 }
 
-void ConsoleIO::printEventText(utl::string<WIDTH>& dst, size_t x, size_t i)
+void ConsoleIO::printEventText(utl::string<WIDTH>& dst, size_t x, utl::list<utl::string<MAX_EVENT_STRING_LEN>, MAX_EVENT_STRING_QUEUE_LEN>::iterator& iter)
 {
-	// Print the queue entry at y, to the line buffer at x
+	// Only print a string if a string was provided
+	if (iter != this->event_string_queue.end()) {
 
-	size_t FIX_THIS = 0; // TODO XXX FIXME
-
-	// Print each event text to the screen buffer
-	for (const auto& event_text : this->event_string_queue)
-	{
-
-		if (FIX_THIS++ == i) {
-			// Copy the chip count into the screen buffer
-			ConsoleIO::lineBufferCopy(dst, event_text.begin(), event_text.end(), x);
-
-		}
+		// Copy the string into the line buffer
+		ConsoleIO::lineBufferCopy(dst, iter->begin(), iter->end(), x);
 	}
+
+	// Increment iter
+	++iter;
 }
 
 template <const size_t SIZE>
@@ -547,7 +542,8 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 	this->printChipStackCount(line_buffer, 20, this->cached_state.opponent_stack);
 
 	// Print event text
-	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, 0);
+	auto iter = this->event_string_queue.begin();
+	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, iter);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Line 2
@@ -556,7 +552,7 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 	line_buffer[line_buffer.size() - 1] = '#';
 
 	// Print event text
-	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, 1);
+	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, iter);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Line 3
@@ -565,7 +561,7 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 	line_buffer[line_buffer.size() - 1] = '#';
 
 	// Print event text
-	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, 2);
+	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, iter);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Line 4
@@ -584,7 +580,7 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 	}
 
 	// Print event text
-	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, 3);
+	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, iter);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Line 5
@@ -604,7 +600,7 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 	}
 
 	// Print event text
-	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, 4);
+	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, iter);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Line 6
@@ -613,7 +609,7 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 	line_buffer[line_buffer.size() - 1] = '#';
 
 	// Print event text
-	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, 5);
+	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, iter);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Line 7
@@ -622,7 +618,7 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 	line_buffer[line_buffer.size() - 1] = '#';
 
 	// Print event text
-	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, 6);
+	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, iter);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Line 8

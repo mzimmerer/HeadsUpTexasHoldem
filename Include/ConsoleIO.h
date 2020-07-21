@@ -212,7 +212,7 @@ private:
 	 *  @param x The x coordinate to draw to
 	 *  @param i The index into the event queue to draw
 	 */
-	void printEventText(utl::string<WIDTH>& dst, size_t x, size_t i);
+	void printEventText(utl::string<WIDTH>& dst, size_t x, utl::list<utl::string<MAX_EVENT_STRING_LEN>, MAX_EVENT_STRING_QUEUE_LEN>::iterator& iter);
 
 	/** Update the screen by drawing the current screen buffer
 	 *  @tparam SIZE The maximum size of the hint_text string
@@ -221,7 +221,7 @@ private:
 	template <const size_t SIZE>
 	void updateScreen(const utl::string<SIZE>& hint_text);
 
-	/** Safe copy function, ignores writes outside of line buffer TODO make it safe again
+	/** Safe copy function, ignores writes outside of line buffer
 	 *  @param dst The destination string
 	 *  @param src_begin Source begin iterator
 	 *  @param src_end Source end iterator
