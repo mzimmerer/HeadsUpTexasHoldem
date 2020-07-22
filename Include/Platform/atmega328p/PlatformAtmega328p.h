@@ -22,15 +22,9 @@
 #include <utl/fifo>
 #include <utl/string>
 
-#define F_CPU 16000000UL
 
+#if 0
 namespace Platform {
-
-    static constexpr double F_CPUD = static_cast<double>(F_CPU);
-
-    static constexpr double BAUD = 57600.0;
-
-    static constexpr uint16_t BAUD_VALUE = static_cast<uint16_t>(F_CPUD / (BAUD * 16.0f)) - 1;
 
     void initAtmega328p();
 
@@ -70,3 +64,23 @@ namespace Platform {
         return processRxBuffer();
     }
 }
+#endif
+
+
+
+namespace this_platform {
+
+    void init();
+
+    void cleanup();
+
+    uint32_t randomSeed();
+
+    void delaySeconds(uint16_t delay);
+
+    void delayMilliSeconds(uint16_t delay);
+
+    size_t writeBytes(const char* begin, const char* end);
+
+    size_t readBytes(char* begin, char* end);
+};

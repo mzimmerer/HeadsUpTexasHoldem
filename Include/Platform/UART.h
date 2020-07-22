@@ -18,22 +18,42 @@
 
 #pragma once
 
-#include <cstddef>
-#include <cstdint>
+#if 0
+#ifdef PLATFORM_ATMEGA328P
+#include "Platform/atmega328p/PlatformAtmega328p.h"
+#else
+#include "Platform/desktop/PlatformDesktop.h"
+#endif
 
-namespace this_platform {
+#include <utl/cstdint>
+#include <utl/string>
+
+class UART {
 
     void init();
 
-    void cleanup();
-
     uint32_t randomSeed();
-
-    void delaySeconds(uint16_t delay);
 
     void delayMilliSeconds(uint16_t delay);
 
-    size_t writeBytes(const char* begin, const char* end);
+    template <const size_t SIZE>
+    void writeString(const utl::string<SIZE>& str)
+    {
+#ifdef PLATFORM_ATMEGA328P
+        writeStringAtmega328p<SIZE>(str);
+#else
+        writeStringDesktop<SIZE>(str);
+#endif
+    }
 
-    size_t readBytes(char* begin, char* end);
-};
+    template <const size_t SIZE>
+    utl::string<SIZE> readString()
+    {
+#ifdef PLATFORM_ATMEGA328P
+        return readStringAtmega328p<SIZE>();
+#else
+        return readStringDesktop<SIZE>();
+#endif
+    }
+}
+#endif

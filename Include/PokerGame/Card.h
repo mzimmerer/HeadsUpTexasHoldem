@@ -17,6 +17,8 @@
  **/
 #pragma once
 
+#include <utl/cstdint>
+
  /**
   * Card class, this class implements a single card in a standard deck of 52 cards
   */
@@ -25,7 +27,7 @@ class Card
 public:
 	/** Enumeration of possible card values
 	 */
-	enum class Value : int
+	enum class Value : uint8_t
 	{
 		Two = 0,
 		Three = 1,
@@ -45,7 +47,7 @@ public:
 
 	/** Enumeration of possible card suits
 	 */
-	enum class Suit : int
+	enum class Suit : uint8_t
 	{
 		Spades = 0,
 		Clubs = 1,

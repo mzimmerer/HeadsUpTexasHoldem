@@ -23,27 +23,132 @@
 #include <iostream>
 #endif
 
+#include <utl/fifo>
 #include <utl/string>
 
 #include "PokerGame/ConsoleIO.h"
 #include "PokerGame/PokerGame.h"
 
+static utl::fifo<char, 8> local_fifo;
+
+static utl::fifo<utl::string<8>, 4> line_fifo;
+
+static int processLine(const utl::string<8>& line)
+{
+	line_fifo.push(line);
+	return line.size() + 1;
+}
+
+static int processLine(utl::fifo<char, 8>::iterator begin,
+	utl::fifo<char, 8>::iterator end)
+{
+	utl::string<32> line;
+	for (auto iter = begin; iter != end; ++iter)
+		line.push_back(*iter);
+	return processLine(line);
+}
+
+static utl::pair<bool, size_t> nextLineOffset(const utl::fifo<char, 8>& buffer)
+{
+	size_t i = 0;
+	for (; i < buffer.size(); ++i) {
+		if (buffer[i] == '\n' || buffer[i] == '\r') {
+			return utl::pair<bool, size_t>(true, i);
+		}
+	}
+	return utl::pair<bool, size_t>(false, i);
+}
+
+static void processRxBufferInternal(utl::fifo<char, 8>& buffer)
+{
+	// While there are possibly more lines to process
+	do {
+		auto result = nextLineOffset(buffer);
+
+		// If a line was found, process it and continue
+		if (result.first == true) {
+			int line_size = processLine(buffer.begin(), buffer.begin() + result.second);
+			buffer.pop(line_size);
+			continue;
+		}
+
+		// If there was no line and the buffer is full, pop 8 chars and return
+		if (result.second == 32) {
+			buffer.pop(8);
+			return;
+		}
+
+	} while (0);
+}
+
+static utl::string<8> readLine()
+{
+	//while (line_fifo.empty() == true) {
+
+#if 0
+	cli();
+	while (isr_fifo.empty() == false)
+	{
+		if (local_fifo.full() == true)
+			local_fifo.pop();
+		local_fifo.push(isr_fifo.pop());
+	}
+	sei();
+#endif
+
+	//	processRxBufferInternal(local_fifo);
+//	}
+
+
+	// While we have not received a full line
+	while (line_fifo.empty() == true) {
+
+		// Read bytes from the UART bus
+		utl::vector<char, 8> buffer;
+		buffer.reserve(8);
+		size_t bytes_read = this_platform::readBytes(buffer.begin(), buffer.end());
+		buffer.reserve(bytes_read);
+		if (bytes_read == 0)
+			continue;
+
+		// Copy them to the local_fifo
+		for (const auto c : buffer) {
+			if (local_fifo.full() == true)
+				local_fifo.pop();
+			local_fifo.push(c);
+		}
+
+		// Process the local_fifo, searching for a line
+		processRxBufferInternal(local_fifo);
+	}
+
+
+	return line_fifo.pop();
+}
+
+
+
+
+
+
+
+
 static void writeLineCallback(const utl::string<ConsoleIO::WIDTH>& line, void* opaque)
 {
 	// Write a line to the user's screen
-	Platform::writeString<ConsoleIO::WIDTH>(line);
+	this_platform::writeBytes(line.begin(), line.end());
 }
 
 static utl::string<ConsoleIO::MAX_USER_INPUT_LEN> readLineCallback(void* opaque)
 {
 	// Read a line from the user
-	return Platform::readString<ConsoleIO::WIDTH>();
+	return readLine();
 }
 
 int main()
 {
-	// Init the platform
-	Platform::init();
+	// Initialize the platform
+	this_platform::init();
 
 	// Run the program
 #ifdef EMBEDDED_BUILD
@@ -53,7 +158,7 @@ int main()
 	{
 #endif
 		// Update the random seed
-		uint32_t random_seed = Platform::randomSeed();
+		uint32_t random_seed = this_platform::randomSeed();
 
 		// Construct the console IO object
 		ConsoleIO console_io(&writeLineCallback, &readLineCallback);
@@ -68,7 +173,7 @@ int main()
 		// TODO Inform the user we are going to wait for 10 seconds...
 
 		// Wait 10 seconds
-		Platform::delayMilliSeconds(10000);
+		this_platform::delayMilliSeconds(10000);
 
 #ifndef EMBEDDED_BUILD
 	}
@@ -78,5 +183,10 @@ int main()
 	}
 #else
 	}
+#endif
+
+#ifndef EMBEDDED_BUILD
+	// Cleanup the platform
+	this_platform::cleanup();
 #endif
 }

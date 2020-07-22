@@ -16,31 +16,4 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-#include "Platform/Platform.h"
-
-void Platform::init()
-{
-#ifdef PLATFORM_ATMEGA328P
-    initAtmega328p();
-#else
-    initDesktop();
-#endif
-}
-
-uint32_t Platform::randomSeed()
-{
-#ifdef PLATFORM_ATMEGA328P
-    return randSeedAtmega328p();
-#else
-    return randSeedDesktop();
-#endif
-}
-
-void Platform::delayMilliSeconds(uint16_t delay)
-{
-#ifdef PLATFORM_ATMEGA328P
-    delayMilliSecondsAtmega328p(delay);
-#else
-    delayMilliSecondsDesktop(delay);
-#endif
-}
+// TODO DELETE

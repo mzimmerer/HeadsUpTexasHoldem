@@ -28,7 +28,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Source\Platform\desktop\PlatformDesktop.cpp" />
+    <ClCompile Include="..\Source\Platform\I2C.cpp" />
     <ClCompile Include="..\Source\Platform\Platform.cpp" />
+    <ClCompile Include="..\Source\Platform\SPI.cpp" />
+    <ClCompile Include="..\Source\Platform\UART.cpp" />
     <ClCompile Include="..\Source\PokerGame\Card.cpp" />
     <ClCompile Include="..\Source\PokerGame\ConsoleIO.cpp" />
     <ClCompile Include="..\Source\PokerGame\Deck.cpp" />
@@ -56,7 +59,10 @@
     <ClInclude Include="..\Include\Exception.h" />
     <ClInclude Include="..\Include\Platform\atmega328p\PlatformAtmega328p.h" />
     <ClInclude Include="..\Include\Platform\desktop\PlatformDesktop.h" />
+    <ClInclude Include="..\Include\Platform\I2C.h" />
     <ClInclude Include="..\Include\Platform\Platform.h" />
+    <ClInclude Include="..\Include\Platform\SPI.h" />
+    <ClInclude Include="..\Include\Platform\UART.h" />
     <ClInclude Include="..\Include\PokerGame\Card.h" />
     <ClInclude Include="..\Include\PokerGame\ConsoleIO.h" />
     <ClInclude Include="..\Include\PokerGame\Deck.h" />

@@ -31,6 +31,18 @@
     <Filter Include="Platform Source">
       <UniqueIdentifier>{efc4c0ea-34f5-45f8-8604-323824ffb2da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Platform Headers\Atmega328p">
+      <UniqueIdentifier>{d5cc5e7e-315d-4ac7-822e-1ca912b087ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform Headers\Desktop">
+      <UniqueIdentifier>{1799bb21-6acf-4538-b4cc-090c9f095b96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform Source\Atmega328p">
+      <UniqueIdentifier>{885da1e6-f789-4579-9294-cd4451c5b7fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform Source\Desktop">
+      <UniqueIdentifier>{62de1296-69be-47b2-bdf7-aaa118965fe9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\utl\new.cpp">
@@ -69,10 +81,19 @@
     <ClCompile Include="..\Source\Platform\Platform.cpp">
       <Filter>Platform Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Platform\atmega328p\PlatformAtmega328p.cpp">
+      <Filter>Platform Source\Atmega328p</Filter>
+    </ClCompile>
     <ClCompile Include="..\Source\Platform\desktop\PlatformDesktop.cpp">
+      <Filter>Platform Source\Desktop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\I2C.cpp">
       <Filter>Platform Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Platform\atmega328p\PlatformAtmega328p.cpp">
+    <ClCompile Include="..\Source\Platform\SPI.cpp">
+      <Filter>Platform Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\UART.cpp">
       <Filter>Platform Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -148,11 +169,20 @@
     <ClInclude Include="..\Include\Platform\Platform.h">
       <Filter>Platform Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Platform\desktop\PlatformDesktop.h">
+    <ClInclude Include="..\Include\Platform\I2C.h">
+      <Filter>Platform Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\SPI.h">
+      <Filter>Platform Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\UART.h">
       <Filter>Platform Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Platform\atmega328p\PlatformAtmega328p.h">
-      <Filter>Platform Headers</Filter>
+      <Filter>Platform Headers\Atmega328p</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\desktop\PlatformDesktop.h">
+      <Filter>Platform Headers\Desktop</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
