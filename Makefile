@@ -79,6 +79,10 @@ all: $(APPLICATION)
 .PHONY: tests
 tests: $(TEST_APPLICATION)
 
+.PHONY: flash
+flash: $(APPLICATION)
+	avrdude.exe -c arduino -p atmega328p -P COM4 -e -U flash:w:$<
+
 $(APPLICATION): $(APP_OBJ) $(MAIN_OBJ)
 	$(CXX) $^ -o $@ $(LDFLAGS)
 	avr-size $(APPLICATION)

@@ -72,6 +72,9 @@
     <ClCompile Include="..\Source\Platform\desktop\PlatformDesktop.cpp">
       <Filter>Platform Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Platform\atmega328p\PlatformAtmega328p.cpp">
+      <Filter>Platform Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Dependencies\utl\include\utl\algorithm">
