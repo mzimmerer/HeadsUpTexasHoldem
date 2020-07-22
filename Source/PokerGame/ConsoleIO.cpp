@@ -526,7 +526,7 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 	utl::string<WIDTH> line_buffer;
 
 	// Write a line of all '#' characters
-	line_buffer.reserve(WIDTH);
+	line_buffer.resize(WIDTH);
 	utl::fill(line_buffer.begin(), line_buffer.end(), '#');
 	this->write_line_callback(line_buffer, this->opaque);
 

@@ -105,9 +105,9 @@ static utl::string<8> readLine()
 
 		// Read bytes from the UART bus
 		utl::vector<char, 8> buffer;
-		buffer.reserve(8);
+		buffer.resize(8);
 		size_t bytes_read = this_platform::readBytes(buffer.begin(), buffer.end());
-		buffer.reserve(bytes_read);
+		buffer.resize(bytes_read);
 		if (bytes_read == 0)
 			continue;
 
