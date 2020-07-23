@@ -28,9 +28,7 @@
 class UART
 {
 public:
-	static constexpr double F_CPUD = static_cast<double>(F_CPU);
-
-	struct UARTOptions
+	struct UARTOptions // TODO a common header
 	{
 		uint32_t baudrate;
 	};
@@ -44,6 +42,8 @@ public:
 	size_t readBytes(char* begin, char* end);
 
 private:
+	static constexpr double F_CPUD = static_cast<double>(F_CPU);
+
 	utl::fifo<char, 8>* isr_fifo;
 };
 
