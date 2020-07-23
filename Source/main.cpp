@@ -131,9 +131,12 @@ static utl::string<ConsoleIO::MAX_USER_INPUT_LEN> readLineCallback(void* opaque)
 int main()
 {
 	// Initialize the platform
-	UART::UARTOptions uart_options{57600};
+	const UART::UARTOptions uart_options{57600};
 	UART uart0_local = this_platform.configureUART(0, uart_options);
 	uart0 = &uart0_local; // XXX
+
+	const SPI::SPIOptions spi_options({62500});
+	SPI spi0 = this_platform.configureSPI(0, spi_options);
 
 	// Run the program
 #ifdef EMBEDDED_BUILD

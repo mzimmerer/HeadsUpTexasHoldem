@@ -18,28 +18,28 @@
 
 #pragma once
 
+#include <avr/interrupt.h>
+#include <utl/cstddef>
 #include <utl/cstdint>
-#include <utl/fifo>
-#include <utl/string>
 
-#include "Platform/Atmega328p/Atmega328pUART.h"
-#include "Platform/Atmega328p/Atmega328pSPI.h"
+#define F_CPU 16000000UL // TODO singular define location
+// TODO preprocessor error if not defined
 
-class PlatformAtmega328p {
+class SPI
+{
 public:
-    PlatformAtmega328p();
+	struct SPIOptions // TODO a common header
+	{
+		uint32_t clock_frequency_hz;
+	};
 
-    ~PlatformAtmega328p();
+	// TODO move this to the private section and declare a friend for access
+	SPI(const SPIOptions& options);
 
-    uint32_t randomSeed();
+	SPI& operator=(const SPI& other);
 
-    void delaySeconds(uint16_t delay);
+	size_t transaction(const char* src_begin, const char* src_end,
+		                  char* dst_begin, char* dst_end);
 
-    void delayMilliSeconds(uint16_t delay);
-
-    UART configureUART(int index, const UART::UARTOptions& options);
-
-    SPI configureSPI(int index, const SPI::SPIOptions& options);
+private:
 };
-
-extern PlatformAtmega328p this_platform;

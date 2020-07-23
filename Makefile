@@ -58,7 +58,7 @@ ifeq ($(TARGET),atmega328p)
     CXXFLAGS += -mmcu=atmega328p
     CXXFLAGS += -ffunction-sections
     CXXFLAGS += -fdata-sections
-    CXXFLAGS += -DEMBEDDED_BUILD # TODO remove this
+    CXXFLAGS += -DEMBEDDED_BUILD
     CXXFLAGS += -DPLATFORM_ATMEGA328P
     LDFLAGS += -mmcu=atmega328p
     LDFLAGS += -ffunction-sections
@@ -67,6 +67,7 @@ ifeq ($(TARGET),atmega328p)
     APP_OBJ += $(OBJECTDIR)/Dependencies/utl/new.o
     APP_OBJ += $(OBJECTDIR)/Dependencies/utl/string.o
     APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pPlatform.o
+    APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pSPI.o
     APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pUART.o
     APP_SRC += $(SOURCEDIR)/Platform/Atmega328p/Atmega328pUART.cpp
     APPLICATION := $(APPLICATION).elf

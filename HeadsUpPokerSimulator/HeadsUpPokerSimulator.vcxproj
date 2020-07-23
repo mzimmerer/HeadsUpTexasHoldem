@@ -24,6 +24,7 @@
     <ClCompile Include="..\Source\Exception.cpp" />
     <ClCompile Include="..\Source\main.cpp" />
     <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pPlatform.cpp" />
+    <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pSPI.cpp" />
     <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pUART.cpp" />
     <ClCompile Include="..\Source\Platform\desktop\PlatformDesktop.cpp" />
     <ClCompile Include="..\Source\Platform\I2C.cpp" />
@@ -54,6 +55,7 @@
   <ItemGroup>
     <ClInclude Include="..\Include\Exception.h" />
     <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pPlatform.h" />
+    <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pSPI.h" />
     <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pUART.h" />
     <ClInclude Include="..\Include\Platform\desktop\PlatformDesktop.h" />
     <ClInclude Include="..\Include\Platform\I2C.h" />

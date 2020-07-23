@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-#include "Platform/UART.h"
+#include "Platform/Atmega328p/Atmega328pUART.h"
 
 #include <utl/cstdint>
 
@@ -33,6 +33,8 @@ ISR(USART_RX_vect)
 UART::UART(utl::fifo<char, 8>& isr_fifo_in, const UARTOptions& options_in) : isr_fifo(&isr_fifo_in)
 {
 	const uint16_t BAUD_VALUE = static_cast<uint16_t>(F_CPUD / (static_cast<double>(options_in.baudrate) * 16.0f)) - 1;
+
+	// TODO set DDR
 
 	UBRR0H = BAUD_VALUE >> 8;
 	UBRR0L = BAUD_VALUE;

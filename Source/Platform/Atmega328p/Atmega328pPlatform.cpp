@@ -85,3 +85,8 @@ UART PlatformAtmega328p::configureUART(int index, const UART::UARTOptions& optio
 {
 	return UART(isr_fifo, options_in);
 }
+
+SPI PlatformAtmega328p::configureSPI(int index, const SPI::SPIOptions& options_in)
+{
+	return SPI(options_in);
+}

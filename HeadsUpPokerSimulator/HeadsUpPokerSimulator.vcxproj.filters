@@ -93,6 +93,9 @@
     <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pUART.cpp">
       <Filter>Platform Source\Atmega328p</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pSPI.cpp">
+      <Filter>Platform Source\Atmega328p</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Dependencies\utl\include\utl\algorithm">
@@ -182,6 +185,9 @@
       <Filter>Platform Headers\Atmega328p</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pUART.h">
+      <Filter>Platform Headers\Atmega328p</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pSPI.h">
       <Filter>Platform Headers\Atmega328p</Filter>
     </ClInclude>
   </ItemGroup>

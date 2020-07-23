@@ -1,0 +1,79 @@
+/**
+ *  A simple interactive texas holdem poker program.
+ *  Copyright (C) 2020, Matt Zimmerer, mzimmere@gmail.com
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ **/
+
+#include "Platform/Atmega328p/Atmega328pSPI.h"
+
+#include <avr/io.h>
+
+SPI::SPI(const SPIOptions& options)
+{
+	DDRB |= (1 << PINB5) | (1 << PINB3) | (1 << PINB2);
+	DDRB &= ~(1 << PINB4);
+
+	PORTB |= (1 << PINB2);
+
+	//	SPCR |= (1 << SPIE); // Enable SPI interrupts
+//	SPCR &= ~(1 << DORD); // MSB
+	SPCR |= (1 << MSTR); // Master mode
+//	SPCR |= (1 << CPOL); // Clock idle high
+	//SPCR |= (1 << CPHA); // Sample leading edge
+	SPCR |= (1 << SPR0);
+	SPCR |= (1 << SPR1);
+	SPCR |= (1 << SPE); // Enable SPI
+
+	// F osc / 128 (62.5kHz)
+//	SPSR &= ~(1 << SPI2X);
+
+
+
+//	sei();
+}
+
+SPI& SPI::operator=(const SPI& other)
+{
+	return *this;
+}
+
+//Function to send and receive data for both master and slave
+unsigned char spi_tranceiver(unsigned char data)
+{
+	// Load data into the buffer
+	SPDR = data;
+
+	//Wait until transmission complete
+	while (!(SPSR & (1 << SPIF)));
+
+	// Return received data
+	return(SPDR);
+}
+
+size_t SPI::transaction(const char* src_begin, const char* src_end,
+	char* dst_begin, char* dst_end)
+{
+	PORTB &= ~(1 << PINB2);
+
+	while (src_begin != src_end) {
+		*dst_begin = spi_tranceiver(*src_begin);
+		++src_begin;
+		++dst_begin;
+	}
+
+	PORTB |= (1 << PINB2);
+
+	return 0;
+}
