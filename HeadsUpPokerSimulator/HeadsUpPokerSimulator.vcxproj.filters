@@ -78,12 +78,6 @@
     <ClCompile Include="..\Source\PokerGame\RankedHand.cpp">
       <Filter>PokerGame Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Platform\Platform.cpp">
-      <Filter>Platform Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Platform\atmega328p\PlatformAtmega328p.cpp">
-      <Filter>Platform Source\Atmega328p</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Platform\desktop\PlatformDesktop.cpp">
       <Filter>Platform Source\Desktop</Filter>
     </ClCompile>
@@ -93,8 +87,11 @@
     <ClCompile Include="..\Source\Platform\SPI.cpp">
       <Filter>Platform Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Platform\UART.cpp">
-      <Filter>Platform Source</Filter>
+    <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pPlatform.cpp">
+      <Filter>Platform Source\Atmega328p</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pUART.cpp">
+      <Filter>Platform Source\Atmega328p</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -178,11 +175,14 @@
     <ClInclude Include="..\Include\Platform\UART.h">
       <Filter>Platform Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Platform\atmega328p\PlatformAtmega328p.h">
-      <Filter>Platform Headers\Atmega328p</Filter>
-    </ClInclude>
     <ClInclude Include="..\Include\Platform\desktop\PlatformDesktop.h">
       <Filter>Platform Headers\Desktop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pPlatform.h">
+      <Filter>Platform Headers\Atmega328p</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pUART.h">
+      <Filter>Platform Headers\Atmega328p</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -23,15 +23,11 @@
     <ClCompile Include="..\Dependencies\utl\string.cpp" />
     <ClCompile Include="..\Source\Exception.cpp" />
     <ClCompile Include="..\Source\main.cpp" />
-    <ClCompile Include="..\Source\Platform\atmega328p\PlatformAtmega328p.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pPlatform.cpp" />
+    <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pUART.cpp" />
     <ClCompile Include="..\Source\Platform\desktop\PlatformDesktop.cpp" />
     <ClCompile Include="..\Source\Platform\I2C.cpp" />
-    <ClCompile Include="..\Source\Platform\Platform.cpp" />
     <ClCompile Include="..\Source\Platform\SPI.cpp" />
-    <ClCompile Include="..\Source\Platform\UART.cpp" />
     <ClCompile Include="..\Source\PokerGame\Card.cpp" />
     <ClCompile Include="..\Source\PokerGame\ConsoleIO.cpp" />
     <ClCompile Include="..\Source\PokerGame\Deck.cpp" />
@@ -57,7 +53,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Exception.h" />
-    <ClInclude Include="..\Include\Platform\atmega328p\PlatformAtmega328p.h" />
+    <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pPlatform.h" />
+    <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pUART.h" />
     <ClInclude Include="..\Include\Platform\desktop\PlatformDesktop.h" />
     <ClInclude Include="..\Include\Platform\I2C.h" />
     <ClInclude Include="..\Include\Platform\Platform.h" />

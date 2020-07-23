@@ -33,6 +33,7 @@ public:
 		uint32_t baudrate;
 	};
 
+	// TODO move this to the private section and declare a friend for access
 	UART(utl::fifo<char, 8>& isr_fifo_in, const UARTOptions& options);
 
 	UART& operator=(const UART& other);

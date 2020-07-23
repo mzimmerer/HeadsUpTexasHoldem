@@ -63,7 +63,7 @@ static int readChar()
 }
 
 static void writeChar(char chr)
-{
+{ 
 	while (!(UCSR0A & (1 << UDRE0)))
 		;
 
