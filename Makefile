@@ -31,7 +31,6 @@ MAIN_SRC := $(SOURCEDIR)/main.cpp
 MAIN_OBJ := $(MAIN_SRC:%.cpp=$(OBJECTDIR)/%.o) 
 
 APP_SRC := $(SOURCEDIR)/Exception.cpp
-APP_SRC += $(SOURCEDIR)/Platform/Platform.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/Card.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/ConsoleIO.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/Deck.cpp
@@ -39,7 +38,9 @@ APP_SRC += $(SOURCEDIR)/Pokergame/Player.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/PokerGame.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/Random.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/RankedHand.cpp
-APP_OBJ := $(APP_SRC:%.cpp=$(OBJECTDIR)/%.o) 
+
+
+APP_OBJ := $(APP_SRC:%.cpp=$(OBJECTDIR)/%.o)  # TODO
 
 TEST_SRC := $(shell find $(TESTDIR) -name '*.cpp')
 TEST_OBJ := $(TEST_SRC:%.cpp=$(TESTOBJECTDIR)/%.o) 
@@ -65,7 +66,9 @@ ifeq ($(TARGET),atmega328p)
     LDFLAGS += -Wl,-Map,texas_holdem.map
     APP_OBJ += $(OBJECTDIR)/Dependencies/utl/new.o
     APP_OBJ += $(OBJECTDIR)/Dependencies/utl/string.o
-    APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/PlatformAtmega328p.o
+    APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pPlatform.o
+    APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pUART.o
+    APP_SRC += $(SOURCEDIR)/Platform/Atmega328p/Atmega328pUART.cpp
     APPLICATION := $(APPLICATION).elf
 else
     CXX := g++

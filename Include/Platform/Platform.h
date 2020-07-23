@@ -19,7 +19,7 @@
 #pragma once
 
 #ifdef PLATFORM_ATMEGA328P
-#include "Platform/Atmega328p/PlatformAtmega328p.h"
+#include "Platform/Atmega328p/Atmega328pPlatform.h"
 #else
 #include "Platform/Desktop/PlatformDesktop.h"
 #endif

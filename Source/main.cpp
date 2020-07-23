@@ -81,6 +81,10 @@ static void processRxBuffer(utl::fifo<char, 8>& buffer)
 	} while (0);
 }
 
+// XXX
+static UART* uart0 = nullptr;
+// XXX
+
 static utl::string<8> readLine()
 {
 	// While we have not received a full line
@@ -89,7 +93,7 @@ static utl::string<8> readLine()
 		// Read bytes from the UART bus
 		utl::vector<char, 8> buffer;
 		buffer.resize(8);
-		size_t bytes_read = this_platform::readBytes(buffer.begin(), buffer.end());
+		size_t bytes_read = uart0->readBytes(buffer.begin(), buffer.end());
 		buffer.resize(bytes_read);
 		if (bytes_read == 0)
 			continue;
@@ -111,11 +115,11 @@ static utl::string<8> readLine()
 static void writeLineCallback(const utl::string<ConsoleIO::WIDTH>& line, void* opaque)
 {
 	// Write a line to the user's screen
-	this_platform::writeBytes(line.begin(), line.end());
+	uart0->writeBytes(line.begin(), line.end());
 
 	// Write "\r\n" tp the user's screen
 	utl::string<2> end_line(utl::const_string<2>(PSTR("\r\n")));
-	this_platform::writeBytes(end_line.begin(), end_line.end());
+	uart0->writeBytes(end_line.begin(), end_line.end());
 }
 
 static utl::string<ConsoleIO::MAX_USER_INPUT_LEN> readLineCallback(void* opaque)
@@ -127,7 +131,9 @@ static utl::string<ConsoleIO::MAX_USER_INPUT_LEN> readLineCallback(void* opaque)
 int main()
 {
 	// Initialize the platform
-	this_platform::init();
+	UART::UARTOptions uart_options{57600};
+	UART uart0_local = this_platform.configureUART(0, uart_options);
+	uart0 = &uart0_local; // XXX
 
 	// Run the program
 #ifdef EMBEDDED_BUILD
@@ -137,7 +143,7 @@ int main()
 	{
 #endif
 		// Update the random seed
-		uint32_t random_seed = this_platform::randomSeed();
+		uint32_t random_seed = this_platform.randomSeed();
 
 		// Construct the console IO object
 		ConsoleIO console_io(&writeLineCallback, &readLineCallback);
@@ -152,7 +158,7 @@ int main()
 		// TODO Inform the user we are going to wait for 10 seconds...
 
 		// Wait 10 seconds
-		this_platform::delayMilliSeconds(10000);
+		this_platform.delayMilliSeconds(10000);
 
 #ifndef EMBEDDED_BUILD
 	}
@@ -166,6 +172,6 @@ int main()
 
 #ifndef EMBEDDED_BUILD
 	// Cleanup the platform
-	this_platform::cleanup();
+	//this_platform::cleanup();
 #endif
 }
