@@ -59,7 +59,7 @@ static utl::pair<bool, size_t> nextLineOffset(const utl::fifo<char, 8>& buffer)
 	return utl::pair<bool, size_t>(false, i);
 }
 
-static void processRxBufferInternal(utl::fifo<char, 8>& buffer)
+static void processRxBuffer(utl::fifo<char, 8>& buffer)
 {
 	// While there are possibly more lines to process
 	do {
@@ -83,23 +83,6 @@ static void processRxBufferInternal(utl::fifo<char, 8>& buffer)
 
 static utl::string<8> readLine()
 {
-	//while (line_fifo.empty() == true) {
-
-#if 0
-	cli();
-	while (isr_fifo.empty() == false)
-	{
-		if (local_fifo.full() == true)
-			local_fifo.pop();
-		local_fifo.push(isr_fifo.pop());
-	}
-	sei();
-#endif
-
-	//	processRxBufferInternal(local_fifo);
-//	}
-
-
 	// While we have not received a full line
 	while (line_fifo.empty() == true) {
 
@@ -119,24 +102,20 @@ static utl::string<8> readLine()
 		}
 
 		// Process the local_fifo, searching for a line
-		processRxBufferInternal(local_fifo);
+		processRxBuffer(local_fifo);
 	}
-
 
 	return line_fifo.pop();
 }
-
-
-
-
-
-
-
 
 static void writeLineCallback(const utl::string<ConsoleIO::WIDTH>& line, void* opaque)
 {
 	// Write a line to the user's screen
 	this_platform::writeBytes(line.begin(), line.end());
+
+	// Write "\r\n" tp the user's screen
+	utl::string<2> end_line(utl::const_string<2>(PSTR("\r\n")));
+	this_platform::writeBytes(end_line.begin(), end_line.end());
 }
 
 static utl::string<ConsoleIO::MAX_USER_INPUT_LEN> readLineCallback(void* opaque)
