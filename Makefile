@@ -70,8 +70,10 @@ ifeq ($(TARGET),atmega328p)
 else
     CXX := g++
     CXXFLAGS += -DPLATFORM_DESKTOP
-    APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/PlatformDesktop.o
+    APP_OBJ += $(OBJECTDIR)/Source/Platform/Desktop/PlatformDesktop.o
 endif
+
+DEVICE ?= /dev/ttyS0
 
 .PHONY: all
 all: $(APPLICATION)
@@ -81,7 +83,7 @@ tests: $(TEST_APPLICATION)
 
 .PHONY: flash
 flash: $(APPLICATION)
-	avrdude.exe -c arduino -p atmega328p -P COM4 -e -U flash:w:$<
+	avrdude.exe -c arduino -p atmega328p -P $(DEVICE) -e -U flash:w:$<
 
 $(APPLICATION): $(APP_OBJ) $(MAIN_OBJ)
 	$(CXX) $^ -o $@ $(LDFLAGS)
