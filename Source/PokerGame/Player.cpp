@@ -17,11 +17,16 @@
  **/
 #include "PokerGame/Player.h"
 
-Player::Player(Random& rng_in, utl::string<MAX_NAME_SIZE> name_in, int starting_stack_in) : rng(rng_in), name(name_in), stack(starting_stack_in)
+Player::Player(Random& rng_in, int player_id_in, utl::string<MAX_NAME_SIZE> name_in, int starting_stack_in) : rng(rng_in), player_id(player_id_in), name(name_in), stack(starting_stack_in)
 {
 }
 
-const utl::string<Player::MAX_NAME_SIZE>& Player::getName() const
+int Player::getPlayerID() const
+{
+	return this->player_id;
+}
+
+const utl::string<MAX_NAME_SIZE>& Player::getName() const
 {
 	return this->name;
 }
@@ -124,7 +129,7 @@ utl::pair<Player::PlayerAction, int> Player::decision(const PokerGameState& stat
 	if (state.board.size() > 0) {
 
 		// Compute a value for the hole cards and the board
-		RankedHand ranked_hand(this->hand, state.board);
+		RankedHand ranked_hand(this->player_id, this->hand, state.board);
 		RankedHand::Ranking ranking = ranked_hand.getRanking();
 		int hand_n_board_value = normalizeValue<MIN_HAND_N_BOARD_VALUE, MAX_HAND_N_BOARD_VALUE, 0, RANDOM_CHOICE_MAX_VALUE>(static_cast<int>(ranking));
 
@@ -154,12 +159,12 @@ utl::pair<Player::PlayerAction, int> Player::decision(const PokerGameState& stat
 			return utl::pair<Player::PlayerAction, int>(static_cast<PlayerAction>(Player::PlayerAction::Fold), 0);
 
 		// Check or bet
-		return this->checkOrBet(state.big_blind, decision_value, state.player_stack);
+		return this->checkOrBet(state.big_blind, decision_value, state.player_states[0].stack);
 	}
 	else {
 
 		// Check or bet
-		return this->checkOrBet(state.big_blind, decision_value, state.player_stack);
+		return this->checkOrBet(state.big_blind, decision_value, state.player_states[0].stack);
 	}
 }
 

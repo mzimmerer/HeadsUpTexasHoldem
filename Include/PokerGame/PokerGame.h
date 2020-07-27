@@ -40,7 +40,7 @@ public:
 
 	/// Player action callback definition
 	using PlayerActionCallback =
-		void(*)(const utl::string<Player::MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet, const PokerGameState& state, void* opaque);
+		void(*)(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet, const PokerGameState& state, void* opaque);
 
 	/// Subround definitions
 	enum class SubRound : int
@@ -55,11 +55,11 @@ public:
 	using SubRoundChangeCallback = void(*)(SubRound new_sub_round, const PokerGameState& state, void* opaque);
 
 	/// Round end callback definition
-	using RoundEndCallback = bool(*)(bool draw, const utl::string<Player::MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking,
+	using RoundEndCallback = bool(*)(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking,
 		const PokerGameState& state, void* opaque);
 
 	/// Game end callback definition
-	using GameEndCallback = void(*)(const utl::string<Player::MAX_NAME_SIZE>& winner, void* opaque);
+	using GameEndCallback = void(*)(const utl::string<MAX_NAME_SIZE>& winner, void* opaque);
 
 	/** Poker game constructor
 	 *  @param random_seed A random seed to used for random number generation
@@ -80,7 +80,7 @@ public:
 	 */
 	void play();
 
-private:
+protected:
 	/// True if the game should continue running
 	bool run{ true };
 
@@ -130,7 +130,7 @@ private:
 	int current_bet{ 0 };
 
 	/// The player table
-	utl::vector<Player, 2> players;
+	utl::vector<Player, 6> players;
 
 	/** Play a round of texas holdem poker!
 	 *  @return True if the program should continue, false otherwise
@@ -189,7 +189,7 @@ private:
 	 *  @param action The action the player performed
 	 *  @param bet The bet, if any
 	 */
-	void callbackWithPlayerAction(const utl::string<Player::MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet);
+	void callbackWithPlayerAction(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet);
 
 	/** Callback to the user with a subround change notification
 	 *  @param new_subround The new subround
@@ -202,5 +202,5 @@ private:
 	 *  @param ranking The ranking of the winning hand
 	 *  @param True if the round should continue, false otherwise
 	 */
-	bool callbackWithRoundEnd(bool draw, const utl::string<Player::MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking);
+	bool callbackWithRoundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking);
 };

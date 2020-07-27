@@ -27,6 +27,13 @@
 #include "Player.h"
 #include "PokerGame.h"
 
+// TODO handle 6 players
+// TODO handle player names
+// TODO handle all computer games
+
+// TODO draw dealer button
+// TODO draw 6 players
+
  /** Console IO class
   */
 class ConsoleIO
@@ -69,7 +76,7 @@ public:
 	 *  @param state The current game state
 	 *  @param opaque A user provided pointer to a specific ConsoleIO instance
 	 */
-	static void playerAction(const utl::string<Player::MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet,
+	static void playerAction(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet,
 		const PokerGameState& state, void* opaque);
 
 	/** Inform the user about a sub round change
@@ -87,13 +94,13 @@ public:
 	 *  @param True if the game should continue, false otherwise
 	 *  @param opaque A user provided pointer to a specific ConsoleIO instance
 	 */
-	static bool roundEnd(bool draw, const utl::string<Player::MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking, const PokerGameState& state, void* opaque);
+	static bool roundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking, const PokerGameState& state, void* opaque);
 
 	/** Inform the user about the game ending
 	 *  @param winner The winner of the game
 	 *  @param opaque A user provided pointer to a specific ConsoleIO instance
 	 */
-	static void gameEnd(const utl::string<Player::MAX_NAME_SIZE>& winner, void* opaque);
+	static void gameEnd(const utl::string<MAX_NAME_SIZE>& winner, void* opaque);
 
 private:
 
@@ -139,7 +146,7 @@ private:
 	 *  @param bet The bet, if any
 	 *  @return The string
 	 */
-	utl::string<MAX_EVENT_STRING_LEN> actionToString(const utl::string<Player::MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet);
+	utl::string<MAX_EVENT_STRING_LEN> actionToString(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet);
 
 	/** Convert a subround change event to string
 	 *  @param new_sub_round The new sub round
@@ -160,7 +167,7 @@ private:
 	 *  @param The pot that was won
 	 *  @return The string
 	 */
-	utl::string<MAX_EVENT_STRING_LEN> roundEndToString(bool draw, const utl::string<Player::MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking, int pot);
+	utl::string<MAX_EVENT_STRING_LEN> roundEndToString(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking, int pot);
 
 	/** Print a suit as a string
 	 *  @param suit The suit
@@ -188,6 +195,13 @@ private:
 	 */
 	void printHand(utl::string<WIDTH>& dst, size_t x, const utl::array<Card, 2>& hand);
 
+	/** Print a name to the screen buffer
+	 *  @param dst The destination string
+	 *  @param x The x coordinate to draw to
+	 *  @param name The name
+	 */
+	void printName(utl::string<WIDTH>& dst, size_t x, const utl::string<MAX_NAME_SIZE>& name);
+
 	/** Print a chip stack count to the screen buffer
 	 *  @param dst The destination string
      *  @param x The x coordinate to draw to
@@ -212,7 +226,7 @@ private:
 	 *  @param x The x coordinate to draw to
 	 *  @param i The index into the event queue to draw
 	 */
-	void printEventText(utl::string<WIDTH>& dst, size_t x, utl::list<utl::string<MAX_EVENT_STRING_LEN>, MAX_EVENT_STRING_QUEUE_LEN>::iterator& iter);
+//	void printEventText(utl::string<WIDTH>& dst, size_t x, utl::list<utl::string<MAX_EVENT_STRING_LEN>, MAX_EVENT_STRING_QUEUE_LEN>::iterator& iter);
 
 	/** Update the screen by drawing the current screen buffer
 	 *  @tparam SIZE The maximum size of the hint_text string
@@ -228,4 +242,10 @@ private:
 	 *  @param x The destination x coordinate
 	 */
 	void lineBufferCopy(utl::string<WIDTH>& dst, utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_begin, const utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_end, size_t x);
+
+// XXX
+	utl::string<MAX_EVENT_STRING_LEN> increment(utl::list<utl::string<MAX_EVENT_STRING_LEN>, MAX_EVENT_STRING_QUEUE_LEN>::iterator& iter);
+
+	void TEMP(utl::string<WIDTH>& line_buffer, const utl::string<MAX_EVENT_STRING_LEN>& event_string);
+	// XXX
 };

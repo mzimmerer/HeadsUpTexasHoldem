@@ -20,7 +20,7 @@
 
 #include <utl/cstdint>
 
-utl::fifo<char, 8> isr_fifo;
+utl::fifo<char, 8> isr_fifo; // TODO volatile
 
 ISR(USART_RX_vect)
 {

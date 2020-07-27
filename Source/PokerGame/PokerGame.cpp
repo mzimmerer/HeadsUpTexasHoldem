@@ -17,6 +17,13 @@
  **/
 #include "PokerGame/PokerGame.h"
 
+ // TODO royal flush ranked hand detection broken
+ // TODO need to implement side pots
+ // TODO 6 players not yet working
+ // TODO Need a way to allow all players to be computers
+
+ // TODO need a method to measure hand strengths, make a utility that does this
+
 #include "Exception.h"
 
 PokerGame::PokerGame(uint32_t random_seed_in, int small_blind_in, int starting_stack_size_in, DecisionCallback decision_callback_in,
@@ -32,14 +39,18 @@ PokerGame::PokerGame(uint32_t random_seed_in, int small_blind_in, int starting_s
 	deck(rng)
 {
 	// Construct players
-	this->players.emplace_back(this->rng, utl::const_string<32>(PSTR("You")), starting_stack_size_in);
-	this->players.emplace_back(this->rng, utl::const_string<32>(PSTR("Computer")), starting_stack_size_in);
+	this->players.emplace_back(this->rng, 0, utl::const_string<32>(PSTR("You")), starting_stack_size_in);
+	this->players.emplace_back(this->rng, 1, utl::const_string<32>(PSTR("Ron")), starting_stack_size_in);
+	this->players.emplace_back(this->rng, 2, utl::const_string<32>(PSTR("Jeff")), starting_stack_size_in);
+	this->players.emplace_back(this->rng, 3, utl::const_string<32>(PSTR("Bill")), starting_stack_size_in);
+	this->players.emplace_back(this->rng, 4, utl::const_string<32>(PSTR("Bob")), starting_stack_size_in);
+	this->players.emplace_back(this->rng, 5, utl::const_string<32>(PSTR("Jack")), starting_stack_size_in);
 }
 
 void PokerGame::play()
 {
-	// Determine dealer. 0 is player, 1 is AI
-	this->current_dealer = this->rng.getRandomNumberInRange(0, 1);
+	// Determine dealer
+	this->current_dealer = this->rng.getRandomNumberInRange(0, 5);
 
 	// While we should continue to play rounds
 	while (this->run == true)
@@ -58,15 +69,21 @@ bool PokerGame::playRound()
 	// Clear pot
 	this->current_pot = 0;
 
-	// If either player has zero chips at the start of the round, they lose!
-	if (this->players[0].chipCount() == 0)
-	{
-		this->game_end_callback(this->players[1].getName(), this->opaque);
-		return false;
+	// Count the number of players remaining
+	int players_remaining = 0;
+	utl::string<MAX_NAME_SIZE> winner;
+	for (const auto& player : this->players) {
+		if (player.chipCount() > 0) {
+			++players_remaining;
+			if (players_remaining == 1)
+				winner = player.getName();
+		}
 	}
-	if (this->players[1].chipCount() == 0)
+
+	// If there is only one player remaining, that player wins!
+	if (players_remaining == 1)
 	{
-		this->game_end_callback(this->players[0].getName(), this->opaque);
+		this->game_end_callback(winner, this->opaque);
 		return false;
 	}
 
@@ -132,6 +149,7 @@ bool PokerGame::playRound()
 		return this->run;
 
 	// Determine winner and adjust chip counts
+#if 0
 	bool draw = false;
 	utl::string<10> winner;
 	RankedHand::Ranking ranking;
@@ -164,6 +182,44 @@ bool PokerGame::playRound()
 			this->players[0].adjustChips(this->current_pot);
 		}
 	}
+#endif
+
+	int draw = false; // XXX
+	RankedHand::Ranking ranking = RankedHand::Ranking::Flush; // XXX
+
+	// Rank each player's hand
+	utl::list<RankedHand, 6> ranked_hands;
+	for (const auto& player : this->players)
+	{
+		// Don't rank hands that have folded
+		if (player.hasFolded() == true)
+			continue;
+
+		// Construct the ranked hand at the back of the list
+		ranked_hands.emplace_back(player.getPlayerID(), player.getHand(), this->board);
+	}
+
+	// If there was only 1 ranked hand, the remaining player wins
+	if (ranked_hands.size() == 1)
+	{
+		draw = false;
+		winner = this->players[ranked_hands.begin()->getPlayerID()].getName();
+		ranking = ranked_hands.begin()->getRanking();
+	}
+	else {
+
+		// There is more than one player
+	//	int winning_player_id;
+//		for (const auto& ranked_hand : ranked_hands)
+	//	{
+		//}
+
+		// XXX
+		draw = false;
+		winner = this->players[ranked_hands.begin()->getPlayerID()].getName();
+		ranking = ranked_hands.begin()->getRanking();
+		// XXX
+	}
 
 	// Callback with the result
 	return this->callbackWithRoundEnd(draw, winner, ranking);
@@ -171,31 +227,20 @@ bool PokerGame::playRound()
 
 void PokerGame::dealCards()
 {
-	// Deal a card to each player
-	int draw_target = (this->current_dealer + 1) % 2;
-	for (size_t i = 0; i < this->players.size(); i++)
-	{
-		// Give the target the card
-		this->players[draw_target].setCard(0, this->deck.dealCard());
+	// Deal two cards to each player starting with the player left of the dealer
+	for (size_t i = 0; i < 2; ++i) {
 
-		// Determine who will receive the new card
-		draw_target = (draw_target + 1) % 2;
+		// Deal a single card to each player starting left of the dealer
+		int draw_target = (this->current_dealer + 1) % 2;
+		for (size_t i = 0; i < this->players.size(); i++)
+		{
+			// Give the player the card
+			this->players[draw_target].setCard(0, this->deck.dealCard());
+
+			// Determine who will receive the next card
+			draw_target = (draw_target + 1) % 2;
+		}
 	}
-
-	// Deal a card to each player
-	draw_target = (this->current_dealer + 1) % 2;
-	for (size_t i = 0; i < this->players.size(); i++)
-	{
-		// Give the target the card
-		this->players[draw_target].setCard(1, this->deck.dealCard());
-
-		// Determine who will receive the new card
-		draw_target = (draw_target + 1) % 2;
-	}
-
-	// Clear folded indicators
-	for (auto& player : this->players)
-		player.clearFolded();
 }
 
 void PokerGame::checkOrCall(int player, const utl::pair<Player::PlayerAction, int>& action)
@@ -281,7 +326,7 @@ void PokerGame::fold(int player, const utl::pair<Player::PlayerAction, int>& act
 	// Call action callback
 	if (action.first == Player::PlayerAction::CheckOrCall)
 		this->callbackWithPlayerAction(this->players[player].getName(), Player::PlayerAction::CheckOrCall,
-			this->current_bet - this->players[0].getPotInvestment());
+			this->current_bet - this->players[player].getPotInvestment());
 	else
 		this->callbackWithPlayerAction(this->players[player].getName(), action.first, action.second);
 }
@@ -291,17 +336,17 @@ bool PokerGame::bettingRoundWrapper(int player, int players_acted)
 	// Call betting round
 	if (false == this->bettingRound(player, players_acted))
 	{
-		// If the player quit, callback with game end and return false
-		if (this->run == false) {
-			this->game_end_callback(this->players[1].getName(), this->opaque);
+		// If the player quit, return false
+		if (this->run == false)
 			return false;
-		}
 
+#if 0
 		// Callback to indicate round end considering one of the players has folded
 		if (this->players[0].hasFolded() == true)
 			this->run = this->callbackWithRoundEnd(false, this->players[1].getName(), RankedHand::Ranking::Unranked);
 		else
 			this->run = this->callbackWithRoundEnd(false, this->players[0].getName(), RankedHand::Ranking::Unranked);
+#endif
 
 		return false;
 	}
@@ -314,20 +359,27 @@ bool PokerGame::bettingRound(int starting_player, int players_acted)
 	// Initialize local variables
 	int deciding_player = starting_player;
 
+	// Track the number of players that are still in
+	int players_in = this->players.size();
+
 	// While not all players have made a decision
 	while (static_cast<size_t>(players_acted++) < this->players.size())
 	{
 		// Players that have folded may no longer make decisions
-		if (this->players[deciding_player].hasFolded() == true)
+		if (this->players[deciding_player].hasFolded() == true) {
+			--players_in;
 			continue;
+		}
 
 		// Players that have no chips may no longer make decisions
-		if (this->players[deciding_player].chipCount() == 0)
+		if (this->players[deciding_player].chipCount() == 0) {
+			--players_in;
 			continue;
+		}
 
-		// If the opponent has no chips and there is no bet, you may not make a decision (round over)
-		if (this->players[(deciding_player + 1) % 2].chipCount() == 0 && this->current_bet - this->players[(deciding_player + 1) % 2].getPotInvestment())
-			break;
+		// If there is only one player remaining, end the round
+		if (players_in == 1)
+			return false;
 
 		// Let either players or AI decide their actions
 		utl::pair<Player::PlayerAction, int> action(Player::PlayerAction::CheckOrCall, 0);
@@ -366,7 +418,7 @@ bool PokerGame::bettingRound(int starting_player, int players_acted)
 			// Fold
 		case Player::PlayerAction::Fold:
 			this->fold(deciding_player, action);
-			return false;
+			break;
 
 			// Quit
 		case Player::PlayerAction::Quit:
@@ -377,9 +429,10 @@ bool PokerGame::bettingRound(int starting_player, int players_acted)
 
 			// Invalid actions
 		default:
-
 			Exception::EXCEPTION(utl::const_string<32>(PSTR("Invalid action")));
 		}
+
+		// XXX
 
 		// Increment deciding player
 		deciding_player = (deciding_player + 1) % 2;
@@ -388,32 +441,48 @@ bool PokerGame::bettingRound(int starting_player, int players_acted)
 	return true;
 }
 
-PokerGameState PokerGame::constructState(bool opponent_hand_visible, int player)
+PokerGameState PokerGame::constructState(bool opponent_hands_visible, int player)
 {
-	PokerGameState state{};
+	PokerGameState state;
 
 	// Copy big blind and table chip count
 	state.big_blind = this->small_blind * 2;
 	state.table_chip_count = this->starting_stack_size * 2;
 
-	// Get this players hand
-	state.player_hand = this->players[player].getHand();
-
-	// Get the other players hand, providing 'Unrevealed' cards if their hand is not visible
-	if (opponent_hand_visible == true)
-		state.opponent_hand = this->players[(player + 1) % 2].getHand();
-	else {
-		utl::array<Card, 2> opponent_hand;
-		opponent_hand[0] = Card(Card::Value::Unrevealed, Card::Suit::Unrevealed);
-		opponent_hand[1] = Card(Card::Value::Unrevealed, Card::Suit::Unrevealed);
-		state.opponent_hand = opponent_hand;
-	}
-
-	state.board = this->board;
+	// Current pot and bet
 	state.current_pot = this->current_pot;
 	state.current_bet = this->current_bet - this->players[player].getPotInvestment();
-	state.player_stack = this->players[player].chipCount();
-	state.opponent_stack = this->players[(player + 1) % 2].chipCount();
+
+	// Current player
+	state.current_player = player;
+
+	// Copy the board
+	state.board = this->board;
+
+	// Resize player state vector
+	state.player_states.resize(6);
+
+	// Copy player states
+	for (size_t i = 0; i < 6; ++i) {
+
+
+		// Name
+		state.player_states[i].name = this->players[i].getName();
+
+		// Hand
+		if (opponent_hands_visible == false && i != static_cast<size_t>(player)) {
+			utl::array<Card, 2> opponent_hand;
+			opponent_hand[0] = Card(Card::Value::Unrevealed, Card::Suit::Unrevealed);
+			opponent_hand[1] = Card(Card::Value::Unrevealed, Card::Suit::Unrevealed);
+			state.player_states[i].hand = opponent_hand;
+		}
+		else {
+			state.player_states[i].hand = this->players[i].getHand();
+		}
+
+		// Chip count
+		state.player_states[i].stack = this->players[i].chipCount();
+	}
 
 	return state;
 }
@@ -427,7 +496,7 @@ utl::pair<Player::PlayerAction, int> PokerGame::callbackWithDecision()
 	return this->decision_callback(state, this->opaque);
 }
 
-void PokerGame::callbackWithPlayerAction(const utl::string<Player::MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet)
+void PokerGame::callbackWithPlayerAction(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet)
 {
 	// Construct state
 	PokerGameState state = this->constructState(false, 0);
@@ -445,7 +514,7 @@ void PokerGame::callbackWithSubroundChange(SubRound new_subround)
 	this->subround_change_callback(new_subround, state, this->opaque);
 }
 
-bool PokerGame::callbackWithRoundEnd(bool draw, const utl::string<Player::MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking)
+bool PokerGame::callbackWithRoundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking)
 {
 	// Construct state
 	PokerGameState state = this->constructState(true, 0);

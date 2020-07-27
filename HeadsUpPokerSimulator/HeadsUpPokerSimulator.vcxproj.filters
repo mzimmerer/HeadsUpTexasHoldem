@@ -78,15 +78,6 @@
     <ClCompile Include="..\Source\PokerGame\RankedHand.cpp">
       <Filter>PokerGame Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Platform\desktop\PlatformDesktop.cpp">
-      <Filter>Platform Source\Desktop</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Platform\I2C.cpp">
-      <Filter>Platform Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Platform\SPI.cpp">
-      <Filter>Platform Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pPlatform.cpp">
       <Filter>Platform Source\Atmega328p</Filter>
     </ClCompile>
@@ -95,6 +86,15 @@
     </ClCompile>
     <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pSPI.cpp">
       <Filter>Platform Source\Atmega328p</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\Desktop\DesktopSPI.cpp">
+      <Filter>Platform Source\Desktop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\Desktop\DesktopUART.cpp">
+      <Filter>Platform Source\Desktop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\Desktop\DesktopPlatform.cpp">
+      <Filter>Platform Source\Desktop</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -178,9 +178,6 @@
     <ClInclude Include="..\Include\Platform\UART.h">
       <Filter>Platform Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Platform\desktop\PlatformDesktop.h">
-      <Filter>Platform Headers\Desktop</Filter>
-    </ClInclude>
     <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pPlatform.h">
       <Filter>Platform Headers\Atmega328p</Filter>
     </ClInclude>
@@ -189,6 +186,15 @@
     </ClInclude>
     <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pSPI.h">
       <Filter>Platform Headers\Atmega328p</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\Desktop\DesktopSPI.h">
+      <Filter>Platform Headers\Desktop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\Desktop\DesktopUART.h">
+      <Filter>Platform Headers\Desktop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\Desktop\DesktopPlatform.h">
+      <Filter>Platform Headers\Desktop</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

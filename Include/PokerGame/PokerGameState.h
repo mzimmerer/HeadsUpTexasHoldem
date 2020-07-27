@@ -22,15 +22,22 @@
 
 #include "Card.h"
 
+static constexpr size_t MAX_NAME_SIZE = 10;
+
+struct PlayerState
+{
+	utl::string<MAX_NAME_SIZE> name;
+	utl::array<Card, 2> hand;
+	int stack;
+};
+
 struct PokerGameState
 {
     int big_blind;
     int table_chip_count;
-	utl::array<Card, 2> player_hand;
-	utl::array<Card, 2> opponent_hand;
-	utl::vector<Card, 5> board;
 	int current_pot;
 	int current_bet;
-	int player_stack;
-	int opponent_stack;
+	int current_player;
+	utl::vector<Card, 5> board;
+	utl::vector<PlayerState, 6> player_states;
 };

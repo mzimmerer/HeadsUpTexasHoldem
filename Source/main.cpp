@@ -33,6 +33,8 @@ static utl::fifo<char, 8> local_fifo;
 
 static utl::fifo<utl::string<8>, 4> line_fifo;
 
+static UART* uart0 = nullptr;
+
 static int processLine(const utl::string<8>& line)
 {
 	line_fifo.push(line);
@@ -80,10 +82,6 @@ static void processRxBuffer(utl::fifo<char, 8>& buffer)
 
 	} while (0);
 }
-
-// XXX
-static UART* uart0 = nullptr;
-// XXX
 
 static utl::string<8> readLine()
 {
@@ -137,6 +135,7 @@ int main()
 
 	const SPI::SPIOptions spi_options({62500});
 	SPI spi0 = this_platform.configureSPI(0, spi_options);
+	(void) spi0; // XXX
 
 	// Run the program
 #ifdef EMBEDDED_BUILD

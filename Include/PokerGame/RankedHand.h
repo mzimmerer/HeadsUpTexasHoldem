@@ -52,27 +52,33 @@ public:
 	RankedHand();
 
 	/** Constructor
+	 *  @param player The player ID
 	 *  @param hand The players hold cards
 	 *  @param board The board cards
 	 */
-	RankedHand(const utl::array<Card, 2>& hand, const utl::vector<Card, 5>& board);
+	RankedHand(int player_id, const utl::array<Card, 2>& hand, const utl::vector<Card, 5>& board);
 
 	/** Less than operator.
 	 *  @param other The hand to compare against
 	 *  @return True if this hand ranks lower than the other hand
 	 */
-	bool operator<(const RankedHand& other);
+	bool operator<(const RankedHand& other) const;
 
 	/** Equality comparison operator.
 	 *  @param other The hand to compare against
 	 *  @return True if both hands rank identically
 	 */
-	bool operator==(const RankedHand& other);
+	bool operator==(const RankedHand& other) const;
+
+	/** Get the player's ID
+	 *  @return The player's ID
+	 */
+	int getPlayerID() const;
 
 	/** Get the hands major ranking
 	 *  @return The ranking
 	 */
-	Ranking getRanking();
+	Ranking getRanking() const;
 
 protected:
 
@@ -90,6 +96,9 @@ protected:
 
 	/// Largest set definition, used to assist in ranking
 	using LargestSet = utl::pair<int, Card>;
+
+	/// The player's ID
+	int player_id;
 
 	/// The player's hole cards
 	utl::array<Card, 2> hand;

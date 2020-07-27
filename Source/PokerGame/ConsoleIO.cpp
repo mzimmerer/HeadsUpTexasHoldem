@@ -103,7 +103,7 @@ utl::pair<Player::PlayerAction, int> ConsoleIO::userDecision(const PokerGameStat
 	return result;
 }
 
-void ConsoleIO::playerAction(const utl::string<Player::MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet,
+void ConsoleIO::playerAction(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet,
 	const PokerGameState& state, void* opaque)
 {
 	ConsoleIO* self = reinterpret_cast<ConsoleIO*>(opaque);
@@ -142,7 +142,7 @@ void ConsoleIO::subRoundChange(PokerGame::SubRound new_sub_round, const PokerGam
 	self->updateScreen<32>(hint_text);
 }
 
-bool ConsoleIO::roundEnd(bool draw, const utl::string<Player::MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking,
+bool ConsoleIO::roundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking,
 	const PokerGameState& state, void* opaque)
 {
 	ConsoleIO* self = reinterpret_cast<ConsoleIO*>(opaque);
@@ -193,7 +193,7 @@ bool ConsoleIO::roundEnd(bool draw, const utl::string<Player::MAX_NAME_SIZE>& wi
 	return true;
 }
 
-void ConsoleIO::gameEnd(const utl::string<Player::MAX_NAME_SIZE>& winner, void* opaque)
+void ConsoleIO::gameEnd(const utl::string<MAX_NAME_SIZE>& winner, void* opaque)
 {
 	ConsoleIO* self = reinterpret_cast<ConsoleIO*>(opaque);
 
@@ -228,7 +228,7 @@ int ConsoleIO::userInputToInt(const utl::string<MAX_USER_INPUT_LEN>& input)
 	return strtol(input.c_str(), nullptr, 10);
 }
 
-utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::actionToString(const utl::string<Player::MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet)
+utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::actionToString(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet)
 {
 	utl::string<MAX_EVENT_STRING_LEN> result;
 
@@ -345,7 +345,7 @@ utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::printRanking(RankedHand:
 	}
 }
 
-utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::roundEndToString(bool draw, const utl::string<Player::MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking, int pot)
+utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::roundEndToString(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking, int pot)
 {
 	// If the round was a draw
 	if (draw == true) {
@@ -475,8 +475,14 @@ void ConsoleIO::printCard(utl::string<WIDTH>& dst, size_t x, const Card& card)
 void ConsoleIO::printHand(utl::string<WIDTH>& dst, size_t x, const utl::array<Card, 2>& RankedHand)
 {
 	// Print both cards at the specified location with a 10 space spacing
-	printCard(dst, x - 2, RankedHand[0]);
-	printCard(dst, x + 2, RankedHand[1]);
+	printCard(dst, x, RankedHand[0]);
+	printCard(dst, x + 4, RankedHand[1]);
+}
+
+void ConsoleIO::printName(utl::string<WIDTH>& dst, size_t x, const utl::string<MAX_NAME_SIZE>& name)
+{
+	// Copy the chip count into the screen buffer
+	ConsoleIO::lineBufferCopy(dst, name.begin(), name.end(), x);
 }
 
 void ConsoleIO::printChipStackCount(utl::string<WIDTH>& dst, size_t x, int count)
@@ -484,7 +490,7 @@ void ConsoleIO::printChipStackCount(utl::string<WIDTH>& dst, size_t x, int count
 	// Copy the chip count into the screen buffer
 	utl::string<MAX_EVENT_STRING_LEN> count_string = utl::const_string<32>(PSTR("$"));
 	count_string += utl::to_string<MAX_EVENT_STRING_LEN>(count);
-	ConsoleIO::lineBufferCopy(dst, count_string.begin(), count_string.end(), x - count_string.size() / 2);
+	ConsoleIO::lineBufferCopy(dst, count_string.begin(), count_string.end(), x);
 }
 
 void ConsoleIO::printPotStackCount(utl::string<WIDTH>& dst, size_t x)
@@ -503,17 +509,28 @@ void ConsoleIO::printToCall(utl::string<WIDTH>& dst, size_t x)
 	ConsoleIO::lineBufferCopy(dst, count_string.begin(), count_string.end(), x);
 }
 
-void ConsoleIO::printEventText(utl::string<WIDTH>& dst, size_t x, utl::list<utl::string<MAX_EVENT_STRING_LEN>, MAX_EVENT_STRING_QUEUE_LEN>::iterator& iter)
+void ConsoleIO::TEMP(utl::string<WIDTH>& line_buffer, const utl::string<MAX_EVENT_STRING_LEN>& event_string)
 {
-	// Only print a string if a string was provided
-	if (iter != this->event_string_queue.end()) {
+	// Prepare line buffer
+	utl::fill(line_buffer.begin(), line_buffer.end(), ' ');
+	line_buffer[0] = '#';
+	line_buffer[line_buffer.size() - 1] = '#';
 
-		// Copy the string into the line buffer
-		ConsoleIO::lineBufferCopy(dst, iter->begin(), iter->end(), x);
+	// Copy the string into the line buffer
+	ConsoleIO::lineBufferCopy(line_buffer, event_string.begin(), event_string.end(), EVENT_TEXT_OFFSET);
+}
+
+utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::increment(utl::list<utl::string<MAX_EVENT_STRING_LEN>, MAX_EVENT_STRING_QUEUE_LEN>::iterator& iter)
+{
+	utl::string<MAX_EVENT_STRING_LEN> result(utl::const_string<32>(PSTR("")));
+
+	if (iter != this->event_string_queue.end())
+	{
+		result = *iter;
+		++iter;
 	}
 
-	// Increment iter
-	++iter;
+	return result;
 }
 
 template <const size_t SIZE>
@@ -530,46 +547,38 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 	utl::fill(line_buffer.begin(), line_buffer.end(), '#');
 	this->write_line_callback(line_buffer, this->opaque);
 
-	// Line 1
-	utl::fill(line_buffer.begin(), line_buffer.end(), ' ');
-	line_buffer[0] = '#';
-	line_buffer[line_buffer.size() - 1] = '#';
-
-	// Draw the opponent's RankedHand
-	this->printHand(line_buffer, 12, this->cached_state.opponent_hand);
-
-	// Draw the opponents chip stack count
-	this->printChipStackCount(line_buffer, 20, this->cached_state.opponent_stack);
-
-	// Print event text
+	// Get an iterator at the beginning of the event string queue
 	auto iter = this->event_string_queue.begin();
-	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, iter);
+
+	// Draw line 1
+	this->TEMP(line_buffer, this->increment(iter));
+	this->printHand(line_buffer, 11, this->cached_state.player_states[2].hand);
+	this->printHand(line_buffer, 24, this->cached_state.player_states[3].hand);
 	this->write_line_callback(line_buffer, this->opaque);
 
-	// Line 2
-	utl::fill(line_buffer.begin(), line_buffer.end(), ' ');
-	line_buffer[0] = '#';
-	line_buffer[line_buffer.size() - 1] = '#';
-
-	// Print event text
-	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, iter);
+	// Draw line 2
+	this->TEMP(line_buffer, this->increment(iter));
+	this->printName(line_buffer, 11, this->cached_state.player_states[2].name);
+	this->printName(line_buffer, 24, this->cached_state.player_states[3].name);
 	this->write_line_callback(line_buffer, this->opaque);
 
-	// Line 3
-	utl::fill(line_buffer.begin(), line_buffer.end(), ' ');
-	line_buffer[0] = '#';
-	line_buffer[line_buffer.size() - 1] = '#';
-
-	// Print event text
-	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, iter);
+	// Draw line 3
+	this->TEMP(line_buffer, this->increment(iter));
+	this->printChipStackCount(line_buffer, 11, this->cached_state.player_states[2].stack);
+	this->printChipStackCount(line_buffer, 24, this->cached_state.player_states[3].stack);
 	this->write_line_callback(line_buffer, this->opaque);
 
-	// Line 4
-	utl::fill(line_buffer.begin(), line_buffer.end(), ' ');
-	line_buffer[0] = '#';
-	line_buffer[line_buffer.size() - 1] = '#';
+	// Prepare line 4
+	this->TEMP(line_buffer, this->increment(iter));
+	this->write_line_callback(line_buffer, this->opaque);
 
-	// Print the flop
+	// Prepare line 5
+	this->TEMP(line_buffer, this->increment(iter));
+	this->write_line_callback(line_buffer, this->opaque);
+
+	// Prepare line 6
+	this->TEMP(line_buffer, this->increment(iter));
+	this->printHand(line_buffer, 4, this->cached_state.player_states[1].hand);
 	auto board_iter = this->cached_state.board.begin();
 	if (this->cached_state.board.size() >= 3) {
 		printCard(line_buffer, EVENT_TEXT_OFFSET / 2 - 5, *board_iter);
@@ -578,69 +587,49 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 		++board_iter;
 		printCard(line_buffer, EVENT_TEXT_OFFSET / 2 + 5, *board_iter);
 	}
-
-	// Print event text
-	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, iter);
+	this->printHand(line_buffer, 33, this->cached_state.player_states[4].hand);
 	this->write_line_callback(line_buffer, this->opaque);
 
-	// Line 5
-	utl::fill(line_buffer.begin(), line_buffer.end(), ' ');
-	line_buffer[0] = '#';
-	line_buffer[line_buffer.size() - 1] = '#';
-
-	// Print the turn
+	// Prepare line 7
+	this->TEMP(line_buffer, this->increment(iter));
+	this->printName(line_buffer, 4, this->cached_state.player_states[1].name);
 	if (this->cached_state.board.size() >= 4) {
 		++board_iter;
 		printCard(line_buffer, EVENT_TEXT_OFFSET / 2 - 3, *board_iter);
 	}
-	// Print the river
 	if (this->cached_state.board.size() >= 5) {
 		++board_iter;
 		printCard(line_buffer, EVENT_TEXT_OFFSET / 2 + 3, *board_iter);
 	}
-
-	// Print event text
-	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, iter);
+	this->printName(line_buffer, 33, this->cached_state.player_states[4].name);
 	this->write_line_callback(line_buffer, this->opaque);
 
-	// Line 6
-	utl::fill(line_buffer.begin(), line_buffer.end(), ' ');
-	line_buffer[0] = '#';
-	line_buffer[line_buffer.size() - 1] = '#';
-
-	// Print event text
-	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, iter);
+	// Prepare line 8
+	this->TEMP(line_buffer, this->increment(iter));
+	this->printChipStackCount(line_buffer, 4, this->cached_state.player_states[1].stack);
+	this->printChipStackCount(line_buffer, 33, this->cached_state.player_states[4].stack);
 	this->write_line_callback(line_buffer, this->opaque);
 
-	// Line 7
-	utl::fill(line_buffer.begin(), line_buffer.end(), ' ');
-	line_buffer[0] = '#';
-	line_buffer[line_buffer.size() - 1] = '#';
-
-	// Print event text
-	this->printEventText(line_buffer, EVENT_TEXT_OFFSET, iter);
+	// Prepare line 9
+	this->TEMP(line_buffer, this->increment(iter));
 	this->write_line_callback(line_buffer, this->opaque);
 
-	// Line 8
-	utl::fill(line_buffer.begin(), line_buffer.end(), ' ');
-	line_buffer[0] = '#';
-	line_buffer[line_buffer.size() - 1] = '#';
-
-	// Print the line
+	// Prepare line 10
+	this->TEMP(line_buffer, this->increment(iter));
+	this->printHand(line_buffer, 10, this->cached_state.player_states[0].hand);
+	this->printHand(line_buffer, 23, this->cached_state.player_states[4].hand);
 	this->write_line_callback(line_buffer, this->opaque);
 
-	// Line 9
-	utl::fill(line_buffer.begin(), line_buffer.end(), ' ');
-	line_buffer[0] = '#';
-	line_buffer[line_buffer.size() - 1] = '#';
+	// Prepare line 11
+	this->TEMP(line_buffer, this->increment(iter));
+	this->printName(line_buffer, 10, this->cached_state.player_states[0].name);
+	this->printName(line_buffer, 23, this->cached_state.player_states[4].name);
+	this->write_line_callback(line_buffer, this->opaque);
 
-	// Draw the user's RankedHand
-	this->printHand(line_buffer, 12, this->cached_state.player_hand);
-
-	// Draw the users chip stack count
-	this->printChipStackCount(line_buffer, 20, this->cached_state.player_stack);
-
-	// Print the line
+	// Prepare line 12
+	this->TEMP(line_buffer, this->increment(iter));
+	this->printChipStackCount(line_buffer, 10, this->cached_state.player_states[0].stack);
+	this->printChipStackCount(line_buffer, 23, this->cached_state.player_states[4].stack);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Write a line of all '#' characters

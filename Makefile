@@ -30,7 +30,9 @@ GOOGLETESTDIR := ./Dependencies/googletest/googletest
 MAIN_SRC := $(SOURCEDIR)/main.cpp
 MAIN_OBJ := $(MAIN_SRC:%.cpp=$(OBJECTDIR)/%.o) 
 
-APP_SRC := $(SOURCEDIR)/Exception.cpp
+APP_SRC := $(UTLDIR)/new.cpp
+APP_SRC += $(UTLDIR)/string.cpp
+APP_SRC += $(SOURCEDIR)/Exception.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/Card.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/ConsoleIO.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/Deck.cpp
@@ -39,8 +41,7 @@ APP_SRC += $(SOURCEDIR)/Pokergame/PokerGame.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/Random.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/RankedHand.cpp
 
-
-APP_OBJ := $(APP_SRC:%.cpp=$(OBJECTDIR)/%.o)  # TODO
+APP_OBJ := $(APP_SRC:%.cpp=$(OBJECTDIR)/%.o)
 
 TEST_SRC := $(shell find $(TESTDIR) -name '*.cpp')
 TEST_OBJ := $(TEST_SRC:%.cpp=$(TESTOBJECTDIR)/%.o) 
@@ -64,17 +65,16 @@ ifeq ($(TARGET),atmega328p)
     LDFLAGS += -ffunction-sections
     LDFLAGS += -fdata-sections
     LDFLAGS += -Wl,-Map,texas_holdem.map
-    APP_OBJ += $(OBJECTDIR)/Dependencies/utl/new.o
-    APP_OBJ += $(OBJECTDIR)/Dependencies/utl/string.o
     APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pPlatform.o
     APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pSPI.o
     APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pUART.o
-    APP_SRC += $(SOURCEDIR)/Platform/Atmega328p/Atmega328pUART.cpp
     APPLICATION := $(APPLICATION).elf
 else
     CXX := g++
     CXXFLAGS += -DPLATFORM_DESKTOP
-    APP_OBJ += $(OBJECTDIR)/Source/Platform/Desktop/PlatformDesktop.o
+    APP_OBJ += $(OBJECTDIR)/Source/Platform/Desktop/DesktopPlatform.o
+    APP_OBJ += $(OBJECTDIR)/Source/Platform/Desktop/DesktopSPI.o
+    APP_OBJ += $(OBJECTDIR)/Source/Platform/Desktop/DesktopUART.o
 endif
 
 DEVICE ?= /dev/ttyS0

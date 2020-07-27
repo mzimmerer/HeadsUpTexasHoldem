@@ -17,19 +17,19 @@
  **/
 #include "PokerGame/RankedHand.h"
 
-RankedHand::RankedHand() : ranking(Ranking::Unranked)
+RankedHand::RankedHand() : player_id(-1), ranking(Ranking::Unranked)
 {
 }
 
-RankedHand::RankedHand(const utl::array<Card, 2>& hand_in,
+RankedHand::RankedHand(int player_id_in, const utl::array<Card, 2>& hand_in,
 	const utl::vector<Card, 5>& board_in)
-	: hand(hand_in), board(board_in), ranking(Ranking::Unranked)
+	: player_id(player_id_in), hand(hand_in), board(board_in), ranking(Ranking::Unranked)
 {
 	// Rank the hand
 	this->rankHand();
 }
 
-bool RankedHand::operator<(const RankedHand& other)
+bool RankedHand::operator<(const RankedHand& other) const
 {
 	// If the rankings are not equal then we can just compare them
 	if (this->ranking != other.ranking)
@@ -57,7 +57,7 @@ bool RankedHand::operator<(const RankedHand& other)
 	return false;
 }
 
-bool RankedHand::operator==(const RankedHand& other)
+bool RankedHand::operator==(const RankedHand& other) const
 {
 	// Check for ranking equality
 	if (this->ranking != other.ranking)
@@ -85,7 +85,12 @@ bool RankedHand::operator==(const RankedHand& other)
 	return true;
 }
 
-RankedHand::Ranking RankedHand::getRanking()
+int RankedHand::getPlayerID() const
+{
+	return this->player_id;
+}
+
+RankedHand::Ranking RankedHand::getRanking() const
 {
 	return this->ranking;
 }

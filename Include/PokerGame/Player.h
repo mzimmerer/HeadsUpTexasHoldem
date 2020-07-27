@@ -34,14 +34,17 @@ class Player
 {
 public:
 
-	/// The maximum allowed name size
-	static constexpr size_t MAX_NAME_SIZE = 10;
-
 	/** Player constructor
 	 *  @param name The name of the player
+	 *  @param player_id The player's ID
 	 *  @param starting_stack The player's starting stack
 	 */
-	Player(Random& rng_in, utl::string<MAX_NAME_SIZE> name, int starting_stack);
+	Player(Random& rng_in, int player_id, utl::string<MAX_NAME_SIZE> name, int starting_stack);
+
+	/** Get the player's ID
+	 *  @return The player's ID
+	 */
+	int getPlayerID() const;
 
 	/** Player name accessor
 	 * @return The player's name
@@ -131,6 +134,9 @@ private:
 
 	/// A reference to a random number generator
 	Random& rng;
+
+	/// The player's ID
+	int player_id;
 
 	/// This player's name
 	utl::string<MAX_NAME_SIZE> name;
