@@ -17,11 +17,11 @@
  **/
 #include "PokerGame/Player.h"
 
-Player::Player(Random& rng_in, int player_id_in, utl::string<MAX_NAME_SIZE> name_in, int starting_stack_in) : rng(rng_in), player_id(player_id_in), name(name_in), stack(starting_stack_in)
+Player::Player(Random& rng_in, uint8_t player_id_in, utl::string<MAX_NAME_SIZE> name_in, uint16_t starting_stack_in) : rng(rng_in), player_id(player_id_in), name(name_in), stack(starting_stack_in)
 {
 }
 
-int Player::getPlayerID() const
+uint8_t Player::getPlayerID() const
 {
 	return this->player_id;
 }
@@ -31,7 +31,7 @@ const utl::string<MAX_NAME_SIZE>& Player::getName() const
 	return this->name;
 }
 
-void Player::setCard(int index, const Card& card)
+void Player::setCard(uint8_t index, const Card& card)
 {
 	this->hand[index] = card;
 }
@@ -46,7 +46,7 @@ void Player::adjustChips(int adjustment)
 	this->stack += adjustment;
 }
 
-int Player::chipCount() const
+uint16_t Player::chipCount() const
 {
 	return this->stack;
 }
@@ -66,7 +66,7 @@ bool Player::hasFolded() const
 	return this->folded;
 }
 
-void Player::adjustPotInvestment(int adjustment)
+void Player::adjustPotInvestment(int16_t adjustment)
 {
 	this->pot_investment += adjustment;
 }
@@ -76,11 +76,12 @@ void Player::clearPotInvestment()
 	this->pot_investment = 0;
 }
 
-int Player::getPotInvestment() const
+uint16_t Player::getPotInvestment() const
 {
 	return this->pot_investment;
 }
 
+#if 0
 int Player::determineMax(int starting_bet, int decision_value, int max_bet)
 {
 	// Keep rolling the dice, each time the decision value is greater than the dice value, double the max bet
@@ -109,9 +110,11 @@ utl::pair<Player::PlayerAction, int> Player::checkOrBet(int starting_bet, int de
 	// Bet
 	return utl::pair<Player::PlayerAction, int>(static_cast<PlayerAction>(Player::PlayerAction::Bet), bet);
 }
+#endif
 
-utl::pair<Player::PlayerAction, int> Player::decision(const PokerGameState& state)
+utl::pair<Player::PlayerAction, uint16_t> Player::decision(const PokerGameState& state)
 {
+#if 0
 	// Disclaimer: This is a very naive AI, but quick to implement
 
 	// Compute a value for the hole cards
@@ -167,8 +170,12 @@ utl::pair<Player::PlayerAction, int> Player::decision(const PokerGameState& stat
 		// Check or bet
 		return this->checkOrBet(state.big_blind, decision_value, state.player_states[0].stack);
 	}
+#endif
+
+	return utl::pair<Player::PlayerAction, uint16_t>(Player::PlayerAction::CheckOrCall, 0); // XXX
 }
 
+#if 0
 template <const size_t IN_MIN, const size_t IN_MAX, const size_t OUT_MIN, const size_t OUT_MAX>
 int Player::normalizeValue(int input)
 {
@@ -179,3 +186,4 @@ int Player::normalizeValue(int input)
 	result += OUT_MIN;
 	return static_cast<int>(result);
 }
+#endif

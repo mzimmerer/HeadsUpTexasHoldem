@@ -39,12 +39,12 @@ public:
 	 *  @param player_id The player's ID
 	 *  @param starting_stack The player's starting stack
 	 */
-	Player(Random& rng_in, int player_id, utl::string<MAX_NAME_SIZE> name, int starting_stack);
+	Player(Random& rng_in, uint8_t player_id, utl::string<MAX_NAME_SIZE> name, uint16_t starting_stack);
 
 	/** Get the player's ID
 	 *  @return The player's ID
 	 */
-	int getPlayerID() const;
+	uint8_t getPlayerID() const;
 
 	/** Player name accessor
 	 * @return The player's name
@@ -55,7 +55,7 @@ public:
 	 * @param index The index to set
 	 * @param card The card to set
 	 */
-	void setCard(int index, const Card& card);
+	void setCard(uint8_t index, const Card& card);
 
 	/** Get the player's hand
 	 *  @return The players hand as an array
@@ -65,12 +65,12 @@ public:
 	/** Adjust the player's chip count
 	 *  @param adjustment The amount to change the count by
 	 */
-	void adjustChips(int adjustment);
+	void adjustChips(int16_t adjustment);
 
 	/** Chip count accessor
 	 *  @return The chip count
 	 */
-	int chipCount() const;
+	uint16_t chipCount() const;
 
 	/** Mark the player as folded
 	 */
@@ -88,7 +88,7 @@ public:
 	/** Adjust the current pot investment
 	 *  @param adjustment The amount to adjust
 	 */
-	void adjustPotInvestment(int adjustment);
+	void adjustPotInvestment(int16_t adjustment);
 
 	/** Clear the current pot investment value
 	 */
@@ -97,11 +97,11 @@ public:
 	/** Pot investment accessor
 	 *  @return The current pot investment
 	 */
-	int getPotInvestment() const;
+	uint16_t getPotInvestment() const;
 
 	/** An enumeration of possible player actions
 	 */
-	enum class PlayerAction : int
+	enum class PlayerAction : uint8_t
 	{
 		CheckOrCall = 1,
 		Bet = 2,
@@ -113,7 +113,7 @@ public:
 	 *  @param state The poker game state
 	 *  @return The decision. The first element is the action, the second is the bet, if any
 	 */
-	utl::pair<PlayerAction, int> decision(const PokerGameState& state);
+	utl::pair<PlayerAction, uint16_t> decision(const PokerGameState& state);
 
 private:
 
@@ -136,19 +136,19 @@ private:
 	Random& rng;
 
 	/// The player's ID
-	int player_id;
+	uint8_t player_id;
 
 	/// This player's name
 	utl::string<MAX_NAME_SIZE> name;
 
 	/// Stack count
-	int stack;
+	uint16_t stack;
 
 	/// Folded indicator
 	bool folded{ false };
 
 	/// Pot investment
-	int pot_investment{ 0 };
+	uint16_t pot_investment{ 0 };
 
 	/// Current hand
 	utl::array<Card, 2> hand;
@@ -159,7 +159,7 @@ private:
 	 *  @param max_bet The maximum amount to bet
 	 *  @return The decision. The first element is the action, the second is the bet, if any
 	 */
-	utl::pair<PlayerAction, int> checkOrBet(int starting_bet, int decision_value, int max_bet);
+	//utl::pair<PlayerAction, int> checkOrBet(int starting_bet, int decision_value, int max_bet);
 
 	/** Determine how much to call or bet
 	 *  @param starting_bet The starting bet value
@@ -167,7 +167,7 @@ private:
 	 *  @param max The maximum amount to call or bet
 	 *  @return The maximum amount to call or bet
 	 */
-	int determineMax(int starting_bet, int decision_value, int max);
+	//int determineMax(int starting_bet, int decision_value, int max);
 
 	/** Normalize an integer value from its own input range to a user specified output range
 	 *  @tparam IN_MIN The minimum input value
@@ -177,6 +177,6 @@ private:
 	 *  @param input The input value
 	 *  @result The transposed and scaled value
 	  */
-	template <const size_t IN_MIN, const size_t IN_MAX, const size_t OUT_MIN, const size_t OUT_MAX>
-	static int normalizeValue(int input);
+//	template <const size_t IN_MIN, const size_t IN_MAX, const size_t OUT_MIN, const size_t OUT_MAX>
+	//static int normalizeValue(int input);
 };

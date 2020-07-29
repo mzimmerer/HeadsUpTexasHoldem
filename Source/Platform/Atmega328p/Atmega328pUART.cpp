@@ -30,7 +30,11 @@ ISR(USART_RX_vect)
 	isr_fifo.push(UDR0);
 }
 
-UART::UART(utl::fifo<char, 8>& isr_fifo_in, const UARTOptions& options_in) : isr_fifo(&isr_fifo_in)
+UART::UART() : isr_fifo_internal(nullptr)
+{
+}
+
+UART::UART(utl::fifo<char, 8>& isr_fifo_in, const UARTOptions& options_in) : isr_fifo_internal(&isr_fifo_in)
 {
 	const uint16_t BAUD_VALUE = static_cast<uint16_t>(F_CPUD / (static_cast<double>(options_in.baudrate) * 16.0f)) - 1;
 
@@ -48,24 +52,24 @@ UART::UART(utl::fifo<char, 8>& isr_fifo_in, const UARTOptions& options_in) : isr
 
 UART& UART::operator=(const UART& other)
 {
-	this->isr_fifo = other.isr_fifo;
+	this->isr_fifo_internal = other.isr_fifo_internal;
 	return *this;
 }
 
-static int readChar()
+int UART::readChar()
 {
 	int result = -1;
 
 	cli();
-	if (isr_fifo.size() > 0)
-		result = static_cast<int>(isr_fifo.pop());
+	if (this->isr_fifo_internal->size() > 0)
+		result = static_cast<int>(this->isr_fifo_internal->pop());
 	sei();
 
 	return result;
 }
 
-static void writeChar(char chr)
-{ 
+void UART::writeChar(char chr)
+{
 	while (!(UCSR0A & (1 << UDRE0)))
 		;
 
@@ -77,7 +81,8 @@ size_t UART::writeBytes(const char* begin, const char* end)
 	size_t result = 0;
 	while (begin != end)
 	{
-		writeChar(*begin);
+		if (this->isr_fifo_internal != nullptr)
+			writeChar(*begin);
 		++begin;
 		++result;
 	}
@@ -86,6 +91,9 @@ size_t UART::writeBytes(const char* begin, const char* end)
 
 size_t UART::readBytes(char* begin, char* end)
 {
+	if (this->isr_fifo_internal == nullptr)
+		return 0;
+
 	size_t result = 0;
 	while (begin != end) {
 		int c = readChar();

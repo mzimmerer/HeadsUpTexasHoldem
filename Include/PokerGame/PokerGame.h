@@ -36,14 +36,14 @@ class PokerGame
 public:
 
 	/// Decision callback definition
-	using DecisionCallback = utl::pair<Player::PlayerAction, int>(*)(const PokerGameState& state, void* opaque);
+	using DecisionCallback = utl::pair<Player::PlayerAction, uint16_t>(*)(const PokerGameState& state, void* opaque);
 
 	/// Player action callback definition
 	using PlayerActionCallback =
-		void(*)(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet, const PokerGameState& state, void* opaque);
+		void(*)(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, uint16_t bet, const PokerGameState& state, void* opaque);
 
 	/// Subround definitions
-	enum class SubRound : int
+	enum class SubRound : uint8_t
 	{
 		PreFlop = 1,
 		Flop = 2,
@@ -72,7 +72,7 @@ public:
 	 *  @param game_end_callback Called to notify of game end
 	 *  @param opaque A pointer that is provided to all callbacks
 	 */
-	PokerGame(uint32_t random_seed, int small_blind, int starting_stack_size, DecisionCallback decision_callback,
+	PokerGame(uint32_t random_seed, uint8_t small_blind, uint16_t starting_stack_size, DecisionCallback decision_callback,
 		PlayerActionCallback player_action_callback, SubRoundChangeCallback subround_change_callback,
 		RoundEndCallback round_end_callback, GameEndCallback game_end_callback, void* opaque);
 
@@ -85,10 +85,10 @@ protected:
 	bool run{ true };
 
 	/// The small blind
-	const int small_blind;
+	const uint8_t small_blind;
 
 	/// The starting stack size
-	const int starting_stack_size;
+	const uint16_t starting_stack_size;
 
 	/// The decision callback
 	DecisionCallback decision_callback;
@@ -112,32 +112,29 @@ protected:
 	Random rng;
 
 	/// The deck
-	Deck deck;
+	Deck deck; // XXX can we save on RAM here? 52 * 2 bytes == 104 bytes
 
 	/// The current dealer
-	int current_dealer{ 0 };
-
-	/// The current subround
-	SubRound current_sub_round{ SubRound::PreFlop };
+	uint8_t current_dealer{ 0 };
 
 	/// The board
 	utl::vector<Card, 5> board;
 
 	/// The current pot
-	int current_pot{ 0 };
+	uint16_t current_pot{ 0 };
 
 	/// The current bet
-	int current_bet{ 0 };
+	uint16_t current_bet{ 0 };
 
 	/// The player table
 	utl::vector<Player, 6> players;
 
 	// XXX
-	struct SidePot {
-		utl::vector<int, 6> players_in;
-		int amount;
-	};
-	utl::vector<SidePot, 6> sidepots;
+	//struct SidePot {
+	//	utl::vector<int, 6> players_in;
+	//	int amount;
+	//};
+//	utl::vector<SidePot, 6> sidepots;
 	// XXX
 
 	/** Play a round of texas holdem poker!
@@ -148,7 +145,7 @@ protected:
 	/** Choose the dealer for this round
 	 *  @return The dealer in the range [0..5]
 	 */
-	virtual int chooseDealer();
+	virtual uint8_t chooseDealer();
 
 	/** Deal a single card
 	 *  @return The card
@@ -163,58 +160,58 @@ protected:
 	 *  @param player A reference to the player object
 	 *  @param action The first element is the action, the second is the bet, if any
 	 */
-	void checkOrCall(Player& player, const utl::pair<Player::PlayerAction, int>& action);
+	void checkOrCall(Player& player, const utl::pair<Player::PlayerAction, uint16_t>& action);
 
 	/** Handle bet actions
 	 *  @param player A reference to the player object
 	 *  @param action The first element is the action, the second is the bet, if any
 	 *  @param True if the round should continue, false otherwise
 	 */
-	bool bet(Player& player, utl::pair<Player::PlayerAction, int>& action);
+	bool bet(Player& player, utl::pair<Player::PlayerAction, uint16_t>& action);
 
 	/** Handle fold actions
 	 *  @param player A reference to the player object
 	 *  @param action The first element is the action, the second is the bet, if any
 	 */
-	void fold(Player& player, const utl::pair<Player::PlayerAction, int>& action);
+	void fold(Player& player, const utl::pair<Player::PlayerAction, uint16_t>& action);
 
 	/** Player action function, either lets the human player or AI take an action
 	 *  @param player A reference to the player object
 	 *  @return The first element is the action, the second is the bet, if any
 	 */
-	virtual utl::pair<Player::PlayerAction, int> playerAction(Player& player);
+	virtual utl::pair<Player::PlayerAction, uint16_t> playerAction(Player& player);
 
 	/** Betting round wrapper, handles final callback
 	 *  @param starting_player The player that starts the betting round
 	 *  @param players_acted The number of players that have acted
 	 *  @return True if the round should progress, false otherwise
 	 */
-	bool bettingRoundWrapper(int starting_player, int players_acted);
+	bool bettingRoundWrapper(uint8_t starting_player, uint8_t players_acted);
 
-	/** Run through a betting round. This function is recursive.
+	/** Run through a betting round. This function is recursive. TODO XXX FIXME make this iterative!
 	 *  @param starting_player The player that starts the betting round
 	 *  @param players_acted The number of players that have acted
 	 *  @return True if the round should progress, false otherwise
 	 */
-	bool bettingRound(int starting_player, int players_acted);
+	bool bettingRound(uint8_t starting_player, uint8_t players_acted);
 
 	// XXX
 	bool resolveRound();
 	// XXX
 
 	/** Construct a state struct
-	 *  @param revealing_players A vector of player_ids cooresponding to those that revealed their cards
 	 *  @param player The player who will receive this state snapshot
+	 *  @param revealing_players A vector of player_ids cooresponding to those that revealed their cards
 	 *  @return A copy of the PokerGameState
 	 */
-	PokerGameState constructState(const utl::vector<int, 6>& revealing_players, Player& player);
+	PokerGameState constructState(Player& player, const utl::vector<uint8_t, 6>& revealing_players);
 
 	/** Callback to the user with a player action notification
 	 *  @param player_name The player's name
 	 *  @param action The action the player performed
 	 *  @param bet The bet, if any
 	 */
-	void callbackWithPlayerAction(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet);
+	void callbackWithPlayerAction(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, uint16_t bet);
 
 	/** Callback to the user with a subround change notification
 	 *  @param new_subround The new subround
@@ -228,5 +225,5 @@ protected:
 	 *  @param ranking The ranking of the winning hand
 	 *  @param True if the round should continue, false otherwise
 	 */
-	bool callbackWithRoundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, const utl::vector<int, 6>& revealing_players, RankedHand::Ranking ranking);
+	bool callbackWithRoundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, const utl::vector<uint8_t, 6>& revealing_players, RankedHand::Ranking ranking);
 };

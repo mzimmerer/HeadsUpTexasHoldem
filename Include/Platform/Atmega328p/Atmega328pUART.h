@@ -33,19 +33,25 @@ public:
 		uint32_t baudrate;
 	};
 
+    UART();
+
 	// TODO move this to the private section and declare a friend for access
 	UART(utl::fifo<char, 8>& isr_fifo_in, const UARTOptions& options);
 
 	UART& operator=(const UART& other);
 
-	size_t writeBytes(const char* begin, const char* end);
+    int readChar();
 
-	size_t readBytes(char* begin, char* end);
+    size_t readBytes(char* begin, char* end);
+
+    void writeChar(char chr);
+
+	size_t writeBytes(const char* begin, const char* end);
 
 private:
 	static constexpr double F_CPUD = static_cast<double>(F_CPU);
 
-	utl::fifo<char, 8>* isr_fifo;
+	utl::fifo<char, 8>* isr_fifo_internal;
 };
 
 extern utl::fifo<char, 8> isr_fifo;

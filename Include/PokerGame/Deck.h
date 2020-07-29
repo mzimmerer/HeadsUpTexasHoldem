@@ -18,6 +18,7 @@
 #pragma once
 
 #include <utl/array>
+#include <utl/cstdint>
 
 #include "Card.h"
 #include "Random.h"
@@ -46,17 +47,17 @@ class Deck
 
     /** Return the number of cards dealt
      */
-    unsigned int cardsDealt() const;
+    uint8_t cardsDealt() const;
 
    private:
     /// The number of cards in a deck
-    static constexpr int DECK_SIZE = 52;
+    static constexpr uint8_t DECK_SIZE = 52;
 
     /// Random number generator
     Random& rng;
 
     /// The cursor used to track which cards have already been dealt
-    int deal_cursor{0};
+    uint8_t deal_cursor{0};
 
     /// An array of 52 cards
     utl::array<Card, DECK_SIZE> cards;

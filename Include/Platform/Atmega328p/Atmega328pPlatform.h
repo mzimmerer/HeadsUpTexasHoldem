@@ -27,19 +27,27 @@
 
 class PlatformAtmega328p {
 public:
-    PlatformAtmega328p();
+	PlatformAtmega328p();
 
-    ~PlatformAtmega328p();
+	~PlatformAtmega328p();
 
-    uint32_t randomSeed();
+	uint32_t randomSeed();
 
-    void delaySeconds(uint16_t delay);
+	void delaySeconds(uint16_t delay);
 
-    void delayMilliSeconds(uint16_t delay);
+	void delayMilliSeconds(uint16_t delay);
 
-    UART configureUART(int index, const UART::UARTOptions& options);
+	UART configureUART(int index, const UART::UARTOptions& options);
 
-    SPI configureSPI(int index, const SPI::SPIOptions& options);
+	SPI configureSPI(int index, const SPI::SPIOptions& options);
+
+	// XXX
+    void debugPrintStackInfo(int id = 0);
+	// XXX
+
+private:
+
+	UART console;
 };
 
 extern PlatformAtmega328p this_platform;

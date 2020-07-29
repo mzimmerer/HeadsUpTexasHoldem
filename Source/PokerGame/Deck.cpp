@@ -69,7 +69,7 @@ Card Deck::dealCard()
     return this->cards[this->deal_cursor++];
 }
 
-unsigned int Deck::cardsDealt() const
+uint8_t Deck::cardsDealt() const
 {
     return this->deal_cursor;
 }

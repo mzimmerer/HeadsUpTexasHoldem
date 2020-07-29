@@ -169,15 +169,6 @@
     <ClInclude Include="..\Include\Platform\Platform.h">
       <Filter>Platform Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\Platform\I2C.h">
-      <Filter>Platform Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Platform\SPI.h">
-      <Filter>Platform Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\Platform\UART.h">
-      <Filter>Platform Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pPlatform.h">
       <Filter>Platform Headers\Atmega328p</Filter>
     </ClInclude>

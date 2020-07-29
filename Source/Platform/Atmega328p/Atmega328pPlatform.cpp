@@ -83,10 +83,32 @@ void PlatformAtmega328p::delayMilliSeconds(uint16_t delay)
 
 UART PlatformAtmega328p::configureUART(int index, const UART::UARTOptions& options_in)
 {
-	return UART(isr_fifo, options_in);
+	UART result(isr_fifo, options_in);
+
+	// Keep a copy for debug console IO
+	if (index == 0) {
+		this->console = result;
+	}
+
+	return result;
 }
 
 SPI PlatformAtmega328p::configureSPI(int index, const SPI::SPIOptions& options_in)
 {
 	return SPI(options_in);
+}
+
+void PlatformAtmega328p::debugPrintStackInfo(int id)
+{
+	utl::string<16> stack_pointer_str = utl::to_string<8>(id);
+	stack_pointer_str += utl::string<16>(" - ");
+	stack_pointer_str += utl::to_string<16>(RAMEND - SP);
+	stack_pointer_str += utl::string<16>("\r\n");
+	this->console.writeBytes(stack_pointer_str.begin(), stack_pointer_str.end());
+
+	static constexpr size_t SRAM_SIZE = 0x800;
+	static constexpr size_t INITIALIZED_DATA_SIZE = 0x164;
+	size_t stack_size = RAMEND - SP;
+	if (stack_size + INITIALIZED_DATA_SIZE > SRAM_SIZE)
+		while (1);
 }

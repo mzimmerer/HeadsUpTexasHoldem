@@ -113,11 +113,11 @@ static utl::string<8> readLine()
 static void writeLineCallback(const utl::string<ConsoleIO::WIDTH>& line, void* opaque)
 {
 	// Write a line to the user's screen
-	uart0->writeBytes(line.begin(), line.end());
+//	uart0->writeBytes(line.begin(), line.end());
 
 	// Write "\r\n" tp the user's screen
-	utl::string<2> end_line(utl::const_string<2>(PSTR("\r\n")));
-	uart0->writeBytes(end_line.begin(), end_line.end());
+//	utl::string<2> end_line(utl::const_string<2>(PSTR("\r\n")));
+//	uart0->writeBytes(end_line.begin(), end_line.end());
 }
 
 static utl::string<ConsoleIO::MAX_USER_INPUT_LEN> readLineCallback(void* opaque)
@@ -126,11 +126,9 @@ static utl::string<ConsoleIO::MAX_USER_INPUT_LEN> readLineCallback(void* opaque)
 	return readLine();
 }
 
-#include <thread>
 static void delayCallback(int16_t delay_ms)
 {
-// XXX
-	std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
+	this_platform.delayMilliSeconds(delay_ms);
 }
 
 int main()

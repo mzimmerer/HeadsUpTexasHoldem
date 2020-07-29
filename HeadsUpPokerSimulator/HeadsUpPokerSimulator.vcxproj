@@ -69,10 +69,7 @@
     <ClInclude Include="..\Include\Platform\Desktop\DesktopPlatform.h" />
     <ClInclude Include="..\Include\Platform\Desktop\DesktopSPI.h" />
     <ClInclude Include="..\Include\Platform\Desktop\DesktopUART.h" />
-    <ClInclude Include="..\Include\Platform\I2C.h" />
     <ClInclude Include="..\Include\Platform\Platform.h" />
-    <ClInclude Include="..\Include\Platform\SPI.h" />
-    <ClInclude Include="..\Include\Platform\UART.h" />
     <ClInclude Include="..\Include\PokerGame\Card.h" />
     <ClInclude Include="..\Include\PokerGame\ConsoleIO.h" />
     <ClInclude Include="..\Include\PokerGame\Deck.h" />

@@ -21,11 +21,15 @@
 #include <utl/cstdlib>
 #include <utl/string>
 
+ // XXX
+#include <Platform/Platform.h>
+// XXX
+
 ConsoleIO::ConsoleIO(WriteLineCallback write_line_callback_in, ReadLineCallback read_line_callback_in, DelayCallback delay_callback_in, void* opaque_in) : write_line_callback(write_line_callback_in), read_line_callback(read_line_callback_in), delay_callback(delay_callback_in), opaque(opaque_in)
 {
 }
 
-utl::pair<Player::PlayerAction, int> ConsoleIO::userDecision(const PokerGameState& state, void* opaque)
+utl::pair<Player::PlayerAction, uint16_t> ConsoleIO::userDecision(const PokerGameState& state, void* opaque)
 {
 	ConsoleIO* self = reinterpret_cast<ConsoleIO*>(opaque);
 
@@ -43,6 +47,7 @@ utl::pair<Player::PlayerAction, int> ConsoleIO::userDecision(const PokerGameStat
 	{
 		utl::string<64> hint_text = checkorcall;
 		hint_text += utl::const_string<64>(PSTR("(c), bet(b), fold(f), or quit(q)?"));
+		this_platform.debugPrintStackInfo(0); // XXX
 		self->updateScreen<64>(hint_text);
 	}
 
@@ -61,6 +66,7 @@ utl::pair<Player::PlayerAction, int> ConsoleIO::userDecision(const PokerGameStat
 			utl::string<64> hint_text = utl::const_string<32>(PSTR("Invalid entry. "));
 			hint_text += checkorcall;
 			hint_text += utl::const_string<64>(PSTR("(c), bet(b), fold(f) or quit(q)?"));
+			this_platform.debugPrintStackInfo(10); // XXX
 			self->updateScreen<64>(hint_text);
 		}
 		else
@@ -76,6 +82,7 @@ utl::pair<Player::PlayerAction, int> ConsoleIO::userDecision(const PokerGameStat
 	{
 		// Update the screen
 		utl::string<64> hint_text = utl::const_string<64>(PSTR("Enter an amount to bet."));
+		this_platform.debugPrintStackInfo(20); // XXX
 		self->updateScreen<64>(hint_text);
 
 		// Get user input
@@ -84,7 +91,7 @@ utl::pair<Player::PlayerAction, int> ConsoleIO::userDecision(const PokerGameStat
 		bet_amt = ConsoleIO::userInputToInt(input);
 
 		// Return a pair with the action and bet amount
-		return utl::pair<Player::PlayerAction, int>(Player::PlayerAction::Bet, bet_amt);
+		return utl::pair<Player::PlayerAction, uint16_t>(Player::PlayerAction::Bet, bet_amt);
 	}
 
 	// Translate user inputs into PlayerAction enum class values
@@ -98,12 +105,12 @@ utl::pair<Player::PlayerAction, int> ConsoleIO::userDecision(const PokerGameStat
 	else
 		player_action = Player::PlayerAction::Quit;
 
-	utl::pair<Player::PlayerAction, int> result(player_action, bet_amt);
+	utl::pair<Player::PlayerAction, uint16_t> result(player_action, bet_amt);
 
 	return result;
 }
 
-void ConsoleIO::playerAction(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet,
+void ConsoleIO::playerAction(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, uint16_t bet,
 	const PokerGameState& state, void* opaque)
 {
 	ConsoleIO* self = reinterpret_cast<ConsoleIO*>(opaque);
@@ -121,6 +128,7 @@ void ConsoleIO::playerAction(const utl::string<MAX_NAME_SIZE>& player_name, Play
 
 	// Update the screen
 	utl::string<32> hint_text = utl::const_string<32>(PSTR(""));
+	this_platform.debugPrintStackInfo(30); // XXX
 	self->updateScreen<32>(hint_text);
 }
 
@@ -139,6 +147,7 @@ void ConsoleIO::subRoundChange(PokerGame::SubRound new_sub_round, const PokerGam
 
 	// Update the screen
 	utl::string<32> hint_text = utl::const_string<32>(PSTR(""));
+	this_platform.debugPrintStackInfo(40); // XXX
 	self->updateScreen<32>(hint_text);
 }
 
@@ -161,6 +170,7 @@ bool ConsoleIO::roundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, Ra
 		utl::string<32> hint_text = utl::const_string<32>(PSTR("Continue(c) or quit(q)?"));
 
 		// Update the screen
+		this_platform.debugPrintStackInfo(50); // XXX
 		self->updateScreen<32>(hint_text);
 	}
 
@@ -177,6 +187,7 @@ bool ConsoleIO::roundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, Ra
 		if (action != 'c' && action != 'q')
 		{
 			utl::string<64> hint_text = utl::const_string<64>(PSTR("Invalid entry. Continue(c) or quit(q)??"));
+			this_platform.debugPrintStackInfo(60); // XXX
 			self->updateScreen<64>(hint_text);
 		}
 		else
@@ -219,7 +230,7 @@ char ConsoleIO::userInputToChar(const utl::string<MAX_USER_INPUT_LEN>& input)
 	return input[0];
 }
 
-int ConsoleIO::userInputToInt(const utl::string<MAX_USER_INPUT_LEN>& input)
+uint16_t ConsoleIO::userInputToInt(const utl::string<MAX_USER_INPUT_LEN>& input)
 {
 	// Handle zero sized inputs
 	if (input.size() == 0)
@@ -228,7 +239,7 @@ int ConsoleIO::userInputToInt(const utl::string<MAX_USER_INPUT_LEN>& input)
 	return strtol(input.c_str(), nullptr, 10);
 }
 
-utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::actionToString(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet)
+utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::actionToString(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, uint16_t bet)
 {
 	utl::string<MAX_EVENT_STRING_LEN> result;
 
@@ -345,7 +356,7 @@ utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::printRanking(RankedHand:
 	}
 }
 
-utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::roundEndToString(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking, int pot)
+utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::roundEndToString(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking, uint16_t pot)
 {
 	// If the round was a draw
 	if (draw == true) {
@@ -408,6 +419,7 @@ utl::string<10> ConsoleIO::printSuit(Card::Suit suit)
 {
 	switch (suit)
 	{
+#if 0
 	case Card::Suit::Clubs:
 		return utl::const_string<32>(PSTR("c"));
 	case Card::Suit::Diamonds:
@@ -418,6 +430,7 @@ utl::string<10> ConsoleIO::printSuit(Card::Suit suit)
 		return utl::const_string<32>(PSTR("s"));
 	case Card::Suit::Unrevealed:
 		return utl::const_string<32>(PSTR("?"));
+#endif
 	default:
 		return utl::const_string<32>(PSTR(""));
 	}
@@ -427,6 +440,7 @@ utl::string<10> ConsoleIO::printValue(Card::Value value)
 {
 	switch (value)
 	{
+#if 0
 	case Card::Value::Ace:
 		return utl::const_string<32>(PSTR("A"));
 	case Card::Value::Two:
@@ -455,6 +469,7 @@ utl::string<10> ConsoleIO::printValue(Card::Value value)
 		return utl::const_string<32>(PSTR("K"));
 	case Card::Value::Unrevealed:
 		return utl::const_string<32>(PSTR("?"));
+#endif
 	default:
 		return utl::const_string<32>(PSTR(""));
 	}
@@ -507,7 +522,7 @@ void ConsoleIO::printChipStackCount(utl::string<WIDTH>& dst, size_t x, size_t pl
 		return;
 
 	// Lookup the chip count
-	int count = this->cached_state.player_states[player_id].stack;
+	uint16_t count = this->cached_state.player_states[player_id].stack;
 
 	// Copy the chip count into the screen buffer
 	utl::string<MAX_EVENT_STRING_LEN> count_string = utl::const_string<32>(PSTR("$"));
@@ -531,38 +546,28 @@ void ConsoleIO::printToCall(utl::string<WIDTH>& dst, size_t x)
 	ConsoleIO::lineBufferCopy(dst, count_string.begin(), count_string.end(), x);
 }
 
-void ConsoleIO::TEMP(utl::string<WIDTH>& line_buffer, const utl::string<MAX_EVENT_STRING_LEN>& event_string)
+void ConsoleIO::writeNextEventString(utl::list<utl::string<MAX_EVENT_STRING_LEN>, MAX_EVENT_STRING_QUEUE_LEN>::iterator& iter,
+	utl::string<WIDTH>& line_buffer)
 {
-	// Prepare line buffer
-	utl::fill(line_buffer.begin(), line_buffer.end(), ' ');
-	line_buffer[0] = '#';
-	line_buffer[line_buffer.size() - 1] = '#';
-
-	// Copy the string into the line buffer
-	ConsoleIO::lineBufferCopy(line_buffer, event_string.begin(), event_string.end(), EVENT_TEXT_OFFSET);
-}
-
-utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::increment(utl::list<utl::string<MAX_EVENT_STRING_LEN>, MAX_EVENT_STRING_QUEUE_LEN>::iterator& iter)
-{
-	utl::string<MAX_EVENT_STRING_LEN> result(utl::const_string<32>(PSTR("")));
-
 	if (iter != this->event_string_queue.end())
 	{
-		result = *iter;
+		line_buffer = *iter;
 		++iter;
 	}
-
-	return result;
+	else {
+		line_buffer = utl::const_string<32>(PSTR(""));
+	}
 }
 
 template <const size_t SIZE>
 void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 {
-	// Clear the terminal
-	this->write_line_callback(utl::const_string<32>(PSTR("\033[2J\033[1;1H")), this->opaque);
-
+	this_platform.debugPrintStackInfo(100); // XXX
 	// Construct line buffer
 	utl::string<WIDTH> line_buffer;
+
+	// Clear the terminal
+	this->CLEAR_TERMINAL(line_buffer);
 
 	// Write a line of all '#' characters
 	line_buffer.resize(WIDTH);
@@ -573,33 +578,34 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 	auto iter = this->event_string_queue.begin();
 
 	// Draw line 1
-	this->TEMP(line_buffer, this->increment(iter));
+	this->writeNextEventString(iter, line_buffer);
+
 	this->printHand(line_buffer, 11, 2);
 	this->printHand(line_buffer, 24, 3);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Draw line 2
-	this->TEMP(line_buffer, this->increment(iter));
+	this->writeNextEventString(iter, line_buffer);
 	this->printName(line_buffer, 11, 2);
 	this->printName(line_buffer, 24, 3);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Draw line 3
-	this->TEMP(line_buffer, this->increment(iter));
+	this->writeNextEventString(iter, line_buffer);
 	this->printChipStackCount(line_buffer, 11, 2);
 	this->printChipStackCount(line_buffer, 24, 3);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Prepare line 4
-	this->TEMP(line_buffer, this->increment(iter));
+	this->writeNextEventString(iter, line_buffer);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Prepare line 5
-	this->TEMP(line_buffer, this->increment(iter));
+	this->writeNextEventString(iter, line_buffer);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Prepare line 6
-	this->TEMP(line_buffer, this->increment(iter));
+	this->writeNextEventString(iter, line_buffer);
 	this->printHand(line_buffer, 4, 1);
 	auto board_iter = this->cached_state.board.begin();
 	if (this->cached_state.board.size() >= 3) {
@@ -613,7 +619,7 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Prepare line 7
-	this->TEMP(line_buffer, this->increment(iter));
+	this->writeNextEventString(iter, line_buffer);
 	this->printName(line_buffer, 4, 1);
 	if (this->cached_state.board.size() >= 4) {
 		++board_iter;
@@ -627,29 +633,29 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Prepare line 8
-	this->TEMP(line_buffer, this->increment(iter));
+	this->writeNextEventString(iter, line_buffer);
 	this->printChipStackCount(line_buffer, 4, 1);
 	this->printChipStackCount(line_buffer, 33, 4);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Prepare line 9
-	this->TEMP(line_buffer, this->increment(iter));
+	this->writeNextEventString(iter, line_buffer);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Prepare line 10
-	this->TEMP(line_buffer, this->increment(iter));
+	this->writeNextEventString(iter, line_buffer);
 	this->printHand(line_buffer, 10, 0);
 	this->printHand(line_buffer, 23, 5);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Prepare line 11
-	this->TEMP(line_buffer, this->increment(iter));
+	this->writeNextEventString(iter, line_buffer);
 	this->printName(line_buffer, 10, 0);
 	this->printName(line_buffer, 23, 5);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Prepare line 12
-	this->TEMP(line_buffer, this->increment(iter));
+	this->writeNextEventString(iter, line_buffer);
 	this->printChipStackCount(line_buffer, 10, 0);
 	this->printChipStackCount(line_buffer, 23, 5);
 	this->write_line_callback(line_buffer, this->opaque);
@@ -669,10 +675,14 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Print hint text
-	this->write_line_callback(hint_text, this->opaque);
+	line_buffer = hint_text;
+	this->write_line_callback(line_buffer, this->opaque);
 
 	// Wait 100ms after each screen draw
 	this->delay_callback(100);
+
+	this_platform.debugPrintStackInfo(101); // XXX 1668, 1668 - 1574 = 94 (83 from string)
+	// 356 bytes of SRAM are used for pre initialized data
 }
 
 void ConsoleIO::lineBufferCopy(utl::string<WIDTH>& dst, utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_begin, utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_end, size_t x)

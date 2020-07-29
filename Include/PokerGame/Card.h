@@ -17,6 +17,7 @@
  **/
 #pragma once
 
+#include <utl/cstddef>
 #include <utl/cstdint>
 
  /**
@@ -83,9 +84,13 @@ public:
 	Suit getSuit() const;
 
 private:
-	/// This card's value
-	Value value;
 
-	/// This card's suit
-	Suit suit;
+	// The bit mask of the VALUE bits
+	static constexpr size_t VALUE_BIT_MASK = 0x0F;
+
+	// The bit offset of the SUIT bits
+	static constexpr size_t SUIT_BIT_OFFSET = 4;
+
+	// A combined value and suit field
+	uint8_t value_and_suit;
 };

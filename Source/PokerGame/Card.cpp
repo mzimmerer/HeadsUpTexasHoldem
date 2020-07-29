@@ -19,27 +19,32 @@
 
 #include "Exception.h"
 
-Card::Card() : value(Value::Unrevealed), suit(Suit::Unrevealed)
+Card::Card()
 {
+    this->value_and_suit = static_cast<uint8_t>(Suit::Unrevealed);
+    this->value_and_suit >>= SUIT_BIT_OFFSET;
+    this->value_and_suit |= static_cast<uint8_t>(Value::Unrevealed);
 }
 
-Card::Card(Value value_in, Suit suit_in) : value(value_in), suit(suit_in)
+Card::Card(Value value_in, Suit suit_in)
 {
+    this->value_and_suit = static_cast<uint8_t>(suit_in);
+    this->value_and_suit >>= SUIT_BIT_OFFSET;
+    this->value_and_suit |= static_cast<uint8_t>(value_in);
 }
 
 Card& Card::operator=(const Card& other)
 {
-	this->value = other.value;
-	this->suit = other.suit;
+	this->value_and_suit = other.value_and_suit;
 	return *this;
 }
 
 Card::Value Card::getValue() const
 {
-	return this->value;
+	return static_cast<Card::Value>(this->value_and_suit & VALUE_BIT_MASK);
 }
 
 Card::Suit Card::getSuit() const
 {
-	return this->suit;
+	return static_cast<Card::Suit>(this->value_and_suit >> SUIT_BIT_OFFSET);
 }
