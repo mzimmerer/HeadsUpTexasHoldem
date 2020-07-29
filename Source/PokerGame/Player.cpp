@@ -17,10 +17,11 @@
  **/
 #include "PokerGame/Player.h"
 
-Player::Player(Random& rng_in, uint8_t player_id_in, utl::string<MAX_NAME_SIZE> name_in, uint16_t starting_stack_in) : rng(rng_in), player_id(player_id_in), name(name_in), stack(starting_stack_in)
+Player::Player(Random& rng_in, uint8_t player_id_in, utl::string<MAX_NAME_SIZE> name_in, uint16_t starting_stack_in) //: rng(rng_in), player_id(player_id_in), name(name_in), stack(starting_stack_in)
 {
 }
 
+#if 0
 uint8_t Player::getPlayerID() const
 {
 	return this->player_id;
@@ -41,7 +42,7 @@ const utl::array<Card, 2>& Player::getHand() const
 	return this->hand;
 }
 
-void Player::adjustChips(int adjustment)
+void Player::adjustChips(int16_t adjustment)
 {
 	this->stack += adjustment;
 }
@@ -80,6 +81,7 @@ uint16_t Player::getPotInvestment() const
 {
 	return this->pot_investment;
 }
+#endif
 
 #if 0
 int Player::determineMax(int starting_bet, int decision_value, int max_bet)

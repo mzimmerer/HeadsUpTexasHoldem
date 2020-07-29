@@ -153,6 +153,9 @@
     <ClCompile Include="..\Dependencies\utl\new.cpp" />
     <ClCompile Include="..\Dependencies\utl\string.cpp" />
     <ClCompile Include="..\Source\Exception.cpp" />
+    <ClCompile Include="..\Source\Platform\Desktop\DesktopPlatform.cpp" />
+    <ClCompile Include="..\Source\Platform\Desktop\DesktopSPI.cpp" />
+    <ClCompile Include="..\Source\Platform\Desktop\DesktopUART.cpp" />
     <ClCompile Include="..\Source\PokerGame\Card.cpp" />
     <ClCompile Include="..\Source\PokerGame\Deck.cpp" />
     <ClCompile Include="..\Source\PokerGame\Player.cpp" />

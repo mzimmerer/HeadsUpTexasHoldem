@@ -22,14 +22,14 @@
 Card::Card()
 {
     this->value_and_suit = static_cast<uint8_t>(Suit::Unrevealed);
-    this->value_and_suit >>= SUIT_BIT_OFFSET;
+    this->value_and_suit <<= SUIT_BIT_OFFSET;
     this->value_and_suit |= static_cast<uint8_t>(Value::Unrevealed);
 }
 
 Card::Card(Value value_in, Suit suit_in)
 {
     this->value_and_suit = static_cast<uint8_t>(suit_in);
-    this->value_and_suit >>= SUIT_BIT_OFFSET;
+    this->value_and_suit <<= SUIT_BIT_OFFSET;
     this->value_and_suit |= static_cast<uint8_t>(value_in);
 }
 

@@ -39,6 +39,10 @@ public:
     UART configureUART(int index, const UART::UARTOptions& options);
 
     SPI configureSPI(int index, const SPI::SPIOptions& options);
+
+    // XXX
+    void debugPrintStackInfo(int id = 0) {}
+    // XXX
 };
 
 extern PlatformDesktop this_platform;

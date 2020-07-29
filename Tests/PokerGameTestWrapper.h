@@ -34,7 +34,7 @@ public:
 
 	PokerGameTestWrapper();
 
-	int setRoundCount(int count) {
+	void setRoundCount(int count) {
 		this->num_rounds = count;
 	}
 
@@ -43,7 +43,7 @@ public:
 		this->starting_dealer = player;
 	}
 
-	void pushAction(int player, Player::PlayerAction action, int bet = 0);
+	void pushAction(uint8_t player, Player::PlayerAction action, uint16_t bet = 0);
 
 	void pushCard(Card::Value value, Card::Suit suit) {
 		this->card_list.emplace_front(value, suit);
@@ -97,7 +97,7 @@ private:
 
 	int num_rounds = 1;
 
-	std::array<std::list<utl::pair<Player::PlayerAction, int>>, 6> player_decisions;
+	std::array<std::list<utl::pair<Player::PlayerAction, uint16_t>>, 6> player_decisions;
 
 	// XXX action_log
 	std::vector< CallbackInfo> callback_log;
@@ -105,9 +105,9 @@ private:
 	// XXX
 
 
-	static utl::pair<Player::PlayerAction, int> decisionCallback(const PokerGameState& state, void* opaque);
+	static utl::pair<Player::PlayerAction, uint16_t> decisionCallback(const PokerGameState& state, void* opaque);
 
-	static void playerActionCallback(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet, const PokerGameState& state, void* opaque);
+	static void playerActionCallback(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, uint16_t bet, const PokerGameState& state, void* opaque);
 
 	static void subRoundChangeCallback(SubRound new_sub_round, const PokerGameState& state, void* opaque);
 
@@ -116,7 +116,7 @@ private:
 
 	static void gameEndCallback(const utl::string<MAX_NAME_SIZE>& winner, void* opaque);
 
-	int chooseDealer() override {
+	uint8_t chooseDealer() override {
 		return this->starting_dealer;
 	}
 
@@ -126,15 +126,15 @@ private:
 		return result;
 	}
 
-	utl::pair<Player::PlayerAction, int> playerAction(Player& player) override
+	utl::pair<Player::PlayerAction, uint16_t> playerAction(uint8_t player_id) override
 	{
 		// Construct state
-		utl::vector<int, 6> revealing_players;
-		PokerGameState state = this->constructState(revealing_players, player);
+		utl::vector<uint8_t, 6> revealing_players;
+		PokerGameState state = this->constructState(player_id, revealing_players);
 
 		// Allow the player to decide an action
-		utl::pair<Player::PlayerAction, int> action(Player::PlayerAction::CheckOrCall, 0);
-		if (player.getPlayerID() == 0)
+		utl::pair<Player::PlayerAction, uint16_t> action(Player::PlayerAction::CheckOrCall, 0);
+		if (player_id == 0)
 		{
 			// Allow player to make a decision
 			return this->decision_callback(state, this->opaque);

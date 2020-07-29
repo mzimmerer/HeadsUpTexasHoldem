@@ -118,40 +118,41 @@ public:
 private:
 
 	/// The maximum value for random choice numbers
-	static constexpr int RANDOM_CHOICE_MAX_VALUE = 1000;
+	//static constexpr int RANDOM_CHOICE_MAX_VALUE = 1000;
 
 	// The maximum hand value
-	static constexpr int MAX_HAND_VALUE = 3 * static_cast<int>(Card::Value::Ace);
+	//static constexpr int MAX_HAND_VALUE = 3 * static_cast<int>(Card::Value::Ace);
 
 	// The minimum hand value
-	static constexpr int MIN_HAND_VALUE = 2 * static_cast<int>(Card::Value::Two);
+	//static constexpr int MIN_HAND_VALUE = 2 * static_cast<int>(Card::Value::Two);
 
 	// The maximum hand + board value
-	static constexpr int MAX_HAND_N_BOARD_VALUE = static_cast<int>(RankedHand::Ranking::RoyalFlush);
+	//static constexpr int MAX_HAND_N_BOARD_VALUE = static_cast<int>(RankedHand::Ranking::RoyalFlush);
 
 	// The minimum hand + board value
-	static constexpr int MIN_HAND_N_BOARD_VALUE = static_cast<int>(RankedHand::Ranking::HighCard);
+	//static constexpr int MIN_HAND_N_BOARD_VALUE = static_cast<int>(RankedHand::Ranking::HighCard);
 
 	/// A reference to a random number generator
-	Random& rng;
+	//Random& rng;
 
 	/// The player's ID
-	uint8_t player_id;
+	//uint8_t player_id;
 
 	/// This player's name
-	utl::string<MAX_NAME_SIZE> name;
+	//utl::string<MAX_NAME_SIZE> name;
 
 	/// Stack count
-	uint16_t stack;
+	//uint16_t stack;
 
 	/// Folded indicator
-	bool folded{ false };
+	//bool folded{ false };
 
 	/// Pot investment
-	uint16_t pot_investment{ 0 };
+	//uint16_t pot_investment{ 0 };
 
 	/// Current hand
-	utl::array<Card, 2> hand;
+//	utl::array<Card, 2> hand;
+};
 
 	/** Decide whether to check or bet, and determine the amount
 	 *  @param starting_bet The starting bet value
@@ -179,4 +180,3 @@ private:
 	  */
 //	template <const size_t IN_MIN, const size_t IN_MAX, const size_t OUT_MIN, const size_t OUT_MAX>
 	//static int normalizeValue(int input);
-};

@@ -35,13 +35,13 @@ static utl::fifo<utl::string<8>, 4> line_fifo;
 
 static UART* uart0 = nullptr;
 
-static int processLine(const utl::string<8>& line)
+static uint8_t processLine(const utl::string<8>& line)
 {
 	line_fifo.push(line);
 	return line.size() + 1;
 }
 
-static int processLine(utl::fifo<char, 8>::iterator begin,
+static uint8_t processLine(utl::fifo<char, 8>::iterator begin,
 	utl::fifo<char, 8>::iterator end)
 {
 	utl::string<32> line;
@@ -69,7 +69,7 @@ static void processRxBuffer(utl::fifo<char, 8>& buffer)
 
 		// If a line was found, process it and continue
 		if (result.first == true) {
-			int line_size = processLine(buffer.begin(), buffer.begin() + result.second);
+			uint8_t line_size = processLine(buffer.begin(), buffer.begin() + result.second);
 			buffer.pop(line_size);
 			continue;
 		}
