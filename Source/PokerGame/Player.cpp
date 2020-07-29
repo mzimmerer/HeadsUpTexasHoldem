@@ -149,7 +149,8 @@ utl::pair<Player::PlayerAction, int> Player::decision(const PokerGameState& stat
 		decision_value = RANDOM_CHOICE_MAX_VALUE;
 
 	// If there is a bet
-	if (state.current_bet > 0) {
+	const PlayerState& player_state = state.player_states[state.current_player];
+	if (state.current_bet - player_state.pot_investment > 0) {
 
 		// Determine how much we will call
 		int max_call = this->determineMax(state.big_blind, decision_value, state.table_chip_count);

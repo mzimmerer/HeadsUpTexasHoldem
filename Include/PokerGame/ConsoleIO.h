@@ -52,15 +52,16 @@ public:
 	///  Read line callback definition
 	using ReadLineCallback = utl::string<MAX_USER_INPUT_LEN>(*)(void* opaque);
 
-	/// Deleted default constructor
-	ConsoleIO() = delete;
+	// Delay callback definition
+	using DelayCallback = void(*)(int16_t delay_ms);
 
 	/** Constructor
 	 *  @param write_line_callback The write line callback
 	 *  @param read_line_callback The read line callback
+	 *  @param delay_callback The delay callback
 	 *  @param opaque A user provided pointer that will be passed with callbacks
 	 */
-	ConsoleIO(WriteLineCallback write_line_callback, ReadLineCallback read_line_callback, void* opaque = nullptr);
+	ConsoleIO(WriteLineCallback write_line_callback, ReadLineCallback read_line_callback, DelayCallback delay_callback, void* opaque = nullptr);
 
 	/** Let the user decide what to do based on the current poker game state
 	 *  @param state The current game state
@@ -110,6 +111,9 @@ private:
 	/// The read line callback
 	ReadLineCallback read_line_callback;
 
+	/// The delay callback
+	DelayCallback delay_callback;
+
 	/// User provided pointer
 	void* opaque;
 
@@ -117,7 +121,7 @@ private:
 	PokerGameState cached_state;
 
 	/// The max information string queue length
-	static constexpr size_t MAX_EVENT_STRING_QUEUE_LEN = 7;
+	static constexpr size_t MAX_EVENT_STRING_QUEUE_LEN = 12;
 
 	/// The maximum length for information strings
 	static constexpr size_t MAX_EVENT_STRING_LEN = 39;
@@ -191,23 +195,23 @@ private:
 	/** Print a hand to the screen buffer
 	 *  @param dst The destination string
 	 *  @param x The x coordinate to draw to
-	 *  @param hand The hand
+	 *  @param player_id The id of the target player
 	 */
-	void printHand(utl::string<WIDTH>& dst, size_t x, const utl::array<Card, 2>& hand);
+	void printHand(utl::string<WIDTH>& dst, size_t x, size_t player_id);
 
 	/** Print a name to the screen buffer
 	 *  @param dst The destination string
 	 *  @param x The x coordinate to draw to
-	 *  @param name The name
+	 *  @param player_id The id of the target player
 	 */
-	void printName(utl::string<WIDTH>& dst, size_t x, const utl::string<MAX_NAME_SIZE>& name);
+	void printName(utl::string<WIDTH>& dst, size_t x, size_t player_id);
 
 	/** Print a chip stack count to the screen buffer
 	 *  @param dst The destination string
      *  @param x The x coordinate to draw to
-	 *  @param count The chip stack count
+	 *  @param player_id The id of the target player
 	 */
-	void printChipStackCount(utl::string<WIDTH>& dst, size_t x,int count);
+	void printChipStackCount(utl::string<WIDTH>& dst, size_t x, size_t player_id);
 
 	/** Print a pot stack count to the screen buffer
 	 *  @param dst The destination string

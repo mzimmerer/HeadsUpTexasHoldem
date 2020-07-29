@@ -29,6 +29,8 @@ struct PlayerState
 	utl::string<MAX_NAME_SIZE> name;
 	utl::array<Card, 2> hand;
 	int stack;
+    int pot_investment;
+    int folded;
 };
 
 struct PokerGameState
@@ -38,6 +40,7 @@ struct PokerGameState
 	int current_pot;
 	int current_bet;
 	int current_player;
+    int current_dealer;
 	utl::vector<Card, 5> board;
 	utl::vector<PlayerState, 6> player_states;
 };

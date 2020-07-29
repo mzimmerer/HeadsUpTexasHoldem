@@ -28,24 +28,27 @@
 
 #include "PokerGame/PokerGame.h"
 
-class PokerGameTestWrapper : public PokerGame, public ::testing::Test
+class PokerGameTestWrapper : public PokerGame
 {
 public:
 
-	virtual void SetUp()
-	{
-		this->poker_game = std::make_unique<PokerGame>(0, 5, 500, &decisionCallback,
-			&playerActionCallback, &subRoundChangeCallback,
-			&roundEndCallback, &gameEndCallback, reinterpret_cast<void*>(this));
+	PokerGameTestWrapper();
+
+	int setRoundCount(int count) {
+		this->num_rounds = count;
 	}
 
-	virtual void TearDown()
+	void setStartingDealer(int player)
 	{
+		this->starting_dealer = player;
 	}
 
 	void pushAction(int player, Player::PlayerAction action, int bet = 0);
 
-	// XXX
+	void pushCard(Card::Value value, Card::Suit suit) {
+		this->card_list.emplace_front(value, suit);
+	}
+
 	enum class CallbackType {
 		Decision = 1,
 		PlayerAction = 2,
@@ -53,19 +56,46 @@ public:
 		RoundEnd = 4,
 		GameEnd = 5,
 	};
+
 	struct CallbackInfo {
 		CallbackInfo(CallbackType callback_type_in, const PokerGameState& state_in) : callback_type(callback_type_in), state(state_in) {}
+		CallbackInfo(CallbackType callback_type_in, const PokerGameState& state_in, std::string player_name_in, Player::PlayerAction action_in, int bet_in) : callback_type(callback_type_in), state(state_in), player_name(player_name_in), action(action_in), bet(bet_in) {}
 		CallbackType callback_type;
 		PokerGameState state;
+
+		// PlayerAction specific members
+		std::string player_name;
+		Player::PlayerAction action{ Player::PlayerAction::Fold };
+		int bet{ 0 };
 	};
+
 	const CallbackInfo& callbackInfoAt(size_t offset) {
 		return this->callback_log[offset];
 	}
-	// XXX
+
+	size_t callbackInfoSize() {
+		return this->callback_log.size();
+	}
+
+	std::string getRoundWinner() {
+		return this->round_winner;
+	}
+
+	std::string getGameWinner() {
+		return this->game_winner;
+	}
+
+
+	std::list<Card> card_list;
+
+
+
+
+	int starting_dealer = 0;
 
 private:
 
-	std::unique_ptr<PokerGame> poker_game;
+	int num_rounds = 1;
 
 	std::array<std::list<utl::pair<Player::PlayerAction, int>>, 6> player_decisions;
 
@@ -73,6 +103,7 @@ private:
 	std::vector< CallbackInfo> callback_log;
 	PokerGameState cached_state{};
 	// XXX
+
 
 	static utl::pair<Player::PlayerAction, int> decisionCallback(const PokerGameState& state, void* opaque);
 
@@ -84,4 +115,53 @@ private:
 		const PokerGameState& state, void* opaque);
 
 	static void gameEndCallback(const utl::string<MAX_NAME_SIZE>& winner, void* opaque);
+
+	int chooseDealer() override {
+		return this->starting_dealer;
+	}
+
+	Card dealCard() override {
+		Card result = this->card_list.back();
+		this->card_list.pop_back();
+		return result;
+	}
+
+	utl::pair<Player::PlayerAction, int> playerAction(Player& player) override
+	{
+		// Construct state
+		utl::vector<int, 6> revealing_players;
+		PokerGameState state = this->constructState(revealing_players, player);
+
+		// Allow the player to decide an action
+		utl::pair<Player::PlayerAction, int> action(Player::PlayerAction::CheckOrCall, 0);
+		if (player.getPlayerID() == 0)
+		{
+			// Allow player to make a decision
+			return this->decision_callback(state, this->opaque);
+		}
+		else
+		{
+			// Allow AI to make a decision
+			action = this->player_decisions[state.current_player].back();
+			this->player_decisions[state.current_player].pop_back();
+			return action;
+		}
+	}
+
+
+
+	std::string round_winner;
+
+	std::string game_winner;
+
+
+
+	void expectAIHandsUnrevealed(const PokerGameState& state) {
+		for (size_t i = 1; i < 6; ++i) {
+			EXPECT_EQ(Card::Value::Unrevealed, state.player_states[i].hand[0].getValue());
+			EXPECT_EQ(Card::Suit::Unrevealed, state.player_states[i].hand[0].getSuit());
+			EXPECT_EQ(Card::Value::Unrevealed, state.player_states[i].hand[1].getValue());
+			EXPECT_EQ(Card::Suit::Unrevealed, state.player_states[i].hand[1].getSuit());
+		}
+	}
 };

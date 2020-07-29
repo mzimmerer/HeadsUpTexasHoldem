@@ -126,6 +126,13 @@ static utl::string<ConsoleIO::MAX_USER_INPUT_LEN> readLineCallback(void* opaque)
 	return readLine();
 }
 
+#include <thread>
+static void delayCallback(int16_t delay_ms)
+{
+// XXX
+	std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
+}
+
 int main()
 {
 	// Initialize the platform
@@ -148,7 +155,7 @@ int main()
 		uint32_t random_seed = this_platform.randomSeed();
 
 		// Construct the console IO object
-		ConsoleIO console_io(&writeLineCallback, &readLineCallback);
+		ConsoleIO console_io(&writeLineCallback, &readLineCallback, &delayCallback);
 
 		// Construct the poker game object
 		PokerGame poker_game(random_seed, 5, 500, &ConsoleIO::userDecision, &ConsoleIO::playerAction, &ConsoleIO::subRoundChange,

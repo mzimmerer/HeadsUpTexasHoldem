@@ -70,6 +70,19 @@ public:
 	 */
 	bool operator==(const RankedHand& other) const;
 
+	// XXX
+	bool operator>=(const RankedHand& other) const
+	{
+		if (this->operator==(other) == true)
+			return true;
+
+		if (this->operator<(other) == false)
+			return true;
+
+		return false;
+	}
+	// XXX
+
 	/** Get the player's ID
 	 *  @return The player's ID
 	 */

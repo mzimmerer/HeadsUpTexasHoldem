@@ -285,7 +285,7 @@ RankedHand::PairList RankedHand::constructPairList(const ValueMap& value_map)
 		}
 	}
 
-	// Sort the list in decending order
+	// Sort the list in descending order
 	result.sort([](const Card& lhs, const Card& rhs) {
 		return (lhs.getValue()) >= (rhs.getValue());
 		});
@@ -307,7 +307,7 @@ RankedHand::StraightMap RankedHand::constructStraightMap(const ValueMap& value_m
 	for (const auto& card : cards)
 		result.push_back(card);
 
-	// Sort the list in decending order
+	// Sort the list in descending order
 	result.sort([](const Card& lhs, const Card& rhs) {
 		return (lhs.getValue()) >= (rhs.getValue());
 		});

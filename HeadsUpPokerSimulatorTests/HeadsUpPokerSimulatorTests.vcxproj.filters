@@ -51,9 +51,39 @@
     <ClCompile Include="..\Source\PokerGame\RankedHand.cpp">
       <Filter>SourceUnderTest</Filter>
     </ClCompile>
+    <ClCompile Include="..\Tests\PokerGameTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\PokerGameTestFixture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\PokerGame.cpp">
+      <Filter>SourceUnderTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\Random.cpp">
+      <Filter>SourceUnderTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\Deck.cpp">
+      <Filter>SourceUnderTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Exception.cpp">
+      <Filter>SourceUnderTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\Player.cpp">
+      <Filter>SourceUnderTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Tests\PokerGameTestWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Tests\HandTestWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tests\PokerGameTestFixture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Tests\PokerGameTestWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

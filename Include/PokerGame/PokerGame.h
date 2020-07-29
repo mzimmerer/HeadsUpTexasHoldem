@@ -132,33 +132,57 @@ protected:
 	/// The player table
 	utl::vector<Player, 6> players;
 
+	// XXX
+	struct SidePot {
+		utl::vector<int, 6> players_in;
+		int amount;
+	};
+	utl::vector<SidePot, 6> sidepots;
+	// XXX
+
 	/** Play a round of texas holdem poker!
 	 *  @return True if the program should continue, false otherwise
 	 */
 	bool playRound();
+
+	/** Choose the dealer for this round
+	 *  @return The dealer in the range [0..5]
+	 */
+	virtual int chooseDealer();
+
+	/** Deal a single card
+	 *  @return The card
+	 */
+	virtual Card dealCard(); // TODO remove virtual keyword
 
 	/** Deal cards to each player
 	 */
 	void dealCards();
 
 	/** Handle check or call actions
-	 *  @param player The player that checked or called
+	 *  @param player A reference to the player object
 	 *  @param action The first element is the action, the second is the bet, if any
 	 */
-	void checkOrCall(int player, const utl::pair<Player::PlayerAction, int>& action);
+	void checkOrCall(Player& player, const utl::pair<Player::PlayerAction, int>& action);
 
 	/** Handle bet actions
-	 *  @param player The player that checked or called
+	 *  @param player A reference to the player object
 	 *  @param action The first element is the action, the second is the bet, if any
 	 *  @param True if the round should continue, false otherwise
 	 */
-	bool bet(int player, const utl::pair<Player::PlayerAction, int>& action);
+	bool bet(Player& player, utl::pair<Player::PlayerAction, int>& action);
 
 	/** Handle fold actions
-	 *  @param player The player that checked or called
+	 *  @param player A reference to the player object
 	 *  @param action The first element is the action, the second is the bet, if any
 	 */
-	void fold(int player, const utl::pair<Player::PlayerAction, int>& action);
+	void fold(Player& player, const utl::pair<Player::PlayerAction, int>& action);
+
+	/** Player action function, either lets the human player or AI take an action
+	 *  @param player A reference to the player object
+	 *  @return The first element is the action, the second is the bet, if any
+	 */
+	virtual utl::pair<Player::PlayerAction, int> playerAction(Player& player);
 
 	/** Betting round wrapper, handles final callback
 	 *  @param starting_player The player that starts the betting round
@@ -174,15 +198,16 @@ protected:
 	 */
 	bool bettingRound(int starting_player, int players_acted);
 
-	/** Construct a state struct
-	 *  @param opponent_hand_visible If true, the opponents's hand will be visible
-	 */
-	PokerGameState constructState(bool opponent_hand_visible, int player);
+	// XXX
+	bool resolveRound();
+	// XXX
 
-	/** Callback to the user with a decision request
-	 *  @return The callback decision. The first element is the action, the second is the bet
+	/** Construct a state struct
+	 *  @param revealing_players A vector of player_ids cooresponding to those that revealed their cards
+	 *  @param player The player who will receive this state snapshot
+	 *  @return A copy of the PokerGameState
 	 */
-	utl::pair<Player::PlayerAction, int> callbackWithDecision();
+	PokerGameState constructState(const utl::vector<int, 6>& revealing_players, Player& player);
 
 	/** Callback to the user with a player action notification
 	 *  @param player_name The player's name
@@ -198,9 +223,10 @@ protected:
 
 	/** Callback to the user with a round end notification
 	 *  @param draw True if the round ended in a draw, false otherwise
+	 *  @param revealing_players A vector of player_ids cooresponding to those that revealed their cards
 	 *  @param winner The round winner
 	 *  @param ranking The ranking of the winning hand
 	 *  @param True if the round should continue, false otherwise
 	 */
-	bool callbackWithRoundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking);
+	bool callbackWithRoundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, const utl::vector<int, 6>& revealing_players, RankedHand::Ranking ranking);
 };

@@ -102,6 +102,8 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\Include;..\Dependencies\utl\include;..\Dependencies\googletest\googletest;..\Dependencies\googletest\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>
+      </AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -135,6 +137,8 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\Include;..\Dependencies\utl\include;..\Dependencies\googletest\googletest;..\Dependencies\googletest\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>
+      </AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,13 +152,23 @@
     <ClCompile Include="..\Dependencies\googletest\googletest\src\gtest_main.cc" />
     <ClCompile Include="..\Dependencies\utl\new.cpp" />
     <ClCompile Include="..\Dependencies\utl\string.cpp" />
+    <ClCompile Include="..\Source\Exception.cpp" />
     <ClCompile Include="..\Source\PokerGame\Card.cpp" />
+    <ClCompile Include="..\Source\PokerGame\Deck.cpp" />
+    <ClCompile Include="..\Source\PokerGame\Player.cpp" />
+    <ClCompile Include="..\Source\PokerGame\PokerGame.cpp" />
+    <ClCompile Include="..\Source\PokerGame\Random.cpp" />
     <ClCompile Include="..\Source\PokerGame\RankedHand.cpp" />
     <ClCompile Include="..\Tests\HandTests.cpp" />
     <ClCompile Include="..\Tests\HandTestWrapper.cpp" />
+    <ClCompile Include="..\Tests\PokerGameTests.cpp" />
+    <ClCompile Include="..\Tests\PokerGameTestFixture.cpp" />
+    <ClCompile Include="..\Tests\PokerGameTestWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Tests\HandTestWrapper.h" />
+    <ClInclude Include="..\Tests\PokerGameTestFixture.h" />
+    <ClInclude Include="..\Tests\PokerGameTestWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Dependencies\utl\include\utl\algorithm" />

@@ -21,7 +21,7 @@
 #include <utl/cstdlib>
 #include <utl/string>
 
-ConsoleIO::ConsoleIO(WriteLineCallback write_line_callback_in, ReadLineCallback read_line_callback_in, void* opaque_in) : write_line_callback(write_line_callback_in), read_line_callback(read_line_callback_in), opaque(opaque_in)
+ConsoleIO::ConsoleIO(WriteLineCallback write_line_callback_in, ReadLineCallback read_line_callback_in, DelayCallback delay_callback_in, void* opaque_in) : write_line_callback(write_line_callback_in), read_line_callback(read_line_callback_in), delay_callback(delay_callback_in), opaque(opaque_in)
 {
 }
 
@@ -472,21 +472,43 @@ void ConsoleIO::printCard(utl::string<WIDTH>& dst, size_t x, const Card& card)
 	ConsoleIO::lineBufferCopy(dst, combined.begin(), combined.end(), x - combined.size() / 2);
 }
 
-void ConsoleIO::printHand(utl::string<WIDTH>& dst, size_t x, const utl::array<Card, 2>& RankedHand)
+void ConsoleIO::printHand(utl::string<WIDTH>& dst, size_t x, size_t player_id)
 {
+	// Dont print anything if a player has folded
+	if (this->cached_state.player_states[player_id].folded == true)
+		return;
+
+	// If the player has no chips, dont print the hand
+	if (this->cached_state.player_states[player_id].stack == 0 && this->cached_state.player_states[player_id].pot_investment == 0)
+		return;
+
 	// Print both cards at the specified location with a 10 space spacing
-	printCard(dst, x, RankedHand[0]);
-	printCard(dst, x + 4, RankedHand[1]);
+	printCard(dst, x, this->cached_state.player_states[player_id].hand[0]);
+	printCard(dst, x + 4, this->cached_state.player_states[player_id].hand[1]);
 }
 
-void ConsoleIO::printName(utl::string<WIDTH>& dst, size_t x, const utl::string<MAX_NAME_SIZE>& name)
+void ConsoleIO::printName(utl::string<WIDTH>& dst, size_t x, size_t player_id)
 {
+	// If the player has no chips, dont print his/her name
+	if (this->cached_state.player_states[player_id].stack == 0 && this->cached_state.player_states[player_id].pot_investment == 0)
+		return;
+
+	// Lookup the name
+	utl::string<MAX_NAME_SIZE> name = this->cached_state.player_states[player_id].name;
+
 	// Copy the chip count into the screen buffer
 	ConsoleIO::lineBufferCopy(dst, name.begin(), name.end(), x);
 }
 
-void ConsoleIO::printChipStackCount(utl::string<WIDTH>& dst, size_t x, int count)
+void ConsoleIO::printChipStackCount(utl::string<WIDTH>& dst, size_t x, size_t player_id)
 {
+	// If the player has no chips, dont print the chip count
+	if (this->cached_state.player_states[player_id].stack == 0 && this->cached_state.player_states[player_id].pot_investment == 0)
+		return;
+
+	// Lookup the chip count
+	int count = this->cached_state.player_states[player_id].stack;
+
 	// Copy the chip count into the screen buffer
 	utl::string<MAX_EVENT_STRING_LEN> count_string = utl::const_string<32>(PSTR("$"));
 	count_string += utl::to_string<MAX_EVENT_STRING_LEN>(count);
@@ -505,7 +527,7 @@ void ConsoleIO::printToCall(utl::string<WIDTH>& dst, size_t x)
 {
 	// Copy the chip count into the screen buffer
 	utl::string<MAX_EVENT_STRING_LEN> count_string = utl::const_string<32>(PSTR("to call: $"));
-	count_string += utl::to_string<MAX_EVENT_STRING_LEN>(this->cached_state.current_bet);
+	count_string += utl::to_string<MAX_EVENT_STRING_LEN>(this->cached_state.current_bet - this->cached_state.player_states[0].pot_investment);
 	ConsoleIO::lineBufferCopy(dst, count_string.begin(), count_string.end(), x);
 }
 
@@ -552,20 +574,20 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 
 	// Draw line 1
 	this->TEMP(line_buffer, this->increment(iter));
-	this->printHand(line_buffer, 11, this->cached_state.player_states[2].hand);
-	this->printHand(line_buffer, 24, this->cached_state.player_states[3].hand);
+	this->printHand(line_buffer, 11, 2);
+	this->printHand(line_buffer, 24, 3);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Draw line 2
 	this->TEMP(line_buffer, this->increment(iter));
-	this->printName(line_buffer, 11, this->cached_state.player_states[2].name);
-	this->printName(line_buffer, 24, this->cached_state.player_states[3].name);
+	this->printName(line_buffer, 11, 2);
+	this->printName(line_buffer, 24, 3);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Draw line 3
 	this->TEMP(line_buffer, this->increment(iter));
-	this->printChipStackCount(line_buffer, 11, this->cached_state.player_states[2].stack);
-	this->printChipStackCount(line_buffer, 24, this->cached_state.player_states[3].stack);
+	this->printChipStackCount(line_buffer, 11, 2);
+	this->printChipStackCount(line_buffer, 24, 3);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Prepare line 4
@@ -578,7 +600,7 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 
 	// Prepare line 6
 	this->TEMP(line_buffer, this->increment(iter));
-	this->printHand(line_buffer, 4, this->cached_state.player_states[1].hand);
+	this->printHand(line_buffer, 4, 1);
 	auto board_iter = this->cached_state.board.begin();
 	if (this->cached_state.board.size() >= 3) {
 		printCard(line_buffer, EVENT_TEXT_OFFSET / 2 - 5, *board_iter);
@@ -587,12 +609,12 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 		++board_iter;
 		printCard(line_buffer, EVENT_TEXT_OFFSET / 2 + 5, *board_iter);
 	}
-	this->printHand(line_buffer, 33, this->cached_state.player_states[4].hand);
+	this->printHand(line_buffer, 33, 4);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Prepare line 7
 	this->TEMP(line_buffer, this->increment(iter));
-	this->printName(line_buffer, 4, this->cached_state.player_states[1].name);
+	this->printName(line_buffer, 4, 1);
 	if (this->cached_state.board.size() >= 4) {
 		++board_iter;
 		printCard(line_buffer, EVENT_TEXT_OFFSET / 2 - 3, *board_iter);
@@ -601,13 +623,13 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 		++board_iter;
 		printCard(line_buffer, EVENT_TEXT_OFFSET / 2 + 3, *board_iter);
 	}
-	this->printName(line_buffer, 33, this->cached_state.player_states[4].name);
+	this->printName(line_buffer, 33, 4);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Prepare line 8
 	this->TEMP(line_buffer, this->increment(iter));
-	this->printChipStackCount(line_buffer, 4, this->cached_state.player_states[1].stack);
-	this->printChipStackCount(line_buffer, 33, this->cached_state.player_states[4].stack);
+	this->printChipStackCount(line_buffer, 4, 1);
+	this->printChipStackCount(line_buffer, 33, 4);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Prepare line 9
@@ -616,20 +638,20 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 
 	// Prepare line 10
 	this->TEMP(line_buffer, this->increment(iter));
-	this->printHand(line_buffer, 10, this->cached_state.player_states[0].hand);
-	this->printHand(line_buffer, 23, this->cached_state.player_states[4].hand);
+	this->printHand(line_buffer, 10, 0);
+	this->printHand(line_buffer, 23, 5);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Prepare line 11
 	this->TEMP(line_buffer, this->increment(iter));
-	this->printName(line_buffer, 10, this->cached_state.player_states[0].name);
-	this->printName(line_buffer, 23, this->cached_state.player_states[4].name);
+	this->printName(line_buffer, 10, 0);
+	this->printName(line_buffer, 23, 5);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Prepare line 12
 	this->TEMP(line_buffer, this->increment(iter));
-	this->printChipStackCount(line_buffer, 10, this->cached_state.player_states[0].stack);
-	this->printChipStackCount(line_buffer, 23, this->cached_state.player_states[4].stack);
+	this->printChipStackCount(line_buffer, 10, 0);
+	this->printChipStackCount(line_buffer, 23, 5);
 	this->write_line_callback(line_buffer, this->opaque);
 
 	// Write a line of all '#' characters
@@ -648,6 +670,9 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 
 	// Print hint text
 	this->write_line_callback(hint_text, this->opaque);
+
+	// Wait 100ms after each screen draw
+	this->delay_callback(100);
 }
 
 void ConsoleIO::lineBufferCopy(utl::string<WIDTH>& dst, utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_begin, utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_end, size_t x)

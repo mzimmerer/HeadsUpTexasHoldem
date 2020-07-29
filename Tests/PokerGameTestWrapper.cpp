@@ -18,6 +18,12 @@
 
 #include "PokerGameTestWrapper.h"
 
+PokerGameTestWrapper::PokerGameTestWrapper() : PokerGame(0, 5, 500, &decisionCallback,
+	&playerActionCallback, &subRoundChangeCallback,
+	&roundEndCallback, &gameEndCallback, this)
+{
+}
+
 void PokerGameTestWrapper::pushAction(int player, Player::PlayerAction action, int bet)
 {
 	this->player_decisions[player].emplace_front(action, bet);
@@ -30,14 +36,16 @@ utl::pair<Player::PlayerAction, int> PokerGameTestWrapper::decisionCallback(cons
 	self->player_decisions[state.current_player].pop_back();
 	self->callback_log.emplace_back(CallbackType::Decision, state);
 	self->cached_state = state;
+	self->expectAIHandsUnrevealed(state);
 	return action;
 }
 
 void PokerGameTestWrapper::playerActionCallback(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, int bet, const PokerGameState& state, void* opaque)
 {
 	PokerGameTestWrapper* self = reinterpret_cast<PokerGameTestWrapper*>(opaque);
-	self->callback_log.emplace_back(CallbackType::PlayerAction, state);
+	self->callback_log.emplace_back(CallbackType::PlayerAction, state, std::string(player_name.begin(), player_name.end()), action, bet);
 	self->cached_state = state;
+	self->expectAIHandsUnrevealed(state);
 }
 
 void PokerGameTestWrapper::subRoundChangeCallback(SubRound new_sub_round, const PokerGameState& state, void* opaque)
@@ -45,6 +53,7 @@ void PokerGameTestWrapper::subRoundChangeCallback(SubRound new_sub_round, const 
 	PokerGameTestWrapper* self = reinterpret_cast<PokerGameTestWrapper*>(opaque);
 	self->callback_log.emplace_back(CallbackType::SubroundChange, state);
 	self->cached_state = state;
+	self->expectAIHandsUnrevealed(state);
 }
 
 bool PokerGameTestWrapper::roundEndCallback(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking,
@@ -53,11 +62,17 @@ bool PokerGameTestWrapper::roundEndCallback(bool draw, const utl::string<MAX_NAM
 	PokerGameTestWrapper* self = reinterpret_cast<PokerGameTestWrapper*>(opaque);
 	self->callback_log.emplace_back(CallbackType::RoundEnd, state);
 	self->cached_state = state;
-	return true;
+	self->round_winner = std::string(winner.begin(), winner.end());
+
+	if (--self->num_rounds == 0)
+		return false;
+	else
+		return true;
 }
 
 void PokerGameTestWrapper::gameEndCallback(const utl::string<MAX_NAME_SIZE>& winner, void* opaque)
 {
 	PokerGameTestWrapper* self = reinterpret_cast<PokerGameTestWrapper*>(opaque);
 	self->callback_log.emplace_back(CallbackType::GameEnd, self->cached_state);
+	self->game_winner = std::string(winner.begin(), winner.end());
 }
