@@ -100,15 +100,22 @@ SPI PlatformAtmega328p::configureSPI(int index, const SPI::SPIOptions& options_i
 
 void PlatformAtmega328p::debugPrintStackInfo(int id)
 {
+	static constexpr size_t INITIALIZED_DATA_SIZE = 0x16e;
+	static uint16_t MAX_SEEN_STACK = 0;
+	if (RAMEND - SP + INITIALIZED_DATA_SIZE > MAX_SEEN_STACK)
+		MAX_SEEN_STACK = RAMEND - SP + INITIALIZED_DATA_SIZE;
+
 	utl::string<16> stack_pointer_str = utl::to_string<8>(id);
 	stack_pointer_str += utl::string<16>(" - ");
-	stack_pointer_str += utl::to_string<16>(RAMEND - SP);
+	stack_pointer_str += utl::to_string<16>(MAX_SEEN_STACK);
 	stack_pointer_str += utl::string<16>("\r\n");
 	this->console.writeBytes(stack_pointer_str.begin(), stack_pointer_str.end());
 
-	static constexpr size_t SRAM_SIZE = 0x800;
-	static constexpr size_t INITIALIZED_DATA_SIZE = 0x164;
-	size_t stack_size = RAMEND - SP;
-	if (stack_size + INITIALIZED_DATA_SIZE > SRAM_SIZE)
-		while (1);
+//	static constexpr size_t SRAM_SIZE = 0x800;
+	//static constexpr size_t INITIALIZED_DATA_SIZE = 0x16e;
+	//size_t stack_size = RAMEND - SP;
+//	if (stack_size + INITIALIZED_DATA_SIZE > SRAM_SIZE)
+	//	while (1);
+
+//	_delay_ms(100.0); // XXX
 }

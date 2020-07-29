@@ -77,12 +77,18 @@ public:
 		return this->callback_log.size();
 	}
 
-	std::string getRoundWinner() {
-		return this->round_winner;
+	std::string getNextRoundWinner() {
+		std::string result;
+		result = this->round_winner_list.back();
+		this->round_winner_list.pop_back();
+		return result;
 	}
 
-	std::string getGameWinner() {
-		return this->game_winner;
+	std::string getNextGameWinner() {
+		std::string result;
+		result = this->game_winner_list.back();
+		this->game_winner_list.pop_back();
+		return result;
 	}
 
 
@@ -150,9 +156,9 @@ private:
 
 
 
-	std::string round_winner;
+	std::list<std::string> round_winner_list;
 
-	std::string game_winner;
+	std::list<std::string> game_winner_list;
 
 
 

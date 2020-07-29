@@ -121,17 +121,17 @@ void RankedHand::rankHand()
 	// Check for a straight
 	bool is_straight = this->isStraight(straight_map);
 
-	// Check for royal flush
-	if (is_flush.first == true && is_straight == true && straight_map.begin()->getValue() == Card::Value::Ace)
-	{
-		// The ranking is a royal flush
-		this->rankRoyalFlush();
-		return;
-	}
-
 	// Check for straight flush
 	if (this->isStraightFlush(is_flush, is_straight, straight_map) == true)
 	{
+		// Check for the royal flush
+		if (straight_map.begin()->getValue() == Card::Value::Ace)
+		{
+			// The ranking is a royal flush
+			this->rankRoyalFlush();
+			return;
+		}
+
 		// The ranking is straight flush
 		this->rankStraightFlush(straight_map);
 		return;

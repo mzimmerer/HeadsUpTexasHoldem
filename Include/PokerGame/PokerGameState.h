@@ -40,5 +40,5 @@ struct PokerGameState
     uint8_t current_player;
     uint8_t current_dealer;
 	utl::vector<Card, 5> board;
-	utl::vector<PlayerState, 6> player_states;
+	utl::array<PlayerState, 6> player_states;
 };

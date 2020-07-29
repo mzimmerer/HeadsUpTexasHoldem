@@ -21,10 +21,6 @@
 #include <utl/cstdlib>
 #include <utl/string>
 
- // XXX
-#include <Platform/Platform.h>
-// XXX
-
 ConsoleIO::ConsoleIO(WriteLineCallback write_line_callback_in, ReadLineCallback read_line_callback_in, DelayCallback delay_callback_in, void* opaque_in) : write_line_callback(write_line_callback_in), read_line_callback(read_line_callback_in), delay_callback(delay_callback_in), opaque(opaque_in)
 {
 }
@@ -47,7 +43,6 @@ utl::pair<PokerGame::PlayerAction, uint16_t> ConsoleIO::userDecision(const Poker
 	{
 		utl::string<64> hint_text = checkorcall;
 		hint_text += utl::const_string<64>(PSTR("(c), bet(b), fold(f), or quit(q)?"));
-		this_platform.debugPrintStackInfo(0); // XXX
 		self->updateScreen<64>(hint_text);
 	}
 
@@ -66,7 +61,6 @@ utl::pair<PokerGame::PlayerAction, uint16_t> ConsoleIO::userDecision(const Poker
 			utl::string<64> hint_text = utl::const_string<32>(PSTR("Invalid entry. "));
 			hint_text += checkorcall;
 			hint_text += utl::const_string<64>(PSTR("(c), bet(b), fold(f) or quit(q)?"));
-			this_platform.debugPrintStackInfo(10); // XXX
 			self->updateScreen<64>(hint_text);
 		}
 		else
@@ -82,7 +76,6 @@ utl::pair<PokerGame::PlayerAction, uint16_t> ConsoleIO::userDecision(const Poker
 	{
 		// Update the screen
 		utl::string<64> hint_text = utl::const_string<64>(PSTR("Enter an amount to bet."));
-		this_platform.debugPrintStackInfo(20); // XXX
 		self->updateScreen<64>(hint_text);
 
 		// Get user input
@@ -128,7 +121,6 @@ void ConsoleIO::playerAction(const utl::string<MAX_NAME_SIZE>& player_name, Poke
 
 	// Update the screen
 	utl::string<32> hint_text = utl::const_string<32>(PSTR(""));
-	this_platform.debugPrintStackInfo(30); // XXX
 	self->updateScreen<32>(hint_text);
 }
 
@@ -147,7 +139,6 @@ void ConsoleIO::subRoundChange(PokerGame::SubRound new_sub_round, const PokerGam
 
 	// Update the screen
 	utl::string<32> hint_text = utl::const_string<32>(PSTR(""));
-	this_platform.debugPrintStackInfo(40); // XXX
 	self->updateScreen<32>(hint_text);
 }
 
@@ -170,7 +161,6 @@ bool ConsoleIO::roundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, Ra
 		utl::string<32> hint_text = utl::const_string<32>(PSTR("Continue(c) or quit(q)?"));
 
 		// Update the screen
-		this_platform.debugPrintStackInfo(50); // XXX
 		self->updateScreen<32>(hint_text);
 	}
 
@@ -187,7 +177,6 @@ bool ConsoleIO::roundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, Ra
 		if (action != 'c' && action != 'q')
 		{
 			utl::string<64> hint_text = utl::const_string<64>(PSTR("Invalid entry. Continue(c) or quit(q)??"));
-			this_platform.debugPrintStackInfo(60); // XXX
 			self->updateScreen<64>(hint_text);
 		}
 		else
@@ -207,9 +196,6 @@ bool ConsoleIO::roundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, Ra
 void ConsoleIO::gameEnd(const utl::string<MAX_NAME_SIZE>& winner, void* opaque)
 {
 	ConsoleIO* self = reinterpret_cast<ConsoleIO*>(opaque);
-
-	// Clear the terminal
-	self->write_line_callback(utl::const_string<32>(PSTR("\033[2J\033[1;1H")), self->opaque);
 
 	// Correct for grammer
 	if (winner == utl::const_string<32>(PSTR("You")))
@@ -563,7 +549,6 @@ void ConsoleIO::writeNextEventString(utl::list<utl::string<MAX_EVENT_STRING_LEN>
 template <const size_t SIZE>
 void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 {
-	this_platform.debugPrintStackInfo(100); // XXX
 	// Construct line buffer
 	utl::string<WIDTH> line_buffer;
 
@@ -681,9 +666,6 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 
 	// Wait 100ms after each screen draw
 	this->delay_callback(100);
-
-	this_platform.debugPrintStackInfo(101); // XXX 1668, 1668 - 1574 = 94 (83 from string)
-	// 356 bytes of SRAM are used for pre initialized data
 }
 
 void ConsoleIO::lineBufferCopy(utl::string<WIDTH>& dst, utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_begin, utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_end, size_t x)

@@ -62,7 +62,7 @@ bool PokerGameTestWrapper::roundEndCallback(bool draw, const utl::string<MAX_NAM
 	PokerGameTestWrapper* self = reinterpret_cast<PokerGameTestWrapper*>(opaque);
 	self->callback_log.emplace_back(CallbackType::RoundEnd, state);
 	self->cached_state = state;
-	self->round_winner = std::string(winner.begin(), winner.end());
+	self->round_winner_list.push_front(std::string(winner.begin(), winner.end()));
 
 	if (--self->num_rounds == 0)
 		return false;
@@ -74,5 +74,5 @@ void PokerGameTestWrapper::gameEndCallback(const utl::string<MAX_NAME_SIZE>& win
 {
 	PokerGameTestWrapper* self = reinterpret_cast<PokerGameTestWrapper*>(opaque);
 	self->callback_log.emplace_back(CallbackType::GameEnd, self->cached_state);
-	self->game_winner = std::string(winner.begin(), winner.end());
+	self->game_winner_list.push_front(std::string(winner.begin(), winner.end()));
 }

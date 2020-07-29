@@ -149,14 +149,30 @@ protected:
 	 */
 	virtual uint8_t chooseDealer();
 
+	// XXX This gives you the next player that is still in the game
+	uint8_t incrementPlayerID(uint8_t player_id) {
+
+		uint8_t result = player_id;
+		do {
+			result = (result + 1) % MAX_PLAYERS;
+			PlayerState& player_state = this->current_state.player_states[result];
+			if (player_state.stack == 0 && player_state.pot_investment == 0)
+				continue;
+			break;
+		} while (1);
+		return result;
+	}
+	// XXX
+
 	/** Deal a single card
 	 *  @return The card
 	 */
 	virtual Card dealCard(); // TODO remove virtual keyword
 
 	/** Deal cards to each player
+	 *  @param player_count The amount of players to deal cards to
 	 */
-	void dealCards();
+	void dealCards(uint8_t player_count);
 
 	/** Handle check or call actions
 	 *  @param player_id The player ID
@@ -164,12 +180,14 @@ protected:
 	 */
 	void checkOrCall(int8_t player_id, const utl::pair<PlayerAction, uint16_t>& action);
 
+
+	// TODO XXX FIXME bet calls bettingRound recursivley
+
 	/** Handle bet actions
 	 *  @param player A reference to the player object
 	 *  @param action The first element is the action, the second is the bet, if any
-	 *  @param True if the round should continue, false otherwise
 	 */
-	bool bet(int8_t player_id, utl::pair<PlayerAction, uint16_t>& action);
+	void bet(int8_t player_id, utl::pair<PlayerAction, uint16_t>& action);
 
 	/** Handle fold actions
 	 *  @param player A reference to the player object
@@ -188,14 +206,15 @@ protected:
 	 *  @param players_acted The number of players that have acted
 	 *  @return True if the round should progress, false otherwise
 	 */
-	bool bettingRoundWrapper(uint8_t starting_player, uint8_t players_acted);
-
-	/** Run through a betting round. This function is recursive. TODO XXX FIXME make this iterative!
-	 *  @param starting_player The player that starts the betting round
-	 *  @param players_acted The number of players that have acted
-	 *  @return True if the round should progress, false otherwise
-	 */
 	bool bettingRound(uint8_t starting_player, uint8_t players_acted);
+
+	/** Run through a betting round step, if a player bets, this function returns false and will need to be called again
+	 *  @param acting_player A reference to the ID of the player that currently has priority
+	 *  @param players_to_act A reference to the count of players that need to act
+	 *  @param players_in A reference to the count of players that have not folded and are still in the game
+	 *  @return True if the betting round is over, false otherwise
+	 */
+	bool bettingRoundStep(uint8_t& acting_player, uint8_t& players_to_act, uint8_t& players_in);
 
 	// XXX
 	struct Outcome {

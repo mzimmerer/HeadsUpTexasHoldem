@@ -124,9 +124,12 @@ static utl::string<ConsoleIO::MAX_USER_INPUT_LEN> readLineCallback(void* opaque)
 {
 	// Read a line from the user
 #ifndef EMBEDDED_BUILD
-	return readLine();
+	//return readLine();
+	(void)readLine;
+	return utl::string<ConsoleIO::MAX_USER_INPUT_LEN>("c\r\n");
 #else
 	// TODO XXX FIXME, just spamming embedded builds with 'c' for long duration testing
+	//return readLine();
 	(void)readLine;
 	return utl::string<ConsoleIO::MAX_USER_INPUT_LEN>("c\r\n");
 #endif
@@ -140,7 +143,7 @@ static void delayCallback(int16_t delay_ms)
 int main()
 {
 	// Initialize the platform
-	const UART::UARTOptions uart_options{57600};
+	const UART::UARTOptions uart_options{500000};
 	UART uart0_local = this_platform.configureUART(0, uart_options);
 	uart0 = &uart0_local; // XXX
 
@@ -168,10 +171,8 @@ int main()
 		// Play poker until one of the players has quit or lost
 		poker_game.play();
 
-		// TODO Inform the user we are going to wait for 10 seconds...
-
-		// Wait 10 seconds
-		this_platform.delayMilliSeconds(10000);
+		// Wait 3 seconds
+		this_platform.delayMilliSeconds(3000);
 
 #ifndef EMBEDDED_BUILD
 	}
