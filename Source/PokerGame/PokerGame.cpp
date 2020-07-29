@@ -162,7 +162,7 @@ bool PokerGame::playRound()
 	this->current_state.current_pot += this->small_blind;
 	this->current_state.current_bet = this->small_blind;
 	this_platform.debugPrintStackInfo(200); // XXX
-	this->callbackWithPlayerAction(this->current_state.player_states[small_blind_target].name, Player::PlayerAction::Bet,
+	this->callbackWithPlayerAction(this->current_state.player_states[small_blind_target].name, PlayerAction::Bet,
 		this->small_blind);
 
 	// Big blind
@@ -172,7 +172,7 @@ bool PokerGame::playRound()
 	this->current_state.current_pot += 2 * this->small_blind;
 	this->current_state.current_bet += this->small_blind;
 	this_platform.debugPrintStackInfo(201); // XXX
-	this->callbackWithPlayerAction(this->current_state.player_states[big_blind_target].name, Player::PlayerAction::Bet,
+	this->callbackWithPlayerAction(this->current_state.player_states[big_blind_target].name, PlayerAction::Bet,
 		2 * this->small_blind);
 
 	// Pre-flop betting round
@@ -239,7 +239,7 @@ void PokerGame::dealCards()
 	}
 }
 
-void PokerGame::checkOrCall(int8_t player_id, const utl::pair<Player::PlayerAction, uint16_t>& action)
+void PokerGame::checkOrCall(int8_t player_id, const utl::pair<PlayerAction, uint16_t>& action)
 {
 	// If it was a call, move chips to the pot
 	if (this->current_state.current_bet > 0)
@@ -264,11 +264,11 @@ void PokerGame::checkOrCall(int8_t player_id, const utl::pair<Player::PlayerActi
 		this->current_state.current_pot += to_call;
 
 		// Call action callback
-		this->callbackWithPlayerAction(this->current_state.player_states[player_id].name, Player::PlayerAction::CheckOrCall, to_call);
+		this->callbackWithPlayerAction(this->current_state.player_states[player_id].name, PlayerAction::CheckOrCall, to_call);
 	}
 }
 
-bool PokerGame::bet(int8_t player_id, utl::pair<Player::PlayerAction, uint16_t>& action)
+bool PokerGame::bet(int8_t player_id, utl::pair<PlayerAction, uint16_t>& action)
 {
 	// Lookup this player's current bet
 	uint16_t chips_in_pot = this->current_state.player_states[player_id].pot_investment;
@@ -298,8 +298,8 @@ bool PokerGame::bet(int8_t player_id, utl::pair<Player::PlayerAction, uint16_t>&
 	this->current_state.current_bet += chips_to_pot;
 
 	// Call action callback
-	if (action.first == Player::PlayerAction::CheckOrCall)
-		this->callbackWithPlayerAction(this->current_state.player_states[player_id].name, Player::PlayerAction::CheckOrCall,
+	if (action.first == PlayerAction::CheckOrCall)
+		this->callbackWithPlayerAction(this->current_state.player_states[player_id].name, PlayerAction::CheckOrCall,
 			to_call);
 	else
 		this->callbackWithPlayerAction(this->current_state.player_states[player_id].name, action.first, action.second);
@@ -311,16 +311,16 @@ bool PokerGame::bet(int8_t player_id, utl::pair<Player::PlayerAction, uint16_t>&
 	return true;
 }
 
-void PokerGame::fold(uint8_t player_id, const utl::pair<Player::PlayerAction, uint16_t>& action)
+void PokerGame::fold(uint8_t player_id, const utl::pair<PlayerAction, uint16_t>& action)
 {
 	// Mark the player as folded
 	this->current_state.player_states[player_id].folded = true;
 
 	// Call action callback
-	this->callbackWithPlayerAction(this->current_state.player_states[player_id].name, Player::PlayerAction::Fold, 0);
+	this->callbackWithPlayerAction(this->current_state.player_states[player_id].name, PlayerAction::Fold, 0);
 }
 
-utl::pair<Player::PlayerAction, uint16_t> PokerGame::playerAction(uint8_t player_id)
+utl::pair<PokerGame::PlayerAction, uint16_t> PokerGame::playerAction(uint8_t player_id)
 {
 	// Construct state
 	utl::vector<uint8_t, 6> revealing_players;
@@ -336,7 +336,7 @@ utl::pair<Player::PlayerAction, uint16_t> PokerGame::playerAction(uint8_t player
 	{
 		// Allow AI to make a decision
 	//	return this->current_state.player_states[player_id].decision(state); TODO XXX FIXME AI!!! Pick it from the sky
-		return utl::pair<Player::PlayerAction, uint16_t>(Player::PlayerAction::CheckOrCall, 0);
+		return utl::pair<PlayerAction, uint16_t>(PlayerAction::Bet, 10);
 	}
 }
 
@@ -352,7 +352,7 @@ bool PokerGame::bettingRoundWrapper(uint8_t player, uint8_t players_acted)
 		// If bettingRound returned false, there is only one player still in, determine who
 		for (size_t player_id = 0; player_id < MAX_PLAYERS; ++player_id) {
 
-			
+
 
 			// If this player has no chips, don't consider him/her
 			if (this->current_state.player_states[player_id].stack == 0 && this->current_state.player_states[player_id].pot_investment == 0)
@@ -423,18 +423,18 @@ bool PokerGame::bettingRound(uint8_t starting_player, uint8_t players_acted)
 
 		// Let either players or AI decide their actions
 		this_platform.debugPrintStackInfo(300); // XXX
-		utl::pair<Player::PlayerAction, uint16_t> action = this->playerAction(deciding_player);
+		utl::pair<PlayerAction, uint16_t> action = this->playerAction(deciding_player);
 
 		// Switch to action specific implementation
 		switch (action.first)
 		{
 			// Check or call, depending on current bet
-		case Player::PlayerAction::CheckOrCall:
+		case PlayerAction::CheckOrCall:
 			this->checkOrCall(deciding_player, action);
 			break;
 
 			// Bet
-		case Player::PlayerAction::Bet:
+		case PlayerAction::Bet:
 
 			// If the player can not afford to bet, just call
 			if (this->current_state.player_states[deciding_player].stack < this->current_state.current_bet - this->current_state.player_states[deciding_player].pot_investment) {
@@ -444,13 +444,13 @@ bool PokerGame::bettingRound(uint8_t starting_player, uint8_t players_acted)
 			return this->bet(deciding_player, action);
 
 			// Fold
-		case Player::PlayerAction::Fold:
+		case PlayerAction::Fold:
 			this->fold(deciding_player, action);
 			--players_in;
 			break;
 
 			// Quit
-		case Player::PlayerAction::Quit:
+		case PlayerAction::Quit:
 
 			// Set run to false
 			this->run = false;
@@ -474,12 +474,9 @@ bool PokerGame::bettingRound(uint8_t starting_player, uint8_t players_acted)
 }
 
 // XXX
-bool PokerGame::resolveRound()
+PokerGame::Outcome PokerGame::determineOutcome()
 {
-	bool draw;
-	utl::string<MAX_NAME_SIZE> winner;
-	RankedHand::Ranking ranking;
-	utl::vector<uint8_t, 6> revealing_players;
+	Outcome result;
 
 	// Rank each player's hand
 	utl::list<RankedHand, 6> ranked_hands;
@@ -505,9 +502,9 @@ bool PokerGame::resolveRound()
 	// If there was only 1 ranked hand, the remaining player wins
 	if (ranked_hands.size() == 1)
 	{
-		draw = false;
-		winner = this->current_state.player_states[ranked_hands.begin()->getPlayerID()].name;
-		ranking = ranked_hands.begin()->getRanking();
+		result.draw = false;
+		result.winner = this->current_state.player_states[ranked_hands.begin()->getPlayerID()].name;
+		result.ranking = ranked_hands.begin()->getRanking();
 
 		// Give him/her the chips
 		this->current_state.player_states[ranked_hands.begin()->getPlayerID()].stack += this->current_state.current_pot;
@@ -516,7 +513,7 @@ bool PokerGame::resolveRound()
 
 		// Each of these players revealed their hands TODO XXX FIXME look at the official rules
 		for (const auto& ranked_hand : ranked_hands) {
-			revealing_players.push_back(ranked_hand.getPlayerID());
+			result.revealing_players.push_back(ranked_hand.getPlayerID());
 		}
 
 		// XXX
@@ -535,9 +532,9 @@ bool PokerGame::resolveRound()
 
 		if (ranked_hands.size() > 1) {
 
-			draw = true;
-			winner = "Draw";
-			ranking = ranked_hands.begin()->getRanking();
+			result.draw = true;
+			result.winner = "Draw";
+			result.ranking = ranked_hands.begin()->getRanking();
 
 			// Split the pot
 			int split_amount = this->current_state.current_pot / ranked_hands.size();
@@ -546,18 +543,31 @@ bool PokerGame::resolveRound()
 			}
 		}
 		else {
-			draw = false;
-			winner = this->current_state.player_states[ranked_hands.begin()->getPlayerID()].name;
-			ranking = ranked_hands.begin()->getRanking();
+			result.draw = false;
+			result.winner = this->current_state.player_states[ranked_hands.begin()->getPlayerID()].name;
+			result.ranking = ranked_hands.begin()->getRanking();
 
 			// Give him the chips
 			this->current_state.player_states[ranked_hands.begin()->getPlayerID()].stack += this->current_state.current_pot;
 		}
 	}
-	// XXX
+
+	return result;
+}
+
+bool PokerGame::resolveRound()
+{
+	this_platform.debugPrintStackInfo(400); // XXX
+	//bool draw;
+	//utl::string<MAX_NAME_SIZE> winner;
+	//RankedHand::Ranking ranking;
+	//utl::vector<uint8_t, 6> revealing_players;
+
+	// Determine the match outcome
+	Outcome outcome = determineOutcome();
 
 	// Callback with the result
-	return this->callbackWithRoundEnd(draw, winner, revealing_players, ranking);
+	return this->callbackWithRoundEnd(outcome.draw, outcome.winner, outcome.revealing_players, outcome.ranking);
 }
 
 PokerGameState PokerGame::constructState(uint8_t player_id, const utl::vector<uint8_t, 6>& revealing_players)
@@ -607,12 +617,12 @@ PokerGameState PokerGame::constructState(uint8_t player_id, const utl::vector<ui
 
 	// Reveal hands indicated in the revealing_players vector
 	for (const auto& revealing_player_id : revealing_players)
-		state.player_states[revealing_player_id].hand = state.player_states[revealing_player_id].hand;
+		state.player_states[revealing_player_id].hand = this->current_state.player_states[revealing_player_id].hand;
 
 	return state;
 }
 
-void PokerGame::callbackWithPlayerAction(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, uint16_t bet)
+void PokerGame::callbackWithPlayerAction(const utl::string<MAX_NAME_SIZE>& player_name, PlayerAction action, uint16_t bet)
 {
 	// Construct state
 	utl::vector<uint8_t, 6> revealing_players;

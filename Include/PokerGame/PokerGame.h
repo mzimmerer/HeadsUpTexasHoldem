@@ -35,12 +35,22 @@ class PokerGame
 {
 public:
 
+	/** An enumeration of possible player actions
+	 */
+	enum class PlayerAction : uint8_t
+	{
+		CheckOrCall = 1,
+		Bet = 2,
+		Fold = 3,
+		Quit = 4,
+	};
+
 	/// Decision callback definition
-	using DecisionCallback = utl::pair<Player::PlayerAction, uint16_t>(*)(const PokerGameState& state, void* opaque);
+	using DecisionCallback = utl::pair<PlayerAction, uint16_t>(*)(const PokerGameState& state, void* opaque);
 
 	/// Player action callback definition
 	using PlayerActionCallback =
-		void(*)(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, uint16_t bet, const PokerGameState& state, void* opaque);
+		void(*)(const utl::string<MAX_NAME_SIZE>& player_name, PlayerAction action, uint16_t bet, const PokerGameState& state, void* opaque);
 
 	/// Subround definitions
 	enum class SubRound : uint8_t
@@ -152,26 +162,26 @@ protected:
 	 *  @param player_id The player ID
 	 *  @param action The first element is the action, the second is the bet, if any
 	 */
-	void checkOrCall(int8_t player_id, const utl::pair<Player::PlayerAction, uint16_t>& action);
+	void checkOrCall(int8_t player_id, const utl::pair<PlayerAction, uint16_t>& action);
 
 	/** Handle bet actions
 	 *  @param player A reference to the player object
 	 *  @param action The first element is the action, the second is the bet, if any
 	 *  @param True if the round should continue, false otherwise
 	 */
-	bool bet(int8_t player_id, utl::pair<Player::PlayerAction, uint16_t>& action);
+	bool bet(int8_t player_id, utl::pair<PlayerAction, uint16_t>& action);
 
 	/** Handle fold actions
 	 *  @param player A reference to the player object
 	 *  @param action The first element is the action, the second is the bet, if any
 	 */
-	void fold(uint8_t player_id, const utl::pair<Player::PlayerAction, uint16_t>& action);
+	void fold(uint8_t player_id, const utl::pair<PlayerAction, uint16_t>& action);
 
 	/** Player action function, either lets the human player or AI take an action
 	 *  @param player A reference to the player object
 	 *  @return The first element is the action, the second is the bet, if any
 	 */
-	virtual utl::pair<Player::PlayerAction, uint16_t> playerAction(uint8_t player_id);
+	virtual utl::pair<PlayerAction, uint16_t> playerAction(uint8_t player_id);
 
 	/** Betting round wrapper, handles final callback
 	 *  @param starting_player The player that starts the betting round
@@ -188,6 +198,14 @@ protected:
 	bool bettingRound(uint8_t starting_player, uint8_t players_acted);
 
 	// XXX
+	struct Outcome {
+		bool draw{ false };
+		utl::string<MAX_NAME_SIZE> winner;
+		RankedHand::Ranking ranking{ RankedHand::Ranking::Unranked };
+		utl::vector<uint8_t, 6> revealing_players;
+	};
+	Outcome determineOutcome();
+
 	bool resolveRound();
 	// XXX
 
@@ -203,7 +221,7 @@ protected:
 	 *  @param action The action the player performed
 	 *  @param bet The bet, if any
 	 */
-	void callbackWithPlayerAction(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, uint16_t bet);
+	void callbackWithPlayerAction(const utl::string<MAX_NAME_SIZE>& player_name, PlayerAction action, uint16_t bet);
 
 	/** Callback to the user with a subround change notification
 	 *  @param new_subround The new subround

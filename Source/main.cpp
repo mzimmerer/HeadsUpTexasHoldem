@@ -113,17 +113,23 @@ static utl::string<8> readLine()
 static void writeLineCallback(const utl::string<ConsoleIO::WIDTH>& line, void* opaque)
 {
 	// Write a line to the user's screen
-//	uart0->writeBytes(line.begin(), line.end());
+	uart0->writeBytes(line.begin(), line.end());
 
 	// Write "\r\n" tp the user's screen
-//	utl::string<2> end_line(utl::const_string<2>(PSTR("\r\n")));
-//	uart0->writeBytes(end_line.begin(), end_line.end());
+	utl::string<2> end_line(utl::const_string<2>(PSTR("\r\n")));
+	uart0->writeBytes(end_line.begin(), end_line.end());
 }
 
 static utl::string<ConsoleIO::MAX_USER_INPUT_LEN> readLineCallback(void* opaque)
 {
 	// Read a line from the user
+#ifndef EMBEDDED_BUILD
 	return readLine();
+#else
+	// TODO XXX FIXME, just spamming embedded builds with 'c' for long duration testing
+	(void)readLine;
+	return utl::string<ConsoleIO::MAX_USER_INPUT_LEN>("c\r\n");
+#endif
 }
 
 static void delayCallback(int16_t delay_ms)

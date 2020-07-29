@@ -34,86 +34,15 @@ class Player
 {
 public:
 
-	/** Player constructor
-	 *  @param name The name of the player
-	 *  @param player_id The player's ID
-	 *  @param starting_stack The player's starting stack
-	 */
-	Player(Random& rng_in, uint8_t player_id, utl::string<MAX_NAME_SIZE> name, uint16_t starting_stack);
+	Player(Random& rng_in);
 
-	/** Get the player's ID
-	 *  @return The player's ID
-	 */
-	uint8_t getPlayerID() const;
 
-	/** Player name accessor
-	 * @return The player's name
-	 */
-	const utl::string<MAX_NAME_SIZE>& getName() const;
-
-	/** Set the player's hand by index
-	 * @param index The index to set
-	 * @param card The card to set
-	 */
-	void setCard(uint8_t index, const Card& card);
-
-	/** Get the player's hand
-	 *  @return The players hand as an array
-	 */
-	const utl::array<Card, 2>& getHand() const;
-
-	/** Adjust the player's chip count
-	 *  @param adjustment The amount to change the count by
-	 */
-	void adjustChips(int16_t adjustment);
-
-	/** Chip count accessor
-	 *  @return The chip count
-	 */
-	uint16_t chipCount() const;
-
-	/** Mark the player as folded
-	 */
-	void fold();
-
-	/** Clear the folded indicator
-	 */
-	void clearFolded();
-
-	/** Folded indicator accessor
-	 *  @return True if the player has folded, false otherwise
-	 */
-	bool hasFolded() const;
-
-	/** Adjust the current pot investment
-	 *  @param adjustment The amount to adjust
-	 */
-	void adjustPotInvestment(int16_t adjustment);
-
-	/** Clear the current pot investment value
-	 */
-	void clearPotInvestment();
-
-	/** Pot investment accessor
-	 *  @return The current pot investment
-	 */
-	uint16_t getPotInvestment() const;
-
-	/** An enumeration of possible player actions
-	 */
-	enum class PlayerAction : uint8_t
-	{
-		CheckOrCall = 1,
-		Bet = 2,
-		Fold = 3,
-		Quit = 4,
-	};
 
 	/** AI decision function, makes a decision based on input
 	 *  @param state The poker game state
 	 *  @return The decision. The first element is the action, the second is the bet, if any
 	 */
-	utl::pair<PlayerAction, uint16_t> decision(const PokerGameState& state);
+	//utl::pair<PlayerAction, uint16_t> decision(const PokerGameState& state);
 
 private:
 

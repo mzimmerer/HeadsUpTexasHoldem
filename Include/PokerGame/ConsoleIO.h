@@ -68,7 +68,7 @@ public:
 	 *  @return The player action, where the first element is the action and the second is a bet, if any
 	 *  @param opaque A user provided pointer to a specific ConsoleIO instance
 	 */
-	static utl::pair<Player::PlayerAction, uint16_t> userDecision(const PokerGameState& state, void* opaque);
+	static utl::pair<PokerGame::PlayerAction, uint16_t> userDecision(const PokerGameState& state, void* opaque);
 
 	/** Inform the user about a player action
 	 *  @player_name The name of the player that acted
@@ -77,7 +77,7 @@ public:
 	 *  @param state The current game state
 	 *  @param opaque A user provided pointer to a specific ConsoleIO instance
 	 */
-	static void playerAction(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, uint16_t bet,
+	static void playerAction(const utl::string<MAX_NAME_SIZE>& player_name, PokerGame::PlayerAction action, uint16_t bet,
 		const PokerGameState& state, void* opaque);
 
 	/** Inform the user about a sub round change
@@ -150,7 +150,7 @@ private:
 	 *  @param bet The bet, if any
 	 *  @return The string
 	 */
-	utl::string<MAX_EVENT_STRING_LEN> actionToString(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, uint16_t bet);
+	utl::string<MAX_EVENT_STRING_LEN> actionToString(const utl::string<MAX_NAME_SIZE>& player_name, PokerGame::PlayerAction action, uint16_t bet);
 
 	/** Convert a subround change event to string
 	 *  @param new_sub_round The new sub round

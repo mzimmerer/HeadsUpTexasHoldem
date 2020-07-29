@@ -36,14 +36,14 @@ public:
     void checkSmallBlind(size_t callback_index, const std::string& player_name) {
         EXPECT_EQ(PokerGameTestWrapper::CallbackType::PlayerAction, this->poker_game.callbackInfoAt(callback_index).callback_type);
         EXPECT_EQ(player_name, this->poker_game.callbackInfoAt(callback_index).player_name);
-        EXPECT_EQ(Player::PlayerAction::Bet, this->poker_game.callbackInfoAt(callback_index).action);
+        EXPECT_EQ(PokerGame::PlayerAction::Bet, this->poker_game.callbackInfoAt(callback_index).action);
         EXPECT_EQ(5, this->poker_game.callbackInfoAt(callback_index).bet);
     }
 
     void checkBigBlind(size_t callback_index, const std::string& player_name) {
         EXPECT_EQ(PokerGameTestWrapper::CallbackType::PlayerAction, this->poker_game.callbackInfoAt(callback_index).callback_type);
         EXPECT_EQ(player_name, this->poker_game.callbackInfoAt(callback_index).player_name);
-        EXPECT_EQ(Player::PlayerAction::Bet, this->poker_game.callbackInfoAt(callback_index).action);
+        EXPECT_EQ(PokerGame::PlayerAction::Bet, this->poker_game.callbackInfoAt(callback_index).action);
         EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index).bet);
     }
 
@@ -55,7 +55,7 @@ public:
     {
         EXPECT_EQ(PokerGameTestWrapper::CallbackType::PlayerAction, this->poker_game.callbackInfoAt(callback_index).callback_type);
         EXPECT_EQ(player_name, this->poker_game.callbackInfoAt(callback_index).player_name);
-        EXPECT_EQ(Player::PlayerAction::Fold, this->poker_game.callbackInfoAt(callback_index).action);
+        EXPECT_EQ(PokerGame::PlayerAction::Fold, this->poker_game.callbackInfoAt(callback_index).action);
         EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).bet);
     }
 
@@ -63,7 +63,7 @@ public:
     {
         EXPECT_EQ(PokerGameTestWrapper::CallbackType::PlayerAction, this->poker_game.callbackInfoAt(callback_index).callback_type);
         EXPECT_EQ(player_name, this->poker_game.callbackInfoAt(callback_index).player_name);
-        EXPECT_EQ(Player::PlayerAction::CheckOrCall, this->poker_game.callbackInfoAt(callback_index).action);
+        EXPECT_EQ(PokerGame::PlayerAction::CheckOrCall, this->poker_game.callbackInfoAt(callback_index).action);
         EXPECT_EQ(call_amount, this->poker_game.callbackInfoAt(callback_index).bet);
     }
 
@@ -71,7 +71,7 @@ public:
     {
         EXPECT_EQ(PokerGameTestWrapper::CallbackType::PlayerAction, this->poker_game.callbackInfoAt(callback_index).callback_type);
         EXPECT_EQ(player_name, this->poker_game.callbackInfoAt(callback_index).player_name);
-        EXPECT_EQ(Player::PlayerAction::Bet, this->poker_game.callbackInfoAt(callback_index).action);
+        EXPECT_EQ(PokerGame::PlayerAction::Bet, this->poker_game.callbackInfoAt(callback_index).action);
         EXPECT_EQ(bet_amount, this->poker_game.callbackInfoAt(callback_index).bet);
     }
 

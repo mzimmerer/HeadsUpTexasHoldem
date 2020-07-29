@@ -29,7 +29,7 @@ ConsoleIO::ConsoleIO(WriteLineCallback write_line_callback_in, ReadLineCallback 
 {
 }
 
-utl::pair<Player::PlayerAction, uint16_t> ConsoleIO::userDecision(const PokerGameState& state, void* opaque)
+utl::pair<PokerGame::PlayerAction, uint16_t> ConsoleIO::userDecision(const PokerGameState& state, void* opaque)
 {
 	ConsoleIO* self = reinterpret_cast<ConsoleIO*>(opaque);
 
@@ -91,26 +91,26 @@ utl::pair<Player::PlayerAction, uint16_t> ConsoleIO::userDecision(const PokerGam
 		bet_amt = ConsoleIO::userInputToInt(input);
 
 		// Return a pair with the action and bet amount
-		return utl::pair<Player::PlayerAction, uint16_t>(Player::PlayerAction::Bet, bet_amt);
+		return utl::pair<PokerGame::PlayerAction, uint16_t>(PokerGame::PlayerAction::Bet, bet_amt);
 	}
 
 	// Translate user inputs into PlayerAction enum class values
-	Player::PlayerAction player_action = static_cast<Player::PlayerAction>(action);
+	PokerGame::PlayerAction player_action = static_cast<PokerGame::PlayerAction>(action);
 	if (action == 'c')
-		player_action = Player::PlayerAction::CheckOrCall;
+		player_action = PokerGame::PlayerAction::CheckOrCall;
 	else if (action == 'b')
-		player_action = Player::PlayerAction::Bet;
+		player_action = PokerGame::PlayerAction::Bet;
 	else if (action == 'f')
-		player_action = Player::PlayerAction::Fold;
+		player_action = PokerGame::PlayerAction::Fold;
 	else
-		player_action = Player::PlayerAction::Quit;
+		player_action = PokerGame::PlayerAction::Quit;
 
-	utl::pair<Player::PlayerAction, uint16_t> result(player_action, bet_amt);
+	utl::pair<PokerGame::PlayerAction, uint16_t> result(player_action, bet_amt);
 
 	return result;
 }
 
-void ConsoleIO::playerAction(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, uint16_t bet,
+void ConsoleIO::playerAction(const utl::string<MAX_NAME_SIZE>& player_name, PokerGame::PlayerAction action, uint16_t bet,
 	const PokerGameState& state, void* opaque)
 {
 	ConsoleIO* self = reinterpret_cast<ConsoleIO*>(opaque);
@@ -239,7 +239,7 @@ uint16_t ConsoleIO::userInputToInt(const utl::string<MAX_USER_INPUT_LEN>& input)
 	return strtol(input.c_str(), nullptr, 10);
 }
 
-utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::actionToString(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, uint16_t bet)
+utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::actionToString(const utl::string<MAX_NAME_SIZE>& player_name, PokerGame::PlayerAction action, uint16_t bet)
 {
 	utl::string<MAX_EVENT_STRING_LEN> result;
 
@@ -247,7 +247,7 @@ utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::actionToString(const utl
 	switch (action)
 	{
 		// Check or call
-	case Player::PlayerAction::CheckOrCall:
+	case PokerGame::PlayerAction::CheckOrCall:
 		if (bet > 0)
 		{
 			// Correct for grammer
@@ -272,7 +272,7 @@ utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::actionToString(const utl
 		break;
 
 		// Bet
-	case Player::PlayerAction::Bet:
+	case PokerGame::PlayerAction::Bet:
 
 		// Correct for grammer
 		if (player_name == utl::const_string<32>(PSTR("You"))) {
@@ -291,7 +291,7 @@ utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::actionToString(const utl
 		break;
 
 		// Fold
-	case Player::PlayerAction::Fold:
+	case PokerGame::PlayerAction::Fold:
 
 		// Correct for grammer
 		if (player_name == utl::const_string<32>(PSTR("You")))
@@ -303,7 +303,7 @@ utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::actionToString(const utl
 		break;
 
 		// Quit
-	case Player::PlayerAction::Quit:
+	case PokerGame::PlayerAction::Quit:
 		return utl::const_string<32>(PSTR(""));
 	}
 
@@ -419,7 +419,7 @@ utl::string<10> ConsoleIO::printSuit(Card::Suit suit)
 {
 	switch (suit)
 	{
-#if 0
+#if 1
 	case Card::Suit::Clubs:
 		return utl::const_string<32>(PSTR("c"));
 	case Card::Suit::Diamonds:
@@ -440,7 +440,7 @@ utl::string<10> ConsoleIO::printValue(Card::Value value)
 {
 	switch (value)
 	{
-#if 0
+#if 1
 	case Card::Value::Ace:
 		return utl::const_string<32>(PSTR("A"));
 	case Card::Value::Two:
@@ -549,13 +549,14 @@ void ConsoleIO::printToCall(utl::string<WIDTH>& dst, size_t x)
 void ConsoleIO::writeNextEventString(utl::list<utl::string<MAX_EVENT_STRING_LEN>, MAX_EVENT_STRING_QUEUE_LEN>::iterator& iter,
 	utl::string<WIDTH>& line_buffer)
 {
+	utl::fill(line_buffer.begin(), line_buffer.end(), ' '); // XXX rename this function, prepare line?
+	line_buffer[0] = '#';
+	line_buffer[line_buffer.size() - 1] = '#';
+
 	if (iter != this->event_string_queue.end())
 	{
-		line_buffer = *iter;
+		ConsoleIO::lineBufferCopy(line_buffer, iter->begin(), iter->end(), EVENT_TEXT_OFFSET);
 		++iter;
-	}
-	else {
-		line_buffer = utl::const_string<32>(PSTR(""));
 	}
 }
 

@@ -17,7 +17,7 @@
  **/
 #include "PokerGame/Player.h"
 
-Player::Player(Random& rng_in, uint8_t player_id_in, utl::string<MAX_NAME_SIZE> name_in, uint16_t starting_stack_in) //: rng(rng_in), player_id(player_id_in), name(name_in), stack(starting_stack_in)
+Player::Player(Random& rng_in) //: rng(rng_in), player_id(player_id_in), name(name_in), stack(starting_stack_in)
 {
 }
 
@@ -114,6 +114,7 @@ utl::pair<Player::PlayerAction, int> Player::checkOrBet(int starting_bet, int de
 }
 #endif
 
+#if 0
 utl::pair<Player::PlayerAction, uint16_t> Player::decision(const PokerGameState& state)
 {
 #if 0
@@ -176,6 +177,7 @@ utl::pair<Player::PlayerAction, uint16_t> Player::decision(const PokerGameState&
 
 	return utl::pair<Player::PlayerAction, uint16_t>(Player::PlayerAction::CheckOrCall, 0); // XXX
 }
+#endif
 
 #if 0
 template <const size_t IN_MIN, const size_t IN_MAX, const size_t OUT_MIN, const size_t OUT_MAX>

@@ -24,15 +24,15 @@ PokerGameTestWrapper::PokerGameTestWrapper() : PokerGame(0, 5, 500, &decisionCal
 {
 }
 
-void PokerGameTestWrapper::pushAction(uint8_t player, Player::PlayerAction action, uint16_t bet)
+void PokerGameTestWrapper::pushAction(uint8_t player, PokerGame::PlayerAction action, uint16_t bet)
 {
 	this->player_decisions[player].emplace_front(action, bet);
 }
 
-utl::pair<Player::PlayerAction, uint16_t> PokerGameTestWrapper::decisionCallback(const PokerGameState& state, void* opaque)
+utl::pair<PokerGame::PlayerAction, uint16_t> PokerGameTestWrapper::decisionCallback(const PokerGameState& state, void* opaque)
 {
 	PokerGameTestWrapper* self = reinterpret_cast<PokerGameTestWrapper*>(opaque);
-	utl::pair<Player::PlayerAction, uint16_t> action = self->player_decisions[state.current_player].back();
+	utl::pair<PokerGame::PlayerAction, uint16_t> action = self->player_decisions[state.current_player].back();
 	self->player_decisions[state.current_player].pop_back();
 	self->callback_log.emplace_back(CallbackType::Decision, state);
 	self->cached_state = state;
@@ -40,7 +40,7 @@ utl::pair<Player::PlayerAction, uint16_t> PokerGameTestWrapper::decisionCallback
 	return action;
 }
 
-void PokerGameTestWrapper::playerActionCallback(const utl::string<MAX_NAME_SIZE>& player_name, Player::PlayerAction action, uint16_t bet, const PokerGameState& state, void* opaque)
+void PokerGameTestWrapper::playerActionCallback(const utl::string<MAX_NAME_SIZE>& player_name, PokerGame::PlayerAction action, uint16_t bet, const PokerGameState& state, void* opaque)
 {
 	PokerGameTestWrapper* self = reinterpret_cast<PokerGameTestWrapper*>(opaque);
 	self->callback_log.emplace_back(CallbackType::PlayerAction, state, std::string(player_name.begin(), player_name.end()), action, bet);

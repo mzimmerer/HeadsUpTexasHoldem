@@ -29,11 +29,11 @@ TEST_F(PokerGameTestFixture, EveryoneFoldsAutoWin)
 	this->poker_game.setStartingDealer(4);
 
 	// All the AI fold, the game should end with you winning the pot
-	this->poker_game.pushAction(1, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(2, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(3, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(4, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(5, Player::PlayerAction::Fold);
+	this->poker_game.pushAction(1, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(2, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(3, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(4, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(5, PokerGame::PlayerAction::Fold);
 
 	// Deal each player two pre-determined cards
 	for (size_t i = 0; i < 2 * 6; ++i) {
@@ -108,12 +108,12 @@ TEST_F(PokerGameTestFixture, AllAIFolds)
 	this->poker_game.setStartingDealer(5);
 
 	// You check, all the AI fold, the game should end
-	this->poker_game.pushAction(2, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(3, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(4, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(5, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(0, Player::PlayerAction::CheckOrCall);
-	this->poker_game.pushAction(1, Player::PlayerAction::Fold);
+	this->poker_game.pushAction(2, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(3, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(4, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(5, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(0, PokerGame::PlayerAction::CheckOrCall);
+	this->poker_game.pushAction(1, PokerGame::PlayerAction::Fold);
 
 	// Deal each player two pre-determined cards
 	for (size_t i = 0; i < 2 * 6; ++i) {
@@ -191,12 +191,12 @@ TEST_F(PokerGameTestFixture, EveryoneChecksOrCalls)
 
 	// Everyone checks for all 4 betting rounds
 	for (size_t i = 0; i < 4; ++i) {
-		this->poker_game.pushAction(0, Player::PlayerAction::CheckOrCall);
-		this->poker_game.pushAction(1, Player::PlayerAction::CheckOrCall);
-		this->poker_game.pushAction(2, Player::PlayerAction::CheckOrCall);
-		this->poker_game.pushAction(3, Player::PlayerAction::CheckOrCall);
-		this->poker_game.pushAction(4, Player::PlayerAction::CheckOrCall);
-		this->poker_game.pushAction(5, Player::PlayerAction::CheckOrCall);
+		this->poker_game.pushAction(0, PokerGame::PlayerAction::CheckOrCall);
+		this->poker_game.pushAction(1, PokerGame::PlayerAction::CheckOrCall);
+		this->poker_game.pushAction(2, PokerGame::PlayerAction::CheckOrCall);
+		this->poker_game.pushAction(3, PokerGame::PlayerAction::CheckOrCall);
+		this->poker_game.pushAction(4, PokerGame::PlayerAction::CheckOrCall);
+		this->poker_game.pushAction(5, PokerGame::PlayerAction::CheckOrCall);
 	}
 
 	// Deal each player two pre-determined cards
@@ -279,25 +279,25 @@ TEST_F(PokerGameTestFixture, AISmallBetYouCall)
 	this->poker_game.setStartingDealer(5);
 
 	// You check, one AI bets 50, the rest fold, you call.
-	this->poker_game.pushAction(0, Player::PlayerAction::CheckOrCall);
-	this->poker_game.pushAction(1, Player::PlayerAction::Bet, 50);
-	this->poker_game.pushAction(2, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(3, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(4, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(5, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(0, Player::PlayerAction::CheckOrCall);
+	this->poker_game.pushAction(0, PokerGame::PlayerAction::CheckOrCall);
+	this->poker_game.pushAction(1, PokerGame::PlayerAction::Bet, 50);
+	this->poker_game.pushAction(2, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(3, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(4, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(5, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(0, PokerGame::PlayerAction::CheckOrCall);
 
 	// Players check down the hand (flop)
-	this->poker_game.pushAction(0, Player::PlayerAction::CheckOrCall);
-	this->poker_game.pushAction(1, Player::PlayerAction::CheckOrCall);
+	this->poker_game.pushAction(0, PokerGame::PlayerAction::CheckOrCall);
+	this->poker_game.pushAction(1, PokerGame::PlayerAction::CheckOrCall);
 
 	// Turn
-	this->poker_game.pushAction(0, Player::PlayerAction::CheckOrCall);
-	this->poker_game.pushAction(1, Player::PlayerAction::CheckOrCall);
+	this->poker_game.pushAction(0, PokerGame::PlayerAction::CheckOrCall);
+	this->poker_game.pushAction(1, PokerGame::PlayerAction::CheckOrCall);
 
 	// River
-	this->poker_game.pushAction(0, Player::PlayerAction::CheckOrCall);
-	this->poker_game.pushAction(1, Player::PlayerAction::CheckOrCall);
+	this->poker_game.pushAction(0, PokerGame::PlayerAction::CheckOrCall);
+	this->poker_game.pushAction(1, PokerGame::PlayerAction::CheckOrCall);
 
 	// Deal each player two pre-determined cards
 	for (size_t i = 0; i < 2 * 6; ++i) {
@@ -382,13 +382,13 @@ TEST_F(PokerGameTestFixture, AIAllInYouCall)
 	this->poker_game.setStartingDealer(5);
 
 	// You check, one AI goes all in, the rest fold, you call.
-	this->poker_game.pushAction(0, Player::PlayerAction::CheckOrCall);
-	this->poker_game.pushAction(1, Player::PlayerAction::Bet, 490);
-	this->poker_game.pushAction(2, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(3, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(4, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(5, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(0, Player::PlayerAction::CheckOrCall);
+	this->poker_game.pushAction(0, PokerGame::PlayerAction::CheckOrCall);
+	this->poker_game.pushAction(1, PokerGame::PlayerAction::Bet, 490);
+	this->poker_game.pushAction(2, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(3, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(4, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(5, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(0, PokerGame::PlayerAction::CheckOrCall);
 
 	// Deal each player two pre-determined cards
 	for (size_t i = 0; i < 2 * 6; ++i) {
@@ -470,13 +470,13 @@ TEST_F(PokerGameTestFixture, AIBetsThanFoldsAutoWin)
 	this->poker_game.setStartingDealer(1);
 
 	// All the AI fold, the game should end with you winning the pot
-	this->poker_game.pushAction(4, Player::PlayerAction::Bet, 40);
-	this->poker_game.pushAction(5, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(0, Player::PlayerAction::CheckOrCall);
-	this->poker_game.pushAction(1, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(2, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(3, Player::PlayerAction::Fold);
-	this->poker_game.pushAction(4, Player::PlayerAction::Fold);
+	this->poker_game.pushAction(4, PokerGame::PlayerAction::Bet, 40);
+	this->poker_game.pushAction(5, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(0, PokerGame::PlayerAction::CheckOrCall);
+	this->poker_game.pushAction(1, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(2, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(3, PokerGame::PlayerAction::Fold);
+	this->poker_game.pushAction(4, PokerGame::PlayerAction::Fold);
 
 	// Deal each player two pre-determined cards
 	for (size_t i = 0; i < 2 * 6; ++i) {
