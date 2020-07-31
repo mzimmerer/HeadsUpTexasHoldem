@@ -147,9 +147,9 @@ int main()
 	UART uart0_local = this_platform.configureUART(0, uart_options);
 	uart0 = &uart0_local; // XXX
 
-	const SPI::SPIOptions spi_options({62500});
-	SPI spi0 = this_platform.configureSPI(0, spi_options);
-	(void) spi0; // XXX
+	//const SPI::SPIOptions spi_options({62500});
+//	SPI spi0 = this_platform.configureSPI(0, spi_options);
+	//(void) spi0; // XXX
 
 	// Run the program
 #ifdef EMBEDDED_BUILD

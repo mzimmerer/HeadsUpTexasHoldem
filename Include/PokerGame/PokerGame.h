@@ -29,6 +29,10 @@
 #include "Random.h"
 #include "RankedHand.h"
 
+// XXX
+#include "PokerGame/PotTracker.h" // XXX dont need remove
+// XXX
+
  /** Texas Holdem poker game class. Implements heads up poker against an AI opponent
   */
 class PokerGame
@@ -132,11 +136,66 @@ protected:
 	PokerGameState current_state;
 
 	// XXX
-	//struct SidePot {
-	//	utl::vector<int, 6> players_in;
-	//	int amount;
-	//};
-//	utl::vector<SidePot, 6> sidepots;
+#if 0
+	class PlayerMap {
+	public:
+
+		PlayerMap() : map(0) {}
+		PlayerMap& operator=(const PlayerMap& other)
+		{
+			this->map = other.map;
+			return *this;
+		}
+		bool operator[](size_t offset) const
+		{
+			return (this->map >> offset) & 1;
+		}
+		void set(size_t offset, bool value)
+		{
+			if (value == true)
+				this->map |= (1 << offset);
+			else
+				this->map &= ~(1 << offset);
+		}
+		size_t playerCount() const {
+			size_t result = 0;
+			for (size_t i = 0; i < 6; ++i) {
+				if (this->operator[](i) == true)
+					++result;
+			}
+			return result;
+		}
+		private:
+			uint8_t map;
+	};
+	struct SidePot {
+	    PlayerMap player_map;
+		uint16_t amount{0};
+	};
+	utl::vector<SidePot, 5> side_pots;
+
+	void addSidePot(uint8_t player_id)
+	{
+		PlayerMap player_map;
+		player_map.set(player_id, true);
+		for (size_t i = 0; i < MAX_PLAYERS; ++i) {
+			const auto& player = this->current_state.player_states[i];
+			if (player.folded == true)
+				continue;
+			if (player.pot_investment == 0)
+				continue;
+			player_map.set(i, true);
+		}
+		SidePot side_pot;
+		side_pot.player_map = player_map;
+		side_pot.amount = this->current_state.current_pot;
+		this->side_pots.push_back(side_pot);
+	}
+#endif
+
+	// XXX
+	PotTracker pot_tracker;
+	// XXX
 	// XXX
 
 	/** Play a round of texas holdem poker!
@@ -177,17 +236,16 @@ protected:
 	/** Handle check or call actions
 	 *  @param player_id The player ID
 	 *  @param action The first element is the action, the second is the bet, if any
+	 *  @return Returns true if the player is now all in, false otherwise
 	 */
-	void checkOrCall(int8_t player_id, const utl::pair<PlayerAction, uint16_t>& action);
-
-
-	// TODO XXX FIXME bet calls bettingRound recursivley
+	bool checkOrCall(int8_t player_id, const utl::pair<PlayerAction, uint16_t>& action);
 
 	/** Handle bet actions
 	 *  @param player A reference to the player object
 	 *  @param action The first element is the action, the second is the bet, if any
+	 *  @return Returns true if the player is now all in, false otherwise
 	 */
-	void bet(int8_t player_id, utl::pair<PlayerAction, uint16_t>& action);
+	bool bet(int8_t player_id, utl::pair<PlayerAction, uint16_t>& action);
 
 	/** Handle fold actions
 	 *  @param player A reference to the player object
@@ -211,10 +269,10 @@ protected:
 	/** Run through a betting round step, if a player bets, this function returns false and will need to be called again
 	 *  @param acting_player A reference to the ID of the player that currently has priority
 	 *  @param players_to_act A reference to the count of players that need to act
-	 *  @param players_in A reference to the count of players that have not folded and are still in the game
+	 *  @param actionable_players A reference to the count of players that may still make decisions
 	 *  @return True if the betting round is over, false otherwise
 	 */
-	bool bettingRoundStep(uint8_t& acting_player, uint8_t& players_to_act, uint8_t& players_in);
+	bool bettingRoundStep(uint8_t& acting_player, uint8_t& players_to_act, uint8_t& actionable_players);
 
 	// XXX
 	struct Outcome {

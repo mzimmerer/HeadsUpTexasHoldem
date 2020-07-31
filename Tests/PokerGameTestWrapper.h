@@ -38,9 +38,13 @@ public:
 		this->num_rounds = count;
 	}
 
-	void setStartingDealer(int player)
+	void setPlayerStack(int player_id, int chip_count) {
+		this->current_state.player_states[player_id].stack = chip_count;
+	}
+
+	void setStartingDealer(int player_id)
 	{
-		this->starting_dealer = player;
+		this->starting_dealer = player_id;
 	}
 
 	void pushAction(uint8_t player, PokerGame::PlayerAction action, uint16_t bet = 0);

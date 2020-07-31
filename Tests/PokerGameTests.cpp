@@ -51,7 +51,8 @@ TEST_F(PokerGameTestFixture, EveryoneFoldsAutoWin)
 	this->poker_game.play();
 
 	// Check output against expectations
-	ASSERT_EQ(10, this->poker_game.callbackInfoSize());
+	static constexpr size_t EXPECTED_CB_INFO_CNT = 10;
+	ASSERT_EQ(EXPECTED_CB_INFO_CNT, this->poker_game.callbackInfoSize());
 
 	// Check output against expectations
 	int callback_index = 0;
@@ -98,8 +99,8 @@ TEST_F(PokerGameTestFixture, EveryoneFoldsAutoWin)
 	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Ron", this->poker_game.getNextGameWinner());
 
-	// We should have examined callback info in the range [0..10)
-	EXPECT_EQ(10, callback_index + 1);
+	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
+	EXPECT_EQ(EXPECTED_CB_INFO_CNT, callback_index + 1);
 }
 
 TEST_F(PokerGameTestFixture, EveryoneBets_YouWin)
@@ -153,7 +154,8 @@ TEST_F(PokerGameTestFixture, EveryoneBets_YouWin)
 	this->poker_game.play();
 
 	// Check output against expectations
-	ASSERT_EQ(25, this->poker_game.callbackInfoSize());
+	static constexpr size_t EXPECTED_CB_INFO_CNT = 25;
+	ASSERT_EQ(EXPECTED_CB_INFO_CNT, this->poker_game.callbackInfoSize());
 
 	// Check output against expectations
 	int callback_index = 0;
@@ -216,8 +218,8 @@ TEST_F(PokerGameTestFixture, EveryoneBets_YouWin)
 	EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("You", this->poker_game.getNextGameWinner());
 
-	// We should have examined callback info in the range [0..25)
-	EXPECT_EQ(25, callback_index + 1);
+	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
+	EXPECT_EQ(EXPECTED_CB_INFO_CNT, callback_index + 1);
 }
 
 TEST_F(PokerGameTestFixture, AllAIFolds)
@@ -249,7 +251,8 @@ TEST_F(PokerGameTestFixture, AllAIFolds)
 	this->poker_game.play();
 
 	// Check output against expectations
-	ASSERT_EQ(12, this->poker_game.callbackInfoSize());
+	static constexpr size_t EXPECTED_CB_INFO_CNT = 12;
+	ASSERT_EQ(EXPECTED_CB_INFO_CNT, this->poker_game.callbackInfoSize());
 
 	// Check output against expectations
 	int callback_index = 0;
@@ -298,8 +301,8 @@ TEST_F(PokerGameTestFixture, AllAIFolds)
 	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Betty", this->poker_game.getNextGameWinner());
 
-	// We should have examined callback info in the range [0..12)
-	EXPECT_EQ(12, callback_index + 1);
+	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
+	EXPECT_EQ(EXPECTED_CB_INFO_CNT, callback_index + 1);
 }
 
 TEST_F(PokerGameTestFixture, EveryoneChecksOrCalls)
@@ -333,7 +336,8 @@ TEST_F(PokerGameTestFixture, EveryoneChecksOrCalls)
 	this->poker_game.play();
 
 	// Check output against expectations
-	ASSERT_EQ(36, this->poker_game.callbackInfoSize());
+	static constexpr size_t EXPECTED_CB_INFO_CNT = 36;
+	ASSERT_EQ(EXPECTED_CB_INFO_CNT, this->poker_game.callbackInfoSize());
 	int callback_index = 0;
 	this->checkSmallBlind(callback_index++, "You");
 	this->checkBigBlind(callback_index++, "Ron");
@@ -387,8 +391,8 @@ TEST_F(PokerGameTestFixture, EveryoneChecksOrCalls)
 	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Ron", this->poker_game.getNextGameWinner());
 
-	// We should have examined callback info in the range [0..36)
-	EXPECT_EQ(36, callback_index + 1);
+	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
+	EXPECT_EQ(EXPECTED_CB_INFO_CNT, callback_index + 1);
 }
 
 TEST_F(PokerGameTestFixture, AISmallBetYouCall)
@@ -433,7 +437,8 @@ TEST_F(PokerGameTestFixture, AISmallBetYouCall)
 	this->poker_game.play();
 
 	// Check output against expectations
-	ASSERT_EQ(26, this->poker_game.callbackInfoSize());
+	static constexpr size_t EXPECTED_CB_INFO_CNT = 26;
+	ASSERT_EQ(EXPECTED_CB_INFO_CNT, this->poker_game.callbackInfoSize());
 	int callback_index = 0;
 	this->checkSmallBlind(callback_index++, "You");
 	this->checkBigBlind(callback_index++, "Ron");
@@ -490,8 +495,8 @@ TEST_F(PokerGameTestFixture, AISmallBetYouCall)
 	EXPECT_EQ(60, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Ron", this->poker_game.getNextGameWinner());
 
-	// We should have examined callback info in the range [0..26)
-	EXPECT_EQ(26, callback_index + 1);
+	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
+	EXPECT_EQ(EXPECTED_CB_INFO_CNT, callback_index + 1);
 }
 
 TEST_F(PokerGameTestFixture, AIAllInYouCall)
@@ -524,7 +529,8 @@ TEST_F(PokerGameTestFixture, AIAllInYouCall)
 	this->poker_game.play();
 
 	// Check output against expectations
-	ASSERT_EQ(17, this->poker_game.callbackInfoSize());
+	static constexpr size_t EXPECTED_CB_INFO_CNT = 17;
+	ASSERT_EQ(EXPECTED_CB_INFO_CNT, this->poker_game.callbackInfoSize());
 	int callback_index = 0;
 	this->checkSmallBlind(callback_index++, "You");
 	this->checkBigBlind(callback_index++, "Ron");
@@ -578,8 +584,8 @@ TEST_F(PokerGameTestFixture, AIAllInYouCall)
 	EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Ron", this->poker_game.getNextGameWinner());
 
-	// We should have examined callback info in the range [0..17)
-	EXPECT_EQ(17, callback_index + 1);
+	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
+	EXPECT_EQ(EXPECTED_CB_INFO_CNT, callback_index + 1);
 }
 
 TEST_F(PokerGameTestFixture, AIBetsThanFoldsAutoWin)
@@ -612,7 +618,8 @@ TEST_F(PokerGameTestFixture, AIBetsThanFoldsAutoWin)
 	this->poker_game.play();
 
 	// Check output against expectations
-	ASSERT_EQ(14, this->poker_game.callbackInfoSize());
+	static constexpr size_t EXPECTED_CB_INFO_CNT = 14;
+	ASSERT_EQ(EXPECTED_CB_INFO_CNT, this->poker_game.callbackInfoSize());
 
 	// Check output against expectations
 	int callback_index = 0;
@@ -666,8 +673,8 @@ TEST_F(PokerGameTestFixture, AIBetsThanFoldsAutoWin)
 	EXPECT_EQ(50, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Ron", this->poker_game.getNextGameWinner());
 
-	// We should have examined callback info in the range [0..14)
-	EXPECT_EQ(14, callback_index + 1);
+	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
+	EXPECT_EQ(EXPECTED_CB_INFO_CNT, callback_index + 1);
 }
 
 TEST_F(PokerGameTestFixture, EveryoneBets_TwoPlayerSplitPot_RonWins)
@@ -741,7 +748,8 @@ TEST_F(PokerGameTestFixture, EveryoneBets_TwoPlayerSplitPot_RonWins)
 	this->poker_game.play();
 
 	// Check output against expectations
-	ASSERT_EQ(34, this->poker_game.callbackInfoSize());
+	static constexpr size_t EXPECTED_CB_INFO_CNT = 34;
+	ASSERT_EQ(EXPECTED_CB_INFO_CNT, this->poker_game.callbackInfoSize());
 
 	// Check output against expectations
 	int callback_index = 0;
@@ -825,6 +833,111 @@ TEST_F(PokerGameTestFixture, EveryoneBets_TwoPlayerSplitPot_RonWins)
 	EXPECT_EQ(1500, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Ron", this->poker_game.getNextGameWinner());
 
-	// We should have examined callback info in the range [0..34)
-	EXPECT_EQ(34, callback_index + 1);
+	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
+	EXPECT_EQ(EXPECTED_CB_INFO_CNT, callback_index + 1);
+}
+
+TEST_F(PokerGameTestFixture, CascadingSplitPots)
+{
+	// You are the big blind
+	this->poker_game.setStartingDealer(4);
+
+	// Adjust the players stack such that there will be 4 side pots
+	this->poker_game.setPlayerStack(1, 50);
+	this->poker_game.setPlayerStack(2, 100);
+	this->poker_game.setPlayerStack(3, 200);
+	this->poker_game.setPlayerStack(4, 300);
+	this->poker_game.setPlayerStack(5, 400);
+	this->poker_game.setPlayerStack(0, 500);
+
+	// Everyone cascades all in
+	this->poker_game.pushAction(1, PokerGame::PlayerAction::Bet, 40); // Bet is 50
+	this->poker_game.pushAction(2, PokerGame::PlayerAction::Bet, 50); // Bet is 100
+	this->poker_game.pushAction(3, PokerGame::PlayerAction::Bet, 100); // Bet is 200
+	this->poker_game.pushAction(4, PokerGame::PlayerAction::Bet, 100); // Bet is 300
+	this->poker_game.pushAction(5, PokerGame::PlayerAction::Bet, 100); // Bet is 400
+	this->poker_game.pushAction(0, PokerGame::PlayerAction::Bet, 100); // This should just call
+
+	// Ron gets Aces, You get Kings, AI gets dueces
+	this->poker_game.pushCard(Card::Value::Two, Card::Suit::Hearts); // Jack
+	this->poker_game.pushCard(Card::Value::King, Card::Suit::Hearts); // You
+	this->poker_game.pushCard(Card::Value::Ace, Card::Suit::Hearts); // Ron
+	this->poker_game.pushCard(Card::Value::Two, Card::Suit::Hearts); // Betty
+	this->poker_game.pushCard(Card::Value::Two, Card::Suit::Hearts); // Bill
+	this->poker_game.pushCard(Card::Value::Two, Card::Suit::Hearts); // Alice
+	this->poker_game.pushCard(Card::Value::Two, Card::Suit::Hearts); // Jack
+	this->poker_game.pushCard(Card::Value::King, Card::Suit::Hearts); // You
+	this->poker_game.pushCard(Card::Value::Ace, Card::Suit::Hearts); // Ron
+	this->poker_game.pushCard(Card::Value::Two, Card::Suit::Hearts); // Betty
+	this->poker_game.pushCard(Card::Value::Two, Card::Suit::Hearts); // Bill
+	this->poker_game.pushCard(Card::Value::Two, Card::Suit::Hearts); // Alice
+
+	// Create a pre-determined board
+	this->poker_game.pushCard(Card::Value::Ten, Card::Suit::Clubs);
+	this->poker_game.pushCard(Card::Value::Seven, Card::Suit::Spades);
+	this->poker_game.pushCard(Card::Value::Three, Card::Suit::Hearts);
+	this->poker_game.pushCard(Card::Value::Five, Card::Suit::Diamonds);
+	this->poker_game.pushCard(Card::Value::Jack, Card::Suit::Clubs);
+
+	// Run the poker game
+	this->poker_game.play();
+
+	// Check output against expectations
+	static constexpr size_t EXPECTED_CB_INFO_CNT = 15;
+	ASSERT_EQ(EXPECTED_CB_INFO_CNT, this->poker_game.callbackInfoSize());
+
+	// Check output against expectations
+	int callback_index = 0;
+	this->checkSmallBlind(callback_index++, "Jack");
+	this->checkBigBlind(callback_index++, "You");
+
+	// Pre flop
+	this->checkSubroundChange(callback_index);
+	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
+	this->checkPlayerBets(callback_index++, "Ron", 40);
+	this->checkPlayerBets(callback_index++, "Betty", 50);
+	this->checkPlayerBets(callback_index++, "Bill", 100);
+	this->checkPlayerBets(callback_index++, "Alice", 100);
+	this->checkPlayerBets(callback_index++, "Jack", 100);
+	this->checkPlayerDecisionCallback(callback_index++);
+	this->checkPlayerBets(callback_index++, "You", 100);
+
+	// Flop -> Turn -> River
+	for (size_t i = 0; i < 3; ++i) {
+		this->checkSubroundChange(callback_index);
+		EXPECT_EQ(1550, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+		EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
+	}
+
+	// Round end
+	EXPECT_EQ(PokerGameTestWrapper::CallbackType::RoundEnd, this->poker_game.callbackInfoAt(callback_index).callback_type);
+	EXPECT_EQ(1550, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+	EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ("Ron", this->poker_game.getNextRoundWinner());
+
+	// Ron multiplied is 50 stack by 6, you won the rest of the chips (1250)
+	EXPECT_EQ(1250, this->poker_game.callbackInfoAt(callback_index).state.player_states[0].stack);
+	EXPECT_EQ(300, this->poker_game.callbackInfoAt(callback_index).state.player_states[1].stack);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.player_states[2].stack);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.player_states[3].stack);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.player_states[4].stack);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.player_states[5].stack);
+
+	// All AI hands should be revealed
+	for (size_t i = 1; i < 6; ++i) {
+		EXPECT_NE(Card::Value::Unrevealed, this->poker_game.callbackInfoAt(callback_index).state.player_states[i].hand[0].getValue());
+		EXPECT_NE(Card::Suit::Unrevealed, this->poker_game.callbackInfoAt(callback_index).state.player_states[i].hand[0].getSuit());
+		EXPECT_NE(Card::Value::Unrevealed, this->poker_game.callbackInfoAt(callback_index).state.player_states[i].hand[1].getValue());
+		EXPECT_NE(Card::Suit::Unrevealed, this->poker_game.callbackInfoAt(callback_index).state.player_states[i].hand[1].getSuit());
+	}
+
+	// Game end
+	EXPECT_EQ(PokerGameTestWrapper::CallbackType::GameEnd, this->poker_game.callbackInfoAt(++callback_index).callback_type);
+	EXPECT_EQ(1550, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+	EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ("Ron", this->poker_game.getNextGameWinner());
+
+	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
+	EXPECT_EQ(EXPECTED_CB_INFO_CNT, callback_index + 1);
 }
