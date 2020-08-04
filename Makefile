@@ -62,9 +62,17 @@ ifeq ($(TARGET),atmega328p)
     CXXFLAGS += -DEMBEDDED_BUILD
     CXXFLAGS += -DPLATFORM_ATMEGA328P
     LDFLAGS += -mmcu=atmega328p
-    LDFLAGS += -ffunction-sections
+#    LDFLAGS += -ffunction-sections
+#
+    LDFLAGS += -Wl,--gc-sections
+#
     LDFLAGS += -fdata-sections
     LDFLAGS += -Wl,-Map,texas_holdem.map
+
+
+#CXXFLAGS += -flto
+#LDFLAGS += -flto
+
     APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pPlatform.o
     APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pSPI.o
     APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pUART.o

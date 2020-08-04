@@ -24,14 +24,9 @@
 #include <utl/vector>
 
 #include "Deck.h"
-#include "Player.h"
 #include "PokerGameState.h"
 #include "Random.h"
 #include "RankedHand.h"
-
-// XXX
-#include "PokerGame/PotTracker.h" // XXX dont need remove
-// XXX
 
  /** Texas Holdem poker game class. Implements heads up poker against an AI opponent
   */

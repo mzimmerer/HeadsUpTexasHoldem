@@ -69,9 +69,6 @@
     <ClCompile Include="..\Source\Exception.cpp">
       <Filter>SourceUnderTest</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\PokerGame\Player.cpp">
-      <Filter>SourceUnderTest</Filter>
-    </ClCompile>
     <ClCompile Include="..\Tests\PokerGameTestWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

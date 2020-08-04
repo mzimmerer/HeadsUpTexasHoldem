@@ -66,9 +66,6 @@
     <ClCompile Include="..\Source\PokerGame\Deck.cpp">
       <Filter>PokerGame Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\PokerGame\Player.cpp">
-      <Filter>PokerGame Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\PokerGame\PokerGame.cpp">
       <Filter>PokerGame Source Files</Filter>
     </ClCompile>
@@ -146,9 +143,6 @@
       <Filter>PokerGame Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\PokerGame\Deck.h">
-      <Filter>PokerGame Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Include\PokerGame\Player.h">
       <Filter>PokerGame Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\PokerGame\PokerGame.h">

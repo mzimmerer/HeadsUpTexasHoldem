@@ -158,7 +158,6 @@
     <ClCompile Include="..\Source\Platform\Desktop\DesktopUART.cpp" />
     <ClCompile Include="..\Source\PokerGame\Card.cpp" />
     <ClCompile Include="..\Source\PokerGame\Deck.cpp" />
-    <ClCompile Include="..\Source\PokerGame\Player.cpp" />
     <ClCompile Include="..\Source\PokerGame\PokerGame.cpp" />
     <ClCompile Include="..\Source\PokerGame\Random.cpp" />
     <ClCompile Include="..\Source\PokerGame\RankedHand.cpp" />

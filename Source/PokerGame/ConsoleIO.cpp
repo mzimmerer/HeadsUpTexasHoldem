@@ -401,7 +401,7 @@ utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::roundEndToString(bool dr
 	}
 }
 
-utl::string<10> ConsoleIO::printSuit(Card::Suit suit)
+utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::printSuit(Card::Suit suit)
 {
 	switch (suit)
 	{
@@ -422,7 +422,7 @@ utl::string<10> ConsoleIO::printSuit(Card::Suit suit)
 	}
 }
 
-utl::string<10> ConsoleIO::printValue(Card::Value value)
+utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::printValue(Card::Value value)
 {
 	switch (value)
 	{

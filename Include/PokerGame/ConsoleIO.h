@@ -24,15 +24,7 @@
 
 #include "Card.h"
 #include "RankedHand.h"
-#include "Player.h"
 #include "PokerGame.h"
-
- // TODO handle 6 players
- // TODO handle player names
- // TODO handle all computer games
-
- // TODO draw dealer button
- // TODO draw 6 players
 
   /** Console IO class
    */
@@ -177,13 +169,13 @@ private:
 	 *  @param suit The suit
 	 *  @return The string
 	 */
-	static utl::string<10> printSuit(Card::Suit suit);
+	static utl::string<MAX_EVENT_STRING_LEN> printSuit(Card::Suit suit);
 
 	/** Print a value as a string
 	 *  @param value The value
 	 *  @return The string
 	 */
-	static utl::string<10> printValue(Card::Value value);
+	static utl::string<MAX_EVENT_STRING_LEN> printValue(Card::Value value);
 
 	/** Print a card to the screen buffer
 	 *  @param dst The destination string
@@ -224,14 +216,6 @@ private:
 	 *  @param x The x coordinate to draw to
 	 */
 	void printToCall(utl::string<WIDTH>& dst, size_t x);
-
-	/** Print an event text queue to the screen buffer
-	 *  @param dst The destination string
-	 *  @param x The x coordinate to draw to
-	 *  @param i The index into the event queue to draw
-	 */
-	 // XXX
- //	void printEventText(utl::string<WIDTH>& dst, size_t x, utl::list<utl::string<MAX_EVENT_STRING_LEN>, MAX_EVENT_STRING_QUEUE_LEN>::iterator& iter);
 
 	 // XXX
 	void CLEAR_TERMINAL(utl::string<WIDTH>& line_buffer) {
