@@ -167,7 +167,6 @@
     <ClCompile Include="..\Tests\PokerGameTests.cpp" />
     <ClCompile Include="..\Tests\PokerGameTestFixture.cpp" />
     <ClCompile Include="..\Tests\PokerGameTestWrapper.cpp" />
-    <ClCompile Include="..\Tests\PotTrackerTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Tests\HandTestWrapper.h" />

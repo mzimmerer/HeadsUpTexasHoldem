@@ -150,7 +150,7 @@ bool ConsoleIO::roundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, Ra
 	// Insert the event text into the event text queue
 	if (self->event_string_queue.size() > MAX_EVENT_STRING_QUEUE_LEN - 1)
 		self->event_string_queue.pop_back();
-	utl::string<MAX_EVENT_STRING_LEN> event_text = self->roundEndToString(draw, winner, ranking, state.current_pot);
+	utl::string<MAX_EVENT_STRING_LEN> event_text = self->roundEndToString(draw, winner, ranking, state.chipsRemaining());
 	self->event_string_queue.push_front(event_text);
 
 	// Copy the state
@@ -520,7 +520,7 @@ void ConsoleIO::printPotStackCount(utl::string<WIDTH>& dst, size_t x)
 {
 	// Copy the chip count into the screen buffer
 	utl::string<MAX_EVENT_STRING_LEN> count_string = utl::const_string<32>(PSTR("pot: $"));
-	count_string += utl::to_string<MAX_EVENT_STRING_LEN>(this->cached_state.current_pot);
+	count_string += utl::to_string<MAX_EVENT_STRING_LEN>(this->cached_state.chipsRemaining());
 	ConsoleIO::lineBufferCopy(dst, count_string.begin(), count_string.end(), x);
 }
 

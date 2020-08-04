@@ -48,7 +48,7 @@ PokerGame::PokerGame(uint32_t random_seed_in, uint8_t small_blind_in, uint16_t s
 		this->current_state.player_states[player_id].pot_investment = 0;
 		this->current_state.player_states[player_id].folded = false;
 	}
-	this->current_state.current_pot = 0;
+	this->current_state.current_pot_shares.clear();
 	this->current_state.current_bet = 0;
 	this->current_state.current_player = 0;
 	this->current_state.current_dealer = 0;
@@ -104,34 +104,6 @@ void PokerGame::play()
 
 bool PokerGame::playRound()
 {
-	// XXX
-	for (const auto& player_state : this->current_state.player_states) {
-
-		(void)player_state;
-		volatile int i = 0;
-		i++;
-		(void)i;
-	}
-
-	// XXX
-
-
-	// XXX
-	this->pot_tracker.clear();
-	// XXX
-
-
-
-
-
-
-
-	// Clear the current bet
-	this->current_state.current_bet = 0;
-
-	// Clear pot
-	this->current_state.current_pot = 0;
-
 	// Count the number of players remaining
 	uint8_t players_remaining = 0;
 	utl::string<MAX_NAME_SIZE> winner; // TODO XXX FIXME wasteful
@@ -163,11 +135,8 @@ bool PokerGame::playRound()
 	uint8_t small_blind_target = this->incrementPlayerID(this->current_state.current_dealer);
 	this->current_state.player_states[small_blind_target].stack -= this->small_blind;
 	this->current_state.player_states[small_blind_target].pot_investment += this->small_blind;
-	this->current_state.current_pot += this->small_blind;
+	this->current_state.current_pot_shares[small_blind_target] += this->small_blind;
 	this->current_state.current_bet = this->small_blind;
-	// XXX
-	this->pot_tracker.bet(small_blind_target, this->small_blind);
-	// XXX
 	this->callbackWithPlayerAction(this->current_state.player_states[small_blind_target].name, PlayerAction::Bet,
 		this->small_blind);
 
@@ -175,11 +144,8 @@ bool PokerGame::playRound()
 	uint8_t big_blind_target = this->incrementPlayerID(small_blind_target);
 	this->current_state.player_states[big_blind_target].stack -= 2 * this->small_blind;
 	this->current_state.player_states[big_blind_target].pot_investment += 2 * this->small_blind;
-	this->current_state.current_pot += 2 * this->small_blind;
+	this->current_state.current_pot_shares[big_blind_target] += 2 * this->small_blind;
 	this->current_state.current_bet += this->small_blind;
-	// XXX
-	this->pot_tracker.bet(big_blind_target, 2 * this->small_blind);
-	// XXX
 	this->callbackWithPlayerAction(this->current_state.player_states[big_blind_target].name, PlayerAction::Bet,
 		2 * this->small_blind);
 
@@ -264,11 +230,7 @@ bool PokerGame::checkOrCall(int8_t player_id, const utl::pair<PlayerAction, uint
 		this->current_state.player_states[player_id].pot_investment += to_call;
 
 		// Add the chips to the pot
-		this->current_state.current_pot += to_call;
-
-		// XXX
-		this->pot_tracker.call(player_id, to_call);
-		// XXX
+		this->current_state.current_pot_shares[player_id] += to_call;
 
 		// Call action callback
 		this->callbackWithPlayerAction(this->current_state.player_states[player_id].name, PlayerAction::CheckOrCall, to_call);
@@ -305,14 +267,10 @@ bool PokerGame::bet(int8_t player_id, utl::pair<PlayerAction, uint16_t>& action)
 	this->current_state.player_states[player_id].pot_investment += chips_to_pot;
 
 	// Add the chips to the pot
-	this->current_state.current_pot += chips_to_pot;
+	this->current_state.current_pot_shares[player_id] += chips_to_pot;
 
 	// Adjust the current bet
 	this->current_state.current_bet = this->current_state.player_states[player_id].pot_investment;
-
-	// XXX
-	this->pot_tracker.call(player_id, chips_to_pot);
-	// XXX
 
 	// Call action callback
 	if (action.first == PlayerAction::CheckOrCall)
@@ -402,7 +360,7 @@ bool PokerGame::bettingRound(uint8_t player, uint8_t players_acted)
 			if (this->current_state.player_states[player_id].folded == false) {
 
 				// He/she wins the pot
-				this->current_state.player_states[player_id].stack += this->current_state.current_pot;
+				this->current_state.player_states[player_id].stack += this->current_state.chipsRemaining();
 
 				// Callback with round end
 				utl::vector<uint8_t, 6> revealing_players;
@@ -571,7 +529,7 @@ PokerGame::Outcome PokerGame::determineOutcome()
 
 			tmp.emplace_back();
 			tmp.back().id = ranked_hand.getPlayerID();
-			tmp.back().amt = this->pot_tracker.XXX(tmp.back().id);
+			tmp.back().amt = this->current_state.current_pot_shares[tmp.back().id];
 
 			++i;
 		}
@@ -588,7 +546,7 @@ PokerGame::Outcome PokerGame::determineOutcome()
 			this->current_state.player_states[tmp.front().id].stack += carry_over;
 
 			// Get this players chip share
-			uint16_t winnings = this->pot_tracker.getChipShare(tmp.front().id);
+			uint16_t winnings = this->current_state.getChipShare(tmp.front().id);
 			winnings /= winners;
 
 			// Give the player the winnings
@@ -605,7 +563,7 @@ PokerGame::Outcome PokerGame::determineOutcome()
 		this->current_state.player_states[tmp.front().id].stack += carry_over;
 
 		// Get this players chip share
-		uint16_t winnings = this->pot_tracker.getChipShare(tmp.front().id);
+		uint16_t winnings = this->current_state.getChipShare(tmp.front().id);
 		winnings /= winners;
 
 		// Give the player the winnings
@@ -615,7 +573,7 @@ PokerGame::Outcome PokerGame::determineOutcome()
 		for (size_t i = 0; i < winners; ++i)
 			ranked_hands.pop_front();
 
-	} while (this->pot_tracker.chipsRemaining() > 0);
+	} while (this->current_state.chipsRemaining() > 0);
 
 	return result;
 }
@@ -634,7 +592,7 @@ PokerGameState PokerGame::constructState(uint8_t player_id, const utl::vector<ui
 	PokerGameState state;
 
 	// Current pot and bet
-	state.current_pot = this->current_state.current_pot;
+	state.current_pot_shares = this->current_state.current_pot_shares;
 	state.current_bet = this->current_state.current_bet;
 
 	// Current player
@@ -700,6 +658,12 @@ void PokerGame::callbackWithSubroundChange(SubRound new_subround)
 
 bool PokerGame::callbackWithRoundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, const utl::vector<uint8_t, 6>& revealing_players, RankedHand::Ranking ranking)
 {
+	// Clear the current bet
+	this->current_state.current_bet = 0;
+
+	// Clear pot share counters
+	this->current_state.current_pot_shares.clear();
+
 	// Construct state
 	PokerGameState state = this->constructState(0, revealing_players);
 

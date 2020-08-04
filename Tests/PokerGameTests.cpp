@@ -61,7 +61,7 @@ TEST_F(PokerGameTestFixture, EveryoneFoldsAutoWin)
 
 	// Pre flop
 	this->checkSubroundChange(callback_index);
-	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	this->checkPlayerFolds(callback_index++, "Ron");
 	this->checkPlayerFolds(callback_index++, "Betty");
@@ -71,8 +71,8 @@ TEST_F(PokerGameTestFixture, EveryoneFoldsAutoWin)
 
 	// Round end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::RoundEnd, this->poker_game.callbackInfoAt(callback_index).callback_type);
-	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("You", this->poker_game.getNextRoundWinner());
 
 	// You should have 505
@@ -95,8 +95,8 @@ TEST_F(PokerGameTestFixture, EveryoneFoldsAutoWin)
 
 	// Game end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::GameEnd, this->poker_game.callbackInfoAt(++callback_index).callback_type);
-	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Ron", this->poker_game.getNextGameWinner());
 
 	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
@@ -164,7 +164,7 @@ TEST_F(PokerGameTestFixture, EveryoneBets_YouWin)
 
 	// Pre flop
 	this->checkSubroundChange(callback_index);
-	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	this->checkPlayerBets(callback_index++, "Ron", 40);
 	this->checkPlayerBets(callback_index++, "Betty", 50);
@@ -187,17 +187,17 @@ TEST_F(PokerGameTestFixture, EveryoneBets_YouWin)
 	// Flop -> Turn -> River
 	for (size_t i = 0; i < 3; ++i) {
 		this->checkSubroundChange(callback_index);
-		EXPECT_EQ(3000, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+		EXPECT_EQ(3000, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 		EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	}
 
 	// Round end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::RoundEnd, this->poker_game.callbackInfoAt(callback_index).callback_type);
-	EXPECT_EQ(3000, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("You", this->poker_game.getNextRoundWinner());
 
-	// You should have 505
+	// You should have 3000
 	EXPECT_EQ(3000, this->poker_game.callbackInfoAt(callback_index).state.player_states[0].stack);
 
 	// The rest should have 0
@@ -214,8 +214,8 @@ TEST_F(PokerGameTestFixture, EveryoneBets_YouWin)
 
 	// Game end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::GameEnd, this->poker_game.callbackInfoAt(++callback_index).callback_type);
-	EXPECT_EQ(3000, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("You", this->poker_game.getNextGameWinner());
 
 	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
@@ -261,7 +261,7 @@ TEST_F(PokerGameTestFixture, AllAIFolds)
 
 	// Pre flop
 	this->checkSubroundChange(callback_index);
-	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	this->checkPlayerFolds(callback_index++, "Betty");
 	this->checkPlayerFolds(callback_index++, "Bill");
@@ -273,14 +273,14 @@ TEST_F(PokerGameTestFixture, AllAIFolds)
 
 	// Round end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::RoundEnd, this->poker_game.callbackInfoAt(callback_index).callback_type);
-	EXPECT_EQ(20, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("You", this->poker_game.getNextRoundWinner());
 
 	// You should have 510
 	EXPECT_EQ(510, this->poker_game.callbackInfoAt(callback_index).state.player_states[0].stack);
 
-	// Ron should have 390
+	// Ron should have 490
 	EXPECT_EQ(490, this->poker_game.callbackInfoAt(callback_index).state.player_states[1].stack);
 
 	// The rest should have 500
@@ -297,8 +297,8 @@ TEST_F(PokerGameTestFixture, AllAIFolds)
 
 	// Game end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::GameEnd, this->poker_game.callbackInfoAt(++callback_index).callback_type);
-	EXPECT_EQ(20, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Betty", this->poker_game.getNextGameWinner());
 
 	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
@@ -344,7 +344,7 @@ TEST_F(PokerGameTestFixture, EveryoneChecksOrCalls)
 
 	// Preflop
 	this->checkSubroundChange(callback_index);
-	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	this->checkPlayerCheckOrCalls(callback_index++, "Betty", 10);
 	this->checkPlayerCheckOrCalls(callback_index++, "Bill", 10);
@@ -357,7 +357,7 @@ TEST_F(PokerGameTestFixture, EveryoneChecksOrCalls)
 	// Flop -> Turn -> River
 	for (size_t i = 0; i < 3; ++i) {
 		this->checkSubroundChange(callback_index);
-		EXPECT_EQ(60, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+		EXPECT_EQ(60, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 		EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 		this->checkPlayerDecisionCallback(callback_index++);
 		this->checkPlayerCheckOrCalls(callback_index++, "You", 0);
@@ -370,8 +370,8 @@ TEST_F(PokerGameTestFixture, EveryoneChecksOrCalls)
 
 	// Round end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::RoundEnd, this->poker_game.callbackInfoAt(callback_index).callback_type);
-	EXPECT_EQ(60, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Draw", this->poker_game.getNextRoundWinner());
 	for (size_t i = 0; i < 6; ++i) {
 
@@ -387,8 +387,8 @@ TEST_F(PokerGameTestFixture, EveryoneChecksOrCalls)
 
 	// Game end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::GameEnd, this->poker_game.callbackInfoAt(++callback_index).callback_type);
-	EXPECT_EQ(60, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Ron", this->poker_game.getNextGameWinner());
 
 	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
@@ -445,7 +445,7 @@ TEST_F(PokerGameTestFixture, AISmallBetYouCall)
 
 	// Preflop
 	this->checkSubroundChange(callback_index);
-	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	this->checkPlayerFolds(callback_index++, "Betty");
 	this->checkPlayerFolds(callback_index++, "Bill");
@@ -460,7 +460,7 @@ TEST_F(PokerGameTestFixture, AISmallBetYouCall)
 	// Flop -> Turn -> River
 	for (size_t i = 0; i < 3; ++i) {
 		this->checkSubroundChange(callback_index);
-		EXPECT_EQ(120, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+		EXPECT_EQ(120, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 		EXPECT_EQ(60, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 		this->checkPlayerDecisionCallback(callback_index++);
 		this->checkPlayerCheckOrCalls(callback_index++, "You", 0);
@@ -469,8 +469,8 @@ TEST_F(PokerGameTestFixture, AISmallBetYouCall)
 
 	// Round end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::RoundEnd, this->poker_game.callbackInfoAt(callback_index).callback_type);
-	EXPECT_EQ(120, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(60, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Draw", this->poker_game.getNextRoundWinner());
 	for (size_t i = 0; i < 6; ++i)
 		EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index).state.player_states[i].stack);
@@ -491,8 +491,8 @@ TEST_F(PokerGameTestFixture, AISmallBetYouCall)
 
 	// Game end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::GameEnd, this->poker_game.callbackInfoAt(++callback_index).callback_type);
-	EXPECT_EQ(120, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(60, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Ron", this->poker_game.getNextGameWinner());
 
 	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
@@ -537,7 +537,7 @@ TEST_F(PokerGameTestFixture, AIAllInYouCall)
 
 	// Preflop
 	this->checkSubroundChange(callback_index);
-	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	this->checkPlayerFolds(callback_index++, "Betty");
 	this->checkPlayerFolds(callback_index++, "Bill");
@@ -552,14 +552,14 @@ TEST_F(PokerGameTestFixture, AIAllInYouCall)
 	// Flop -> Turn -> River
 	for (size_t i = 0; i < 3; ++i) {
 		this->checkSubroundChange(callback_index);
-		EXPECT_EQ(1000, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+		EXPECT_EQ(1000, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 		EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	}
 
 	// Round end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::RoundEnd, this->poker_game.callbackInfoAt(callback_index).callback_type);
-	EXPECT_EQ(1000, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Draw", this->poker_game.getNextRoundWinner());
 	for (size_t i = 0; i < 6; ++i)
 		EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index).state.player_states[i].stack);
@@ -580,8 +580,8 @@ TEST_F(PokerGameTestFixture, AIAllInYouCall)
 
 	// Game end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::GameEnd, this->poker_game.callbackInfoAt(++callback_index).callback_type);
-	EXPECT_EQ(1000, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Ron", this->poker_game.getNextGameWinner());
 
 	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
@@ -628,7 +628,7 @@ TEST_F(PokerGameTestFixture, AIBetsThanFoldsAutoWin)
 
 	// Pre flop
 	this->checkSubroundChange(callback_index);
-	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	this->checkPlayerBets(callback_index++, "Alice", 40);
 	this->checkPlayerFolds(callback_index++, "Jack");
@@ -640,15 +640,15 @@ TEST_F(PokerGameTestFixture, AIBetsThanFoldsAutoWin)
 
 	// Flop
 	this->checkSubroundChange(callback_index);
-	EXPECT_EQ(115, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+	EXPECT_EQ(115, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 	EXPECT_EQ(50, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	this->checkPlayerFolds(callback_index++, "Alice");
 
 
 	// Round end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::RoundEnd, this->poker_game.callbackInfoAt(callback_index).callback_type);
-	EXPECT_EQ(115, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(50, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("You", this->poker_game.getNextRoundWinner());
 
 	// Check chip stacks
@@ -669,8 +669,8 @@ TEST_F(PokerGameTestFixture, AIBetsThanFoldsAutoWin)
 
 	// Game end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::GameEnd, this->poker_game.callbackInfoAt(++callback_index).callback_type);
-	EXPECT_EQ(115, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(50, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Ron", this->poker_game.getNextGameWinner());
 
 	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
@@ -758,7 +758,7 @@ TEST_F(PokerGameTestFixture, EveryoneBets_TwoPlayerSplitPot_RonWins)
 
 	// Pre flop
 	this->checkSubroundChange(callback_index);
-	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	this->checkPlayerBets(callback_index++, "Ron", 40);
 	this->checkPlayerBets(callback_index++, "Betty", 50);
@@ -781,14 +781,14 @@ TEST_F(PokerGameTestFixture, EveryoneBets_TwoPlayerSplitPot_RonWins)
 	// Flop -> Turn -> River
 	for (size_t i = 0; i < 3; ++i) {
 		this->checkSubroundChange(callback_index);
-		EXPECT_EQ(3000, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+		EXPECT_EQ(3000, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 		EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	}
 
 	// Round end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::RoundEnd, this->poker_game.callbackInfoAt(callback_index).callback_type);
-	EXPECT_EQ(3000, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Draw", this->poker_game.getNextRoundWinner());
 
 	// Ron and Betty should have 1500, the rest should have 0
@@ -814,7 +814,7 @@ TEST_F(PokerGameTestFixture, EveryoneBets_TwoPlayerSplitPot_RonWins)
 
 	// Pre flop, Betty goes all in, Ron calls
 	this->checkSubroundChange(callback_index);
-	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	this->checkPlayerBets(callback_index++, "Betty", 1495);
 	this->checkPlayerCheckOrCalls(callback_index++, "Ron", 1490);
@@ -822,15 +822,15 @@ TEST_F(PokerGameTestFixture, EveryoneBets_TwoPlayerSplitPot_RonWins)
 	// Flop -> Turn -> River
 	for (size_t i = 0; i < 3; ++i) {
 		this->checkSubroundChange(callback_index);
-		EXPECT_EQ(3000, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+		EXPECT_EQ(3000, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 		EXPECT_EQ(1500, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	}
 
 
 	// Game end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::GameEnd, this->poker_game.callbackInfoAt(++callback_index).callback_type);
-	EXPECT_EQ(3000, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(1500, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Ron", this->poker_game.getNextGameWinner());
 
 	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)
@@ -893,7 +893,7 @@ TEST_F(PokerGameTestFixture, CascadingSplitPots)
 
 	// Pre flop
 	this->checkSubroundChange(callback_index);
-	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+	EXPECT_EQ(15, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 	EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	this->checkPlayerBets(callback_index++, "Ron", 40);
 	this->checkPlayerBets(callback_index++, "Betty", 50);
@@ -906,14 +906,14 @@ TEST_F(PokerGameTestFixture, CascadingSplitPots)
 	// Flop -> Turn -> River
 	for (size_t i = 0; i < 3; ++i) {
 		this->checkSubroundChange(callback_index);
-		EXPECT_EQ(1550, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
+		EXPECT_EQ(1550, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
 		EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index++).state.current_bet);
 	}
 
 	// Round end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::RoundEnd, this->poker_game.callbackInfoAt(callback_index).callback_type);
-	EXPECT_EQ(1550, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Ron", this->poker_game.getNextRoundWinner());
 
 	// Ron multiplied is 50 stack by 6, you won the rest of the chips (1250)
@@ -934,8 +934,8 @@ TEST_F(PokerGameTestFixture, CascadingSplitPots)
 
 	// Game end
 	EXPECT_EQ(PokerGameTestWrapper::CallbackType::GameEnd, this->poker_game.callbackInfoAt(++callback_index).callback_type);
-	EXPECT_EQ(1550, this->poker_game.callbackInfoAt(callback_index).state.current_pot);
-	EXPECT_EQ(500, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.chipsRemaining());
+	EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).state.current_bet);
 	EXPECT_EQ("Ron", this->poker_game.getNextGameWinner());
 
 	// We should have examined callback info in the range [0..EXPECTED_CB_INFO_CNT)

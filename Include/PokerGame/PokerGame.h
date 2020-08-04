@@ -194,7 +194,7 @@ protected:
 #endif
 
 	// XXX
-	PotTracker pot_tracker;
+	//PotTracker pot_tracker;
 	// XXX
 	// XXX
 

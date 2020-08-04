@@ -35,10 +35,48 @@ struct PlayerState
 
 struct PokerGameState
 {
-    uint16_t current_pot;
+    utl::array<uint16_t, 6> current_pot_shares;
     uint16_t current_bet;
     uint8_t current_player;
     uint8_t current_dealer;
 	utl::vector<Card, 5> board;
 	utl::array<PlayerState, 6> player_states;
+
+    uint16_t chipsRemaining() const
+    {
+        // Add up every player's chip share
+        uint16_t result = 0;
+        for (const auto& chip_share : current_pot_shares)
+            result += chip_share;
+        return result;
+    }
+
+    uint16_t getChipShare(uint8_t player_id)
+    {
+        // Remove these chips from this player's pot investment
+        uint16_t pot_investment = this->current_pot_shares[player_id];
+        this->current_pot_shares[player_id] -= pot_investment;
+
+        // Prepare the result
+        uint16_t result = pot_investment;
+
+        // For each player that is not player_id
+        for (size_t i = 0; i < 6; ++i) {
+            if (player_id == i)
+                continue;
+
+            // Add up to pot investment chips from that player's pot share
+            if (this->current_pot_shares[i] > pot_investment)
+            {
+                result += pot_investment;
+                this->current_pot_shares[i] -= pot_investment;
+            }
+            else {
+                result += this->current_pot_shares[i];
+                this->current_pot_shares[i] = 0;
+            }
+        }
+
+        return result;
+    }
 };

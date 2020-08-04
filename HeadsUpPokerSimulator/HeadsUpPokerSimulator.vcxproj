@@ -43,7 +43,6 @@
     <ClCompile Include="..\Source\PokerGame\Deck.cpp" />
     <ClCompile Include="..\Source\PokerGame\Player.cpp" />
     <ClCompile Include="..\Source\PokerGame\PokerGame.cpp" />
-    <ClCompile Include="..\Source\PokerGame\PotTracker.cpp" />
     <ClCompile Include="..\Source\PokerGame\Random.cpp" />
     <ClCompile Include="..\Source\PokerGame\RankedHand.cpp" />
   </ItemGroup>
@@ -77,7 +76,6 @@
     <ClInclude Include="..\Include\PokerGame\Player.h" />
     <ClInclude Include="..\Include\PokerGame\PokerGame.h" />
     <ClInclude Include="..\Include\PokerGame\PokerGameState.h" />
-    <ClInclude Include="..\Include\PokerGame\PotTracker.h" />
     <ClInclude Include="..\Include\PokerGame\Random.h" />
     <ClInclude Include="..\Include\PokerGame\RankedHand.h" />
   </ItemGroup>
