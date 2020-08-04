@@ -28,31 +28,46 @@
 
 #include "PokerGame/PokerGame.h"
 
+/** PokerGameTestWrapper class, provides additional access to PokerGame objects for testing purposes
+ */
 class PokerGameTestWrapper : public PokerGame
 {
 public:
 
+	/** PokerGameTestWrapper constructor
+	 */
 	PokerGameTestWrapper();
 
-	void setRoundCount(int count) {
-		this->num_rounds = count;
-	}
+	/** Set the round count, how many rounds will be played
+	 *  @param The new round count
+	 */
+	void setRoundCount(int count);
 
-	void setPlayerStack(int player_id, int chip_count) {
-		this->current_state.player_states[player_id].stack = chip_count;
-	}
+	/** Set a player's stack
+	 *  @param player_id The id of the player to set
+	 *  @param chip_count The new chip_count
+	 */
+	void setPlayerStack(int player_id, int chip_count);
 
-	void setStartingDealer(int player_id)
-	{
-		this->starting_dealer = player_id;
-	}
+	/** Set the starting dealer
+	 *  @param player_id The player id
+	 */
+	void setStartingDealer(int player_id);
 
+	/** Push a player action into the action list
+	 *  @param player The player who will act
+	 *  @param action The actionb
+	 *  @param bet The bet, if any
+	 */
 	void pushAction(uint8_t player, PokerGame::PlayerAction action, uint16_t bet = 0);
 
-	void pushCard(Card::Value value, Card::Suit suit) {
-		this->card_list.emplace_front(value, suit);
-	}
+	/** Push a card into the deck FIFO
+	 *  @param value The value of the card
+	 *  @param suit The suit if the card
+	 */
+	void pushCard(Card::Value value, Card::Suit suit);
 
+	/// Callback type enumeration
 	enum class CallbackType {
 		Decision = 1,
 		PlayerAction = 2,
@@ -61,117 +76,122 @@ public:
 		GameEnd = 5,
 	};
 
+	/// Callback info definition
 	struct CallbackInfo {
 		CallbackInfo(CallbackType callback_type_in, const PokerGameState& state_in) : callback_type(callback_type_in), state(state_in) {}
 		CallbackInfo(CallbackType callback_type_in, const PokerGameState& state_in, std::string player_name_in, PokerGame::PlayerAction action_in, int bet_in) : callback_type(callback_type_in), state(state_in), player_name(player_name_in), action(action_in), bet(bet_in) {}
 		CallbackType callback_type;
 		PokerGameState state;
-
-		// PlayerAction specific members
 		std::string player_name;
 		PokerGame::PlayerAction action{ PokerGame::PlayerAction::Fold };
 		int bet{ 0 };
 	};
 
-	const CallbackInfo& callbackInfoAt(size_t offset) {
-		return this->callback_log[offset];
-	}
+	/** Get callback info at a specific offset
+	 *  @param offset The offset to access
+	 *  @return The callback info
+	 */
+	const CallbackInfo& callbackInfoAt(size_t offset) const;
 
-	size_t callbackInfoSize() {
-		return this->callback_log.size();
-	}
+	/** Get the number of callback infos
+	 *  @return The number of callback infos
+	 */
+	size_t callbackInfoSize();
 
-	std::string getNextRoundWinner() {
-		std::string result;
-		result = this->round_winner_list.back();
-		this->round_winner_list.pop_back();
-		return result;
-	}
+	/** Access the name of the round winner
+	 *  @return The round winner's name
+	 */
+	std::string getNextRoundWinner();
 
-	std::string getNextGameWinner() {
-		std::string result;
-		result = this->game_winner_list.back();
-		this->game_winner_list.pop_back();
-		return result;
-	}
-
-
-	std::list<Card> card_list;
-
-
-
-
-	int starting_dealer = 0;
+	/** Access the name of the game winner
+	 *  @return The game winner's name
+	 */
+	std::string getNextGameWinner();
 
 private:
 
+	/// The card list
+	std::list<Card> card_list;
+
+	/// The starting dealer
+	int starting_dealer = 0;
+
+	/// The number of rounds that will be played
 	int num_rounds = 1;
 
+	/// Pre-loaded player decision array
 	std::array<std::list<utl::pair<PokerGame::PlayerAction, uint16_t>>, 6> player_decisions;
 
-	// XXX action_log
-	std::vector< CallbackInfo> callback_log;
+	/// The callback log
+	std::vector<CallbackInfo> callback_log;
+
+	/// The last observed poker game state
 	PokerGameState cached_state{};
-	// XXX
 
+	/// The list of round winners
+	std::list<std::string> round_winner_list;
 
+	/// The list of game winners
+	std::list<std::string> game_winner_list;
+
+	/** Decision callback tracker
+	 *  @param state The poker game state
+	 *  @param opaque An opaque pointer
+	 *  @return The action
+	 */
 	static utl::pair<PokerGame::PlayerAction, uint16_t> decisionCallback(const PokerGameState& state, void* opaque);
 
+	/** Player action callback tracker
+	 *  @param player_name The name of the player
+	 *  @param action The action
+	 *  @param bet The bet, if any
+	 *  @param state The poker game state
+	 *  @param opaque An opaque pointer
+	 */
 	static void playerActionCallback(const utl::string<MAX_NAME_SIZE>& player_name, PokerGame::PlayerAction action, uint16_t bet, const PokerGameState& state, void* opaque);
 
+	/** Sub-round change callback tracker
+	 *  @param new_sub_round The new sub round
+	 *  @param state The poker game state
+	 *  @param opaque An opaque pointer
+	 */
 	static void subRoundChangeCallback(SubRound new_sub_round, const PokerGameState& state, void* opaque);
 
+	/** Round end callback tracker
+	 *  @param draw True if the round was a draw
+	 *  @param winner The name of the winning player
+	 *  @param winnings The size of the pot won
+	 *  @param ranking The ranking of the winning hand
+	 *  @param state The poker game state
+	 *  @param opaque An opaque pointer
+	 */
 	static bool roundEndCallback(bool draw, const utl::string<MAX_NAME_SIZE>& winner, uint16_t winnings, RankedHand::Ranking ranking,
 		const PokerGameState& state, void* opaque);
 
+	/** Game end callback tracker
+	 *  @param winner The name of the winning player
+	 *  @param opaque An opaque pointer
+	 */
 	static void gameEndCallback(const utl::string<MAX_NAME_SIZE>& winner, void* opaque);
 
-	uint8_t chooseDealer() override {
-		return this->starting_dealer;
-	}
+	/** Choose dealer override, sets a user chosen dealer
+	 *  @return The dealer id
+	 */
+	uint8_t chooseDealer() override;
 
-	Card dealCard() override {
-		Card result = this->card_list.back();
-		this->card_list.pop_back();
-		return result;
-	}
+	/** Deal a card override, deals a user chosen card
+	 *  @return The card
+	 */
+	Card dealCard() override;
 
-	utl::pair<PokerGame::PlayerAction, uint16_t> playerAction(uint8_t player_id) override
-	{
-		// Construct state
-		utl::vector<uint8_t, 6> revealing_players;
-		PokerGameState state = this->constructState(player_id, revealing_players);
+	/** player action override, returns a user chosen action
+	 *  @param player_id The id of the player that is deciding
+	 *  @return The action
+	 */
+	utl::pair<PokerGame::PlayerAction, uint16_t> playerAction(uint8_t player_id) override;
 
-		// Allow the player to decide an action
-		utl::pair<PokerGame::PlayerAction, uint16_t> action(PokerGame::PlayerAction::CheckOrCall, 0);
-		if (player_id == 0)
-		{
-			// Allow player to make a decision
-			return this->decision_callback(state, this->opaque);
-		}
-		else
-		{
-			// Allow AI to make a decision
-			action = this->player_decisions[state.current_player].back();
-			this->player_decisions[state.current_player].pop_back();
-			return action;
-		}
-	}
-
-
-
-	std::list<std::string> round_winner_list;
-
-	std::list<std::string> game_winner_list;
-
-
-
-	void expectAIHandsUnrevealed(const PokerGameState& state) {
-		for (size_t i = 1; i < 6; ++i) {
-			EXPECT_EQ(Card::Value::Unrevealed, state.player_states[i].hand[0].getValue());
-			EXPECT_EQ(Card::Suit::Unrevealed, state.player_states[i].hand[0].getSuit());
-			EXPECT_EQ(Card::Value::Unrevealed, state.player_states[i].hand[1].getValue());
-			EXPECT_EQ(Card::Suit::Unrevealed, state.player_states[i].hand[1].getSuit());
-		}
-	}
+	/** Check that AI hands are un-revealed
+	 *  @param state The current poker game state
+	 */
+	void expectAIHandsUnrevealed(const PokerGameState& state);
 };

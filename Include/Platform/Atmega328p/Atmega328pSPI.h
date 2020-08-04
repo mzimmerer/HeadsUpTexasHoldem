@@ -18,28 +18,38 @@
 
 #pragma once
 
-#include <avr/interrupt.h>
 #include <utl/cstddef>
 #include <utl/cstdint>
 
-#define F_CPU 16000000UL // TODO singular define location
-// TODO preprocessor error if not defined
-
+ /** SPI class. A SPI bus driver for Atmega328p uCs
+  */
 class SPI
 {
 public:
-	struct SPIOptions // TODO a common header
+
+    /// The SPI Options struct
+	struct SPIOptions
 	{
 		uint32_t clock_frequency_hz;
 	};
 
-	// TODO move this to the private section and declare a friend for access
+    /** SPI Constructor
+     *  @param options The SPI options
+     */
 	SPI(const SPIOptions& options);
 
+    /** Copy operator
+     *  @param other The SPI object to copy
+     *  @result A reference to the lhs SPI object
+     */
 	SPI& operator=(const SPI& other);
 
+    /** SPI transaction function
+     *  @param src_begin An iterator to the beginning of source data
+     *  @param src_end An iterator to the end of source data
+     *  @param dst_begin An iterator to the beginning of destination data
+     *  @param dst_end An iterator to the end of destination data
+     */
 	size_t transaction(const char* src_begin, const char* src_end,
 		                  char* dst_begin, char* dst_end);
-
-private:
 };

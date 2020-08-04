@@ -22,24 +22,44 @@
 
 #include <utl/fifo>
 
+ /** UART class. A UART bus driver for Desktop emulation
+  */
 class UART
 {
 public:
-	struct UARTOptions // TODO a common header
+
+    /// The UART Options struct
+	struct UARTOptions
 	{
 		uint32_t baudrate;
 	};
 
-	// TODO move this to the private section and declare a friend for access
+    /** UART constructor
+     *  @param options The UART options to use
+     */
 	UART(const UARTOptions& options);
 
+    /** UART deconstructor
+     */
 	~UART();
 
+    /** Copy operator
+     *  @param other The UART object to copy
+     *  @result A reference to the lhs UART object
+     */
 	UART& operator=(const UART& other);
 
+    /** Read bytes from the UART bus
+     *  @param begin The beginning of the destination buffer
+     *  @param end The end of the destination buffer
+     *  @return The number of bytes read
+     */
 	size_t writeBytes(const char* begin, const char* end);
 
+    /** Write bytes to the UART bus
+     *  @param begin The beginning of the source buffer
+     *  @param end The end of the source buffer
+     *  @return The number of bytes written
+     */
 	size_t readBytes(char* begin, char* end);
-
-private:
 };

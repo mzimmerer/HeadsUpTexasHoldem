@@ -22,36 +22,68 @@
 #include <utl/cstdint>
 #include <utl/fifo>
 
-#define F_CPU 16000000UL // TODO singular define location
-// TODO preprocessor error if not defined
-
+ /** UART class. A UART bus driver for Atmega328p uCs
+  */
 class UART
 {
 public:
-	struct UARTOptions // TODO a common header
+
+    /// The UART Options struct
+	struct UARTOptions
 	{
 		uint32_t baudrate;
 	};
 
+
+    /** UART default constructor, constructs an empty, non-functional UART object
+     *  @param options The SPI options
+     */
     UART();
 
-	// TODO move this to the private section and declare a friend for access
-	UART(utl::fifo<char, 8>& isr_fifo_in, const UARTOptions& options);
+    /** UART constructor
+     *  @param isr_fifo_in A reference to the isr_fifo that will be used
+     *  @param options The UART options to use
+     */
+	UART(volatile utl::fifo<char, 8>& isr_fifo_in, const UARTOptions& options);
 
+    /** Copy operator
+     *  @param other The UART object to copy
+     *  @result A reference to the lhs UART object
+     */
 	UART& operator=(const UART& other);
 
+    /** Read a char from the UART bus.
+     *  @return -1 If there is no char to read, otherwise the char as an int
+     */
     int readChar();
 
+    /** Read bytes from the UART bus
+     *  @param begin The beginning of the destination buffer
+     *  @param end The end of the destination buffer
+     *  @return The number of bytes read
+     */
     size_t readBytes(char* begin, char* end);
 
+    /** Write a char to the UART bus.
+     *  @param chr The character to write
+     */
     void writeChar(char chr);
 
+    /** Write bytes to the UART bus
+     *  @param begin The beginning of the source buffer
+     *  @param end The end of the source buffer
+     *  @return The number of bytes written
+     */
 	size_t writeBytes(const char* begin, const char* end);
 
 private:
+
+    /// F_CPU as a double
 	static constexpr double F_CPUD = static_cast<double>(F_CPU);
 
+    /// A pointer to this UART's ISR fifo, if any
 	utl::fifo<char, 8>* isr_fifo_internal;
 };
 
-extern utl::fifo<char, 8> isr_fifo;
+/// A single isr_fifo is available on Atmega328p uCs
+extern volatile utl::fifo<char, 8> isr_fifo;

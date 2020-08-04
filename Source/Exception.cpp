@@ -17,16 +17,12 @@
  **/
 #include "Exception.h"
 
-#ifndef EMBEDDED_BUILD
-#include <stdexcept>
-#endif
-
-void Exception::EXCEPTION(const utl::string<MAX_ERROR_MESSAGE_LEN>& message)
+void Exception::EXCEPTION()
 {
 #ifdef EMBEDDED_BUILD
     while (1)
         ;
 #else
-    throw std::runtime_error(message.c_str());
+    throw;
 #endif
 }

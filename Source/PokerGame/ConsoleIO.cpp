@@ -531,15 +531,25 @@ void ConsoleIO::printToCall(utl::string<WIDTH>& dst, size_t x)
 	ConsoleIO::lineBufferCopy(dst, count_string.begin(), count_string.end(), x);
 }
 
+void ConsoleIO::clearTerminal(utl::string<WIDTH>& line_buffer)
+{
+	// Write the clear screan string to the console
+	line_buffer = utl::const_string<32>(PSTR("\033[2J\033[1;1H"));
+	this->write_line_callback(line_buffer, this->opaque);
+}
+
 void ConsoleIO::writeNextEventString(utl::list<utl::string<MAX_EVENT_STRING_LEN>, MAX_EVENT_STRING_QUEUE_LEN>::iterator& iter,
 	utl::string<WIDTH>& line_buffer)
 {
-	utl::fill(line_buffer.begin(), line_buffer.end(), ' '); // XXX rename this function, prepare line?
+	// Fill the line with blank space, place '#' characters on each end
+	utl::fill(line_buffer.begin(), line_buffer.end(), ' ');
 	line_buffer[0] = '#';
 	line_buffer[line_buffer.size() - 1] = '#';
 
+	// If the iterator points to valid data
 	if (iter != this->event_string_queue.end())
 	{
+		// Copy this string to the line_buffer at the correct offset
 		ConsoleIO::lineBufferCopy(line_buffer, iter->begin(), iter->end(), EVENT_TEXT_OFFSET);
 		++iter;
 	}
@@ -552,7 +562,7 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 	utl::string<WIDTH> line_buffer;
 
 	// Clear the terminal
-	this->CLEAR_TERMINAL(line_buffer);
+	this->clearTerminal(line_buffer);
 
 	// Write a line of all '#' characters
 	line_buffer.resize(WIDTH);
@@ -665,10 +675,6 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 
 	// Wait 100ms after each screen draw
 	this->delay_callback(100);
-
-
-//	this_platform.debugPrintStackInfo(); // XXX
-//	while (1);
 }
 
 void ConsoleIO::lineBufferCopy(utl::string<WIDTH>& dst, utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_begin, utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_end, size_t x)

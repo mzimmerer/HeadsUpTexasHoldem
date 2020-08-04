@@ -18,13 +18,7 @@
 
 #include "Platform/Desktop/DesktopPlatform.h"
 
-#include <atomic>
-#include <ctime>
-#include <iostream>
-#include <mutex>
-#include <string>
 #include <thread>
-#include <utl/fifo>
 
 PlatformDesktop this_platform;
 

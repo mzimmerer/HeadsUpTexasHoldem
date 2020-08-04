@@ -70,18 +70,11 @@ public:
 	 */
 	bool operator==(const RankedHand& other) const;
 
-	// XXX
-	bool operator>=(const RankedHand& other) const
-	{
-		if (this->operator==(other) == true)
-			return true;
-
-		if (this->operator<(other) == false)
-			return true;
-
-		return false;
-	}
-	// XXX
+	/** Greater than or equals operator.
+	 *  @param other The hand to compare against
+	 *  @return True if this hand ranks greater than or equal to the other hand
+	 */
+	bool operator>=(const RankedHand& other) const;
 
 	/** Get the player's ID
 	 *  @return The player's ID

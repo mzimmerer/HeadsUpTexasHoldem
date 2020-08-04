@@ -25,7 +25,15 @@
 #include "PokerGame/Card.h"
 #include "PokerGame/PokerGame.h"
 
+/** AI namespace, implements AI decision function
+ */
 namespace AI
 {
+    /** AI decision function, decides on an action based on game state
+     *  @param state The game state
+     *  @param rng A random number generator
+     *  @param player_id The id of the player that is acting
+     *  @result The action pair, with the first element specifying the action, and the second element specifying the bet, if any
+     */
     utl::pair<PokerGame::PlayerAction, uint16_t> computerDecision(const PokerGameState& state, Random& rng, uint8_t player_id);
 }

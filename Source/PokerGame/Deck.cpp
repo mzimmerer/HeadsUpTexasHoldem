@@ -64,7 +64,7 @@ Card Deck::dealCard()
 {
     // Ensure that the entire deck has not already been dealt
     if (static_cast<size_t>(this->deal_cursor) + 1 >= this->cards.size())
-        Exception::EXCEPTION("");
+        Exception::EXCEPTION();
 
     return this->cards[this->deal_cursor++];
 }

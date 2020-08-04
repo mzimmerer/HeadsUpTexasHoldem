@@ -85,6 +85,19 @@ bool RankedHand::operator==(const RankedHand& other) const
 	return true;
 }
 
+bool RankedHand::operator>=(const RankedHand& other) const
+{
+	// Leverage the fact that operator== is already defined
+	if (this->operator==(other) == true)
+		return true;
+
+	// Leverage the fact that operator< is already defined
+	if (this->operator<(other) == false)
+		return true;
+
+	return false;
+}
+
 int RankedHand::getPlayerID() const
 {
 	return this->player_id;
@@ -95,7 +108,11 @@ RankedHand::Ranking RankedHand::getRanking() const
 	return this->ranking;
 }
 
+#ifdef EMBEDDED_BUILD
 void __attribute__((noinline)) RankedHand::rankHand()
+#else
+void RankedHand::rankHand()
+#endif
 {
 	// Clear sub_ranking
 	this->sub_ranking.clear();

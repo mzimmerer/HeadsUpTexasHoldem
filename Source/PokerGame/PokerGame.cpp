@@ -33,23 +33,25 @@ PokerGame::PokerGame(uint32_t random_seed_in, uint8_t small_blind_in, uint16_t s
 	rng(random_seed_in),
 	deck(rng)
 {
-	// XXX
+	// Initialize name strings
 	this->current_state.player_states[0].name = utl::const_string<32>(PSTR("You"));
 	this->current_state.player_states[1].name = utl::const_string<32>(PSTR("Ron"));
 	this->current_state.player_states[2].name = utl::const_string<32>(PSTR("Betty"));
 	this->current_state.player_states[3].name = utl::const_string<32>(PSTR("Bill"));
 	this->current_state.player_states[4].name = utl::const_string<32>(PSTR("Alice"));
 	this->current_state.player_states[5].name = utl::const_string<32>(PSTR("Jack"));
+
+	// Initialize player states
 	for (size_t player_id = 0; player_id < MAX_PLAYERS; ++player_id) {
 		this->current_state.player_states[player_id].stack = starting_stack_size_in;
 		this->current_state.player_states[player_id].pot_investment = 0;
 		this->current_state.player_states[player_id].folded = false;
 	}
-	this->current_state.current_pot_shares.clear();
+
+	// Initialize remaining current_state
 	this->current_state.current_bet = 0;
 	this->current_state.current_player = 0;
 	this->current_state.current_dealer = 0;
-	// XXX
 }
 
 void PokerGame::play()
@@ -60,8 +62,6 @@ void PokerGame::play()
 	// While we should continue to play rounds
 	while (this->run == true)
 	{
-
-
 		// Play a round of poker
 		if (false == this->playRound()) {
 
@@ -69,12 +69,6 @@ void PokerGame::play()
 			this->run = false;
 		}
 		else {
-
-			// Initialize player state TODO XXX FIXME cleanup
-			for (size_t i = 0; i < MAX_PLAYERS; ++i) {
-				this->current_state.player_states[i].pot_investment = 0;
-				this->current_state.player_states[i].folded = false;
-			}
 
 			// Choose the next dealer
 			this->current_state.current_dealer = this->incrementPlayerID(this->current_state.current_dealer);
@@ -103,7 +97,7 @@ bool PokerGame::playRound()
 {
 	// Count the number of players remaining
 	uint8_t players_remaining = 0;
-	utl::string<MAX_NAME_SIZE> winner; // TODO XXX FIXME wasteful
+	utl::string<MAX_NAME_SIZE> winner;
 	for (size_t i = 0; i < MAX_PLAYERS; ++i) {
 		if (this->current_state.player_states[i].stack > 0) {
 			++players_remaining;
@@ -178,6 +172,27 @@ bool PokerGame::playRound()
 uint8_t PokerGame::chooseDealer()
 {
 	return this->rng.getRandomNumberInRange(0, 5);
+}
+
+uint8_t PokerGame::incrementPlayerID(uint8_t player_id) {
+
+	uint8_t result = player_id;
+
+	do {
+		// Increment the ID
+		result = (result + 1) % MAX_PLAYERS;
+
+		// If the player's stack and pot investment are zero, continue iterating
+		PlayerState& player_state = this->current_state.player_states[result];
+		if (player_state.stack == 0 && player_state.pot_investment == 0)
+			continue;
+
+		// We found a valid result, break the loop
+		break;
+
+	} while (1);
+
+	return result;
 }
 
 Card PokerGame::dealCard()
@@ -434,37 +449,41 @@ bool PokerGame::bettingRoundStep(uint8_t& acting_player, uint8_t& players_to_act
 
 			// Fold
 		case PlayerAction::Fold:
+
+			// Call fold
 			this->fold(deciding_player, action);
+
+			// One less player may now act
 			--actionable_players;
 
-			// XXX If there is only one player left after a fold, no more players may make actions
-			if (actionable_players == 1) {
+			// If there is only one player left after a fold, no more players may make actions
+			if (actionable_players == 1)
 				players_to_act = 0;
-			}
 			break;
 
 			// Quit
 		case PlayerAction::Quit:
 
 			// Set run to false
-			this->run = false; // TODO XXX FIXME something more modular
+			this->run = false;
 			return false;
 
 			// Invalid actions
 		default:
-			Exception::EXCEPTION(utl::const_string<32>(PSTR("Invalid action")));
+			Exception::EXCEPTION();
 		}
 	}
 
 	return true;
 }
 
-// XXX
+#ifdef EMBEDDED_BUILD
 PokerGame::Outcome __attribute__((noinline)) PokerGame::determineOutcome()
+#else
+PokerGame::Outcome PokerGame::determineOutcome()
+#endif
 {
 	Outcome result;
-
-	// XXX
 	uint16_t winnings = 0;
 
 	// Rank each player's hand
@@ -490,12 +509,8 @@ PokerGame::Outcome __attribute__((noinline)) PokerGame::determineOutcome()
 	// Sort the list in descending order
 	ranked_hands.sort([](const RankedHand& lhs, const RankedHand& rhs) { return lhs >= rhs;	});
 
-
-
-
-
-
-	bool TEMP_BOOL = false;
+	// Only populate the result on the first iteration of the following loop
+	bool first_iteration = false;
 
 	// Give the winner his share of the chips, as long as there are still chips in the pot
 	do {
@@ -507,80 +522,82 @@ PokerGame::Outcome __attribute__((noinline)) PokerGame::determineOutcome()
 				++winners;
 		}
 
-		// XXX
-		if (TEMP_BOOL == false) {
+		// If this is the first iteration
+		if (first_iteration == false) {
 
+			// Set the result
 			result.draw = winners == 1 ? false : true;
-			result.winner = winners == 1 ? this->current_state.player_states[ranked_hands.begin()->getPlayerID()].name : "Draw";
+			result.winner = winners == 1 ? this->current_state.player_states[ranked_hands.begin()->getPlayerID()].name : utl::const_string<5>(PSTR("Draw"));
 			result.ranking = ranked_hands.begin()->getRanking();
 
-			TEMP_BOOL = true;
+			// Clear 'first_iteration'
+			first_iteration = true;
 		}
-		// XXX
 
-		// Create a list of id to stack mappings...
-		struct TMP {
-			uint8_t id;
-			uint16_t amt;
+		// Create a list of id to stack mappings
+		struct StackMapping {
+			uint8_t player_id;
+			uint16_t chip_count;
 		};
-		utl::list<TMP, 6> tmp;
+		utl::list<StackMapping, 6> stack_mapping;
 		int i = 0;
 		for (const auto& ranked_hand : ranked_hands) {
 
+			// If this ranked hand is not one of the wining hands, dont add it to the mapping
 			if (static_cast<size_t>(i) >= winners)
 				break;
 
-			tmp.emplace_back();
-			tmp.back().id = ranked_hand.getPlayerID();
-			tmp.back().amt = this->current_state.current_pot_shares[tmp.back().id];
+			// Add this player_id and chip count to the stack mapping
+			stack_mapping.emplace_back();
+			stack_mapping.back().player_id = ranked_hand.getPlayerID();
+			stack_mapping.back().chip_count = this->current_state.current_pot_shares[stack_mapping.back().player_id];
 
 			++i;
 		}
 
-		// Sort the list ascending
-		tmp.sort([](const TMP& lhs, const TMP& rhs) { return lhs.amt <= rhs.amt; });
+		// Sort the stack mapping list ascending
+		stack_mapping.sort([](const StackMapping& lhs, const StackMapping& rhs) { return lhs.chip_count <= rhs.chip_count; });
 
 		// For each entry in the list but the last
 		uint16_t carry_over = 0;
-		size_t iterations = tmp.size() - 1;
+		size_t iterations = stack_mapping.size() - 1;
 		for (size_t i = 0; i < iterations; ++i) {
 
 			// Add carry over
-			this->current_state.player_states[tmp.front().id].stack += carry_over;
+			this->current_state.player_states[stack_mapping.front().player_id].stack += carry_over;
 
 			// Get this players chip share
-			winnings = this->current_state.getChipShare(tmp.front().id);
+			winnings = this->current_state.getChipShare(stack_mapping.front().player_id);
 			winnings /= winners;
 
 			// Give the player the winnings
-			this->current_state.player_states[tmp.front().id].stack += winnings;
+			this->current_state.player_states[stack_mapping.front().player_id].stack += winnings;
 
 			// Add to the carry over value
 			carry_over += winnings;
 
 			// Pop this entry from the list
-			tmp.pop_front();
+			stack_mapping.pop_front();
 		}
 
 		// Add carry over
-		this->current_state.player_states[tmp.front().id].stack += carry_over;
+		this->current_state.player_states[stack_mapping.front().player_id].stack += carry_over;
 
 		// Get this players chip share
-		winnings = this->current_state.getChipShare(tmp.front().id);
+		winnings = this->current_state.getChipShare(stack_mapping.front().player_id);
 		winnings /= winners;
 
 		// Give the player the winnings
-		this->current_state.player_states[tmp.front().id].stack += winnings;
+		this->current_state.player_states[stack_mapping.front().player_id].stack += winnings;
 
-		// XXX
+		// Pop this ranked hand from the list
 		for (size_t i = 0; i < winners; ++i)
 			ranked_hands.pop_front();
 
 	} while (this->current_state.chipsRemaining() > 0);
 
-	// XXX
+	// Set player 0's chip share to the winnings, so that this chips are still represented in the pot
 	this->current_state.current_pot_shares[0] = winnings;
-	// XXX
 
 	return result;
 }
@@ -673,6 +690,12 @@ bool PokerGame::callbackWithRoundEnd(bool draw, const utl::string<MAX_NAME_SIZE>
 
 	// Clear pot share counters
 	this->current_state.current_pot_shares.clear();
+
+	// Initialize player state
+	for (size_t i = 0; i < MAX_PLAYERS; ++i) {
+		this->current_state.player_states[i].pot_investment = 0;
+		this->current_state.player_states[i].folded = false;
+	}
 
 	// Construct state
 	PokerGameState state = this->constructState(0, revealing_players);

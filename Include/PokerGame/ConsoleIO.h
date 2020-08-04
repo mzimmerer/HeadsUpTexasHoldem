@@ -218,12 +218,10 @@ private:
 	 */
 	void printToCall(utl::string<WIDTH>& dst, size_t x);
 
-	 // XXX
-	void CLEAR_TERMINAL(utl::string<WIDTH>& line_buffer) {
-		line_buffer = utl::const_string<32>(PSTR("\033[2J\033[1;1H"));
-		this->write_line_callback(line_buffer, this->opaque);
-	}
-	// XXX
+	/** Clear the terminal
+	 *  @param line_buffer A reference to a line buffer used to write to the console
+	 */
+	void clearTerminal(utl::string<WIDTH>& line_buffer);
 
 	/** Update the screen by drawing the current screen buffer
 	 *  @tparam SIZE The maximum size of the hint_text string
@@ -240,8 +238,10 @@ private:
 	 */
 	void lineBufferCopy(utl::string<WIDTH>& dst, utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_begin, const utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_end, size_t x);
 
-	// XXX
+	/** Write the next event string
+	 *  @param iter An event string iterator
+	 *  @param line_buffer A reference to the line_buffer
+     */
 	void writeNextEventString(utl::list<utl::string<MAX_EVENT_STRING_LEN>, MAX_EVENT_STRING_QUEUE_LEN>::iterator& iter,
 		utl::string<WIDTH>& line_buffer);
-	// XXX
 };

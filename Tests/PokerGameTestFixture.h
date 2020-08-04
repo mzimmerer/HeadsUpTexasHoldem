@@ -28,55 +28,55 @@
 
 #include "PokerGameTestWrapper.h"
 
+/** PokerGameTestFixture class, supports unit-test implementation
+ */
 class PokerGameTestFixture :  public ::testing::Test
 {
 public:
+
+    /** The poker game wrapper
+     */
 	PokerGameTestWrapper poker_game;
 
-    void checkSmallBlind(size_t callback_index, const std::string& player_name) {
-        EXPECT_EQ(PokerGameTestWrapper::CallbackType::PlayerAction, this->poker_game.callbackInfoAt(callback_index).callback_type);
-        EXPECT_EQ(player_name, this->poker_game.callbackInfoAt(callback_index).player_name);
-        EXPECT_EQ(PokerGame::PlayerAction::Bet, this->poker_game.callbackInfoAt(callback_index).action);
-        EXPECT_EQ(5, this->poker_game.callbackInfoAt(callback_index).bet);
-    }
+    /** Check that the small blind was paid
+     *  @param callback_index The index of the callback data to check
+     *  @param player_name The player expected to pay the small blind
+     */
+    void checkSmallBlind(size_t callback_index, const std::string& player_name);
 
-    void checkBigBlind(size_t callback_index, const std::string& player_name) {
-        EXPECT_EQ(PokerGameTestWrapper::CallbackType::PlayerAction, this->poker_game.callbackInfoAt(callback_index).callback_type);
-        EXPECT_EQ(player_name, this->poker_game.callbackInfoAt(callback_index).player_name);
-        EXPECT_EQ(PokerGame::PlayerAction::Bet, this->poker_game.callbackInfoAt(callback_index).action);
-        EXPECT_EQ(10, this->poker_game.callbackInfoAt(callback_index).bet);
-    }
+    /** Check that the big blind was paid
+     *  @param callback_index The index of the callback data to check
+     *  @param player_name The player expected to pay the big blind
+     */
+    void checkBigBlind(size_t callback_index, const std::string& player_name);
 
-    void checkSubroundChange(size_t callback_index) {
-        EXPECT_EQ(PokerGameTestWrapper::CallbackType::SubroundChange, this->poker_game.callbackInfoAt(callback_index).callback_type);
-    }
+    /** Check that the subround change callback was called
+     *  @param callback_index The index of the callback data to check
+     */
+    void checkSubroundChange(size_t callback_index);
 
-    void checkPlayerFolds(size_t callback_index, const std::string& player_name)
-    {
-        EXPECT_EQ(PokerGameTestWrapper::CallbackType::PlayerAction, this->poker_game.callbackInfoAt(callback_index).callback_type);
-        EXPECT_EQ(player_name, this->poker_game.callbackInfoAt(callback_index).player_name);
-        EXPECT_EQ(PokerGame::PlayerAction::Fold, this->poker_game.callbackInfoAt(callback_index).action);
-        EXPECT_EQ(0, this->poker_game.callbackInfoAt(callback_index).bet);
-    }
+    /** Check that a player folds
+     *  @param callback_index The index of the callback data to check
+     *  @param player_name The player expected to fold
+     */
+    void checkPlayerFolds(size_t callback_index, const std::string& player_name);
 
-    void checkPlayerCheckOrCalls(size_t callback_index, const std::string& player_name, int call_amount)
-    {
-        EXPECT_EQ(PokerGameTestWrapper::CallbackType::PlayerAction, this->poker_game.callbackInfoAt(callback_index).callback_type);
-        EXPECT_EQ(player_name, this->poker_game.callbackInfoAt(callback_index).player_name);
-        EXPECT_EQ(PokerGame::PlayerAction::CheckOrCall, this->poker_game.callbackInfoAt(callback_index).action);
-        EXPECT_EQ(call_amount, this->poker_game.callbackInfoAt(callback_index).bet);
-    }
+    /** Check that a player checks or calls
+     *  @param callback_index The index of the callback data to check
+     *  @param player_name The player expected to check or call
+     *  @param call_amount The amount that the player was expected to call
+     */
+    void checkPlayerCheckOrCalls(size_t callback_index, const std::string& player_name, int call_amount);
 
-    void checkPlayerBets(size_t callback_index, const std::string& player_name, int bet_amount)
-    {
-        EXPECT_EQ(PokerGameTestWrapper::CallbackType::PlayerAction, this->poker_game.callbackInfoAt(callback_index).callback_type);
-        EXPECT_EQ(player_name, this->poker_game.callbackInfoAt(callback_index).player_name);
-        EXPECT_EQ(PokerGame::PlayerAction::Bet, this->poker_game.callbackInfoAt(callback_index).action);
-        EXPECT_EQ(bet_amount, this->poker_game.callbackInfoAt(callback_index).bet);
-    }
+    /** Check that a player bets
+     *  @param callback_index The index of the callback data to check
+     *  @param player_name The player expected to bet
+     *  @param call_amount The amount that the player was expected to bet
+     */
+    void checkPlayerBets(size_t callback_index, const std::string& player_name, int bet_amount);
 
-    void checkPlayerDecisionCallback(size_t callback_index)
-    {
-        EXPECT_EQ(PokerGameTestWrapper::CallbackType::Decision, this->poker_game.callbackInfoAt(callback_index).callback_type);
-    }
+    /** Check that the player decision callback was called
+     *  @param callback_index The index of the callback data to check
+     */
+    void checkPlayerDecisionCallback(size_t callback_index);
 };

@@ -18,30 +18,29 @@
 
 #include "Platform/Atmega328p/Atmega328pSPI.h"
 
+#include <avr/interrupt.h>
 #include <avr/io.h>
 
 SPI::SPI(const SPIOptions& options)
 {
+	// MOSI CLK and CS configured as outputs
 	DDRB |= (1 << PINB5) | (1 << PINB3) | (1 << PINB2);
+
+	// MISO configured as input
 	DDRB &= ~(1 << PINB4);
 
+	// Set CS high
 	PORTB |= (1 << PINB2);
 
-	//	SPCR |= (1 << SPIE); // Enable SPI interrupts
-//	SPCR &= ~(1 << DORD); // MSB
-	SPCR |= (1 << MSTR); // Master mode
-//	SPCR |= (1 << CPOL); // Clock idle high
-	//SPCR |= (1 << CPHA); // Sample leading edge
+	// Master mode
+	SPCR |= (1 << MSTR);
+
+	// Clock frequency CLOCK / 128
 	SPCR |= (1 << SPR0);
 	SPCR |= (1 << SPR1);
-	SPCR |= (1 << SPE); // Enable SPI
 
-	// F osc / 128 (62.5kHz)
-//	SPSR &= ~(1 << SPI2X);
-
-
-
-//	sei();
+	// Enable SPI
+	SPCR |= (1 << SPE);
 }
 
 SPI& SPI::operator=(const SPI& other)
@@ -49,13 +48,12 @@ SPI& SPI::operator=(const SPI& other)
 	return *this;
 }
 
-//Function to send and receive data for both master and slave
 unsigned char spi_tranceiver(unsigned char data)
 {
 	// Load data into the buffer
 	SPDR = data;
 
-	//Wait until transmission complete
+	// Wait until transmission complete
 	while (!(SPSR & (1 << SPIF)));
 
 	// Return received data
@@ -65,14 +63,21 @@ unsigned char spi_tranceiver(unsigned char data)
 size_t SPI::transaction(const char* src_begin, const char* src_end,
 	char* dst_begin, char* dst_end)
 {
+	// Set CS low
 	PORTB &= ~(1 << PINB2);
 
+	// While there are source bytes to send
 	while (src_begin != src_end) {
+
+		// Transact one byte
 		*dst_begin = spi_tranceiver(*src_begin);
+
+		// Iterate iterators
 		++src_begin;
 		++dst_begin;
 	}
 
+	// Set CS high
 	PORTB |= (1 << PINB2);
 
 	return 0;

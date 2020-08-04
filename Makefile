@@ -37,7 +37,6 @@ APP_SRC += $(SOURCEDIR)/Pokergame/AI.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/Card.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/ConsoleIO.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/Deck.cpp
-#APP_SRC += $(SOURCEDIR)/Pokergame/Player.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/PokerGame.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/Random.cpp
 APP_SRC += $(SOURCEDIR)/Pokergame/RankedHand.cpp
@@ -64,6 +63,7 @@ ifeq ($(TARGET),atmega328p)
     CXXFLAGS += -flto
     CXXFLAGS += -DEMBEDDED_BUILD
     CXXFLAGS += -DPLATFORM_ATMEGA328P
+    CXXFLAGS += -DF_CPU=16000000UL
 
     LDFLAGS += -mmcu=atmega328p
     LDFLAGS += -Wl,--gc-sections

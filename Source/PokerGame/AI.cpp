@@ -18,9 +18,12 @@
 
 #include "PokerGame/AI.h"
 
-#if 0
+#ifdef EMBEDDED_BUILD
+static const uint8_t hand_strengths[91] PROGMEM = {
+#else
 static const uint8_t hand_strengths[91] = {
-		 0xBD,
+#endif
+		0xBD,
 		 0x0,
 		 0x0,
 		 0x0,
@@ -145,7 +148,11 @@ static float handStrength(const utl::array<Card, 2>& hand)
 	}
 
 	// Lookup the hand strength
+#ifdef EMBEDDED_BUILD
+	return pgm_read_byte(&hand_strengths[getOffset(ordered_hand_values[0], ordered_hand_values[1])]);
+#else
 	return hand_strengths[getOffset(ordered_hand_values[0], ordered_hand_values[1])];
+#endif
 }
 
 static float calculatePotOdds(const PokerGameState& state, uint16_t bet)
@@ -154,9 +161,13 @@ static float calculatePotOdds(const PokerGameState& state, uint16_t bet)
 	return static_cast<double>(bet) / (static_cast<double>(bet) + static_cast<double>(pot));
 }
 
-utl::pair<PokerGame::PlayerAction, uint16_t> decide(float random_value, float fold, float call, float raise)
+utl::pair<PokerGame::PlayerAction, uint16_t> decide(Random& rng, float fold, float call, float raise)
 {
 	utl::pair<PokerGame::PlayerAction, uint16_t> result;
+
+	// Get a random value
+	int random16 = rng.getRandomNumberInRange(0, 10000);
+	float random_value = static_cast<float>(random16) / 10000.0;
 
 	// Fold
 	if (random_value < fold) {
@@ -177,11 +188,35 @@ utl::pair<PokerGame::PlayerAction, uint16_t> decide(float random_value, float fo
 	result.second = 0;
 	return result;
 }
-#endif
+
+uint16_t decideBet(Random& rng, uint16_t base, uint16_t max, float raise)
+{
+	uint16_t result = base;
+
+	// Get a random value
+	int random16 = rng.getRandomNumberInRange(0, 10000);
+	float random_value = static_cast<float>(random16) / 10000.0;
+
+	// While the random_value is belue the raise rate
+	while (random_value < raise) {
+
+		// Get a random value
+		random16 = rng.getRandomNumberInRange(0, 10000);
+		random_value = static_cast<float>(random16) / 10000.0;
+
+		// Increase the bet
+		result += base;
+	}
+
+	// Make sure that the bet does not exceed the AI's max
+	if (result > max)
+		return max;
+	else
+		return result;
+}
 
 utl::pair<PokerGame::PlayerAction, uint16_t> AI::computerDecision(const PokerGameState& state, Random& rng, uint8_t player_id)
 {
-#if 0
 	// Calculate Pot Odds
 	float pot_odds;
 	if (state.current_bet - state.current_pot_shares[player_id]) {
@@ -192,11 +227,8 @@ utl::pair<PokerGame::PlayerAction, uint16_t> AI::computerDecision(const PokerGam
 	else {
 
 		// There is no bet
-		pot_odds = calculatePotOdds(state, state.current_bet / 2); // TODO XXX FIXME make more interesting
+		pot_odds = calculatePotOdds(state, state.current_bet / 2);
 	}
-
-	// Rank this hand
-	//RankedHand ranked_hand(player_id, state.player_states[player_id].hand, state.board);
 
 	// Lookup hand strength
 	uint8_t hand_strength = handStrength(state.player_states[player_id].hand);
@@ -204,32 +236,16 @@ utl::pair<PokerGame::PlayerAction, uint16_t> AI::computerDecision(const PokerGam
 	// Calculate rate of return
 	float rate_of_return = hand_strength / pot_odds;
 
-	// Get a random value
-	int random16 = rng.getRandomNumberInRange(0, 10000);
-	float random_value = static_cast<float>(random16) / 10000.0;
-
 	// Decide
 	utl::pair<PokerGame::PlayerAction, uint16_t> result;
 	if (rate_of_return < 0.8)
-	{
-		// 95 % fold, 0 % call, 5 % raise(bluff)
-		result = decide(random_value, 0.95, 0.0, 0.05);
-	}
+		result = decide(rng, 0.95, 0.0, 0.05);
 	else if (rate_of_return < 1.0)
-	{
-		// 80 %, fold 5 % call, 15 % raise(bluff)
-		result = decide(random_value, 0.80, 0.05, 0.15);
-	}
+		result = decide(rng, 0.80, 0.05, 0.15);
 	else if (rate_of_return < 1.3)
-	{
-		// 0 % fold, 60 % call, 40 % raise
-		result = decide(random_value, 0.00, 0.60, 0.40);
-	}
-	else {
-
-		// 0 % fold, 30 % call, 70 % raise
-		result = decide(random_value, 0.00, 0.30, 0.70);
-	}
+		result = decide(rng, 0.00, 0.60, 0.40);
+	else
+		result = decide(rng, 0.00, 0.30, 0.70);
 
 	// Do not fold if there is no bet
 	if (state.current_bet - state.current_pot_shares[player_id] == 0) {
@@ -238,11 +254,16 @@ utl::pair<PokerGame::PlayerAction, uint16_t> AI::computerDecision(const PokerGam
 	}
 
 	// Determine bet amount
-	if (result.first == PokerGame::PlayerAction::Bet)
-		result.second = 20; // TODO XXX FIXME
+	if (result.first == PokerGame::PlayerAction::Bet) {
+		if (rate_of_return < 0.8)
+			result.second = decideBet(rng, state.current_bet / 2, state.player_states[player_id].stack, 0.05);
+		else if (rate_of_return < 1.0)
+			result.second = decideBet(rng, state.current_bet / 2, state.player_states[player_id].stack, 0.15);
+		else if (rate_of_return < 1.3)
+			result.second = decideBet(rng, state.current_bet / 2, state.player_states[player_id].stack, 0.40);
+		else
+			result.second = decideBet(rng, state.current_bet / 2, state.player_states[player_id].stack, 0.70);
+	}
 
 	return result;
-#endif
-
-	return utl::pair<PokerGame::PlayerAction, uint16_t>(PokerGame::PlayerAction::Bet, 100); // XXX
 }

@@ -18,8 +18,6 @@
 
 #include "Platform/Atmega328p/Atmega328pPlatform.h"
 
-#define F_CPU 16000000UL // TODO singular define location
-
 #include <avr/eeprom.h>
 #include <util/delay.h>
 
@@ -29,6 +27,7 @@ PlatformAtmega328p this_platform;
 
 static void writeRandomSeed(uint32_t seed)
 {
+	// Write 4 bytes
 	eeprom_write_byte((uint8_t*)3, seed & 0xFF);
 	seed >>= 8;
 	eeprom_write_byte((uint8_t*)2, seed & 0xFF);
@@ -42,6 +41,7 @@ static uint32_t randSeedAtmega328p()
 {
 	uint32_t result = 0;
 
+	// Read 4 bytes
 	result = eeprom_read_byte((uint8_t*)0);
 	result <<= 8;
 	result |= eeprom_read_byte((uint8_t*)1);
@@ -100,21 +100,15 @@ SPI PlatformAtmega328p::configureSPI(int index, const SPI::SPIOptions& options_i
 
 void PlatformAtmega328p::debugPrintStackInfo(int id)
 {
-	static constexpr size_t INITIALIZED_DATA_SIZE = 0x1f6;
+	// Determine 'MAX_SEEN_STACK', the maximum observed stack size
 	static uint16_t MAX_SEEN_STACK = 0;
-	if (RAMEND - SP + INITIALIZED_DATA_SIZE > MAX_SEEN_STACK)
-		MAX_SEEN_STACK = RAMEND - SP + INITIALIZED_DATA_SIZE;
+	if (RAMEND - SP > MAX_SEEN_STACK)
+		MAX_SEEN_STACK = RAMEND - SP;
 
+	// Create a string with this information and write the string to console
 	utl::string<16> stack_pointer_str = utl::to_string<8>(id);
 	stack_pointer_str += utl::const_string<16>(PSTR(" - "));
 	stack_pointer_str += utl::to_string<16>(MAX_SEEN_STACK);
 	stack_pointer_str += utl::const_string<16>(PSTR("\r\n"));
 	this->console.writeBytes(stack_pointer_str.begin(), stack_pointer_str.end());
-
-	static constexpr size_t SRAM_SIZE = 0x800;
-	size_t stack_size = RAMEND - SP;
-	if (stack_size + INITIALIZED_DATA_SIZE > SRAM_SIZE)
-		while (1);
-
-//	_delay_ms(100.0); // XXX
 }

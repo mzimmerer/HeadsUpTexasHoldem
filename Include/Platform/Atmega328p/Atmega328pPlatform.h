@@ -25,29 +25,58 @@
 #include "Platform/Atmega328p/Atmega328pUART.h"
 #include "Platform/Atmega328p/Atmega328pSPI.h"
 
+ /** PlatformAtmega328p class. Implements Atmega328p specific platform features
+  */
 class PlatformAtmega328p {
 public:
+
+    /** PlatformAtmega328p Constructor
+     */
 	PlatformAtmega328p();
 
+    /** PlatformAtmega328p Deconstructor
+     */
 	~PlatformAtmega328p();
 
+    /** Get a random seed
+     *  @result The random seed
+     */
 	uint32_t randomSeed();
 
+    /** Delay for 'delay' seconds
+     *  @param delay The amount of seconds to delay
+     */
 	void delaySeconds(uint16_t delay);
 
+    /** Delay for 'delay' milli-seconds
+     *  @param delay The amount of milli-seconds to delay
+     */
 	void delayMilliSeconds(uint16_t delay);
 
+    /** Configure a UART port
+     *  @param index The platform specific UART index to configure
+     *  @param options The options to configure
+     *  @resul A copy of the UART object
+     */
 	UART configureUART(int index, const UART::UARTOptions& options);
 
+    /** Configure a SPI port
+     *  @param index The platform specific SPI index to configure
+     *  @param options The options to configure
+     *  @resul A copy of the SPI object
+     */
 	SPI configureSPI(int index, const SPI::SPIOptions& options);
 
-	// XXX
+	/** Print stack size information for debugging purposes
+     *  @param id An integer to print along with the stack size information
+     */
     void debugPrintStackInfo(int id = 0);
-	// XXX
 
 private:
 
+    /// A private copy of the 'console' UART at index 0
 	UART console;
 };
 
+/// Global access to this platform
 extern PlatformAtmega328p this_platform;

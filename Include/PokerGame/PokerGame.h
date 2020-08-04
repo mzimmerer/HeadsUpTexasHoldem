@@ -127,71 +127,8 @@ protected:
 	/// The deck
 	Deck deck;
 
-	// XXX
+	/// The current poker game state
 	PokerGameState current_state;
-
-	// XXX
-#if 0
-	class PlayerMap {
-	public:
-
-		PlayerMap() : map(0) {}
-		PlayerMap& operator=(const PlayerMap& other)
-		{
-			this->map = other.map;
-			return *this;
-		}
-		bool operator[](size_t offset) const
-		{
-			return (this->map >> offset) & 1;
-		}
-		void set(size_t offset, bool value)
-		{
-			if (value == true)
-				this->map |= (1 << offset);
-			else
-				this->map &= ~(1 << offset);
-		}
-		size_t playerCount() const {
-			size_t result = 0;
-			for (size_t i = 0; i < 6; ++i) {
-				if (this->operator[](i) == true)
-					++result;
-			}
-			return result;
-		}
-		private:
-			uint8_t map;
-	};
-	struct SidePot {
-	    PlayerMap player_map;
-		uint16_t amount{0};
-	};
-	utl::vector<SidePot, 5> side_pots;
-
-	void addSidePot(uint8_t player_id)
-	{
-		PlayerMap player_map;
-		player_map.set(player_id, true);
-		for (size_t i = 0; i < MAX_PLAYERS; ++i) {
-			const auto& player = this->current_state.player_states[i];
-			if (player.folded == true)
-				continue;
-			if (player.pot_investment == 0)
-				continue;
-			player_map.set(i, true);
-		}
-		SidePot side_pot;
-		side_pot.player_map = player_map;
-		side_pot.amount = this->current_state.current_pot;
-		this->side_pots.push_back(side_pot);
-	}
-#endif
-
-	// XXX
-	//PotTracker pot_tracker;
-	// XXX
-	// XXX
 
 	/** Play a round of texas holdem poker!
 	 *  @return True if the program should continue, false otherwise
@@ -203,25 +140,16 @@ protected:
 	 */
 	virtual uint8_t chooseDealer();
 
-	// XXX This gives you the next player that is still in the game
-	uint8_t incrementPlayerID(uint8_t player_id) {
-
-		uint8_t result = player_id;
-		do {
-			result = (result + 1) % MAX_PLAYERS;
-			PlayerState& player_state = this->current_state.player_states[result];
-			if (player_state.stack == 0 && player_state.pot_investment == 0)
-				continue;
-			break;
-		} while (1);
-		return result;
-	}
-	// XXX
+	/** Increment a player_id, returning the next player that is still in the game
+	 *  @param player_id The id to increment
+	 *  @return The incremented player_id
+	 */
+	uint8_t incrementPlayerID(uint8_t player_id);
 
 	/** Deal a single card
 	 *  @return The card
 	 */
-	virtual Card dealCard(); // TODO remove virtual keyword
+	virtual Card dealCard();
 
 	/** Deal cards to each player
 	 *  @param player_count The amount of players to deal cards to
@@ -269,17 +197,23 @@ protected:
 	 */
 	bool bettingRoundStep(uint8_t& acting_player, uint8_t& players_to_act, uint8_t& actionable_players);
 
-	// XXX
+	/// Outcome struct, used to represent the outcome of a showdown
 	struct Outcome {
 		bool draw{ false };
 		utl::string<MAX_NAME_SIZE> winner;
 		RankedHand::Ranking ranking{ RankedHand::Ranking::Unranked };
 		utl::vector<uint8_t, 6> revealing_players;
 	};
+
+	/** Determine the outcome of a round, the showdown
+	 *  @return The outcome of the round
+	 */
 	Outcome determineOutcome();
 
+	/** Resolve a betting round by dermining the outcome of the showdown, this also calls back
+	 *  @return bool True if the game should continue
+	 */
 	bool resolveRound();
-	// XXX
 
 	/** Construct a state struct
 	 *  @param player The player who will receive this state snapshot

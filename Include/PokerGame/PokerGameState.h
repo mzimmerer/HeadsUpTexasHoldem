@@ -22,26 +22,50 @@
 
 #include "Card.h"
 
+/// The maximum allowed name size
 static constexpr size_t MAX_NAME_SIZE = 5;
 
 struct PlayerState
 {
+    /// The player's name
 	utl::string<MAX_NAME_SIZE> name;
+
+    /// The player's hand
 	utl::array<Card, 2> hand;
+
+    /// The player's stack
 	uint16_t stack;
+    
+    /// The player's current pot_investment
     uint16_t pot_investment;
+
+    /// Has the playe folded?
     bool folded;
 };
 
 struct PokerGameState
 {
+    /// An array of each player's pot share
     utl::array<uint16_t, 6> current_pot_shares;
+
+    /// The current bet
     uint16_t current_bet;
+
+    /// The current player acting
     uint8_t current_player;
+
+    /// The current dealer position
     uint8_t current_dealer;
+
+    /// The current board
 	utl::vector<Card, 5> board;
+
+    /// An array of all player states
 	utl::array<PlayerState, 6> player_states;
 
+    /** Return the number of chips remaining in the pot
+     *  @param The number of chips remaining
+     */
     uint16_t chipsRemaining() const
     {
         // Add up every player's chip share
@@ -51,6 +75,10 @@ struct PokerGameState
         return result;
     }
 
+    /** Get a player's chip share from the pot
+     *  @param player_id The player who is retreiving his/her chip share
+     *  @return The chip share won
+     */
     uint16_t getChipShare(uint8_t player_id)
     {
         // Remove these chips from this player's pot investment

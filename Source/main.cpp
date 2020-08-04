@@ -124,8 +124,6 @@ static utl::string<ConsoleIO::MAX_USER_INPUT_LEN> readLineCallback(void* opaque)
 {
 	// Read a line from the user
 	return readLine();
-	//(void)readLine;
-	//return utl::string<ConsoleIO::MAX_USER_INPUT_LEN>("c\r\n");
 }
 
 static void delayCallback(int16_t delay_ms)
@@ -138,11 +136,7 @@ int main()
 	// Initialize the platform
 	const UART::UARTOptions uart_options{500000};
 	UART uart0_local = this_platform.configureUART(0, uart_options);
-	uart0 = &uart0_local; // XXX
-
-	//const SPI::SPIOptions spi_options({62500});
-//	SPI spi0 = this_platform.configureSPI(0, spi_options);
-	//(void) spi0; // XXX
+	uart0 = &uart0_local;
 
 	// Run the program
 #ifdef EMBEDDED_BUILD
@@ -161,7 +155,7 @@ int main()
 		PokerGame poker_game(random_seed, 5, 500, &ConsoleIO::userDecision, &ConsoleIO::playerAction, &ConsoleIO::subRoundChange,
 			&ConsoleIO::roundEnd, &ConsoleIO::gameEnd, &console_io);
 
-		// Play poker until one of the players has quit or lost
+		// Play poker until one of the players has quit or only one player remains
 		poker_game.play();
 
 		// Wait 3 seconds
@@ -175,10 +169,5 @@ int main()
 	}
 #else
 	}
-#endif
-
-#ifndef EMBEDDED_BUILD
-	// Cleanup the platform
-	//this_platform::cleanup();
 #endif
 }
