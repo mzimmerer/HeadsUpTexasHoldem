@@ -121,7 +121,7 @@ private:
 
 	static void subRoundChangeCallback(SubRound new_sub_round, const PokerGameState& state, void* opaque);
 
-	static bool roundEndCallback(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking,
+	static bool roundEndCallback(bool draw, const utl::string<MAX_NAME_SIZE>& winner, uint16_t winnings, RankedHand::Ranking ranking,
 		const PokerGameState& state, void* opaque);
 
 	static void gameEndCallback(const utl::string<MAX_NAME_SIZE>& winner, void* opaque);

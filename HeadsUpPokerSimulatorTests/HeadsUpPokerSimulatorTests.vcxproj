@@ -23,6 +23,7 @@
     <ProjectGuid>{EC8FF3C3-104B-40CA-BDF3-51784927CB94}</ProjectGuid>
     <RootNamespace>HeadsUpPokerSimulatorTests</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>uHoldemTests</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -156,6 +157,7 @@
     <ClCompile Include="..\Source\Platform\Desktop\DesktopPlatform.cpp" />
     <ClCompile Include="..\Source\Platform\Desktop\DesktopSPI.cpp" />
     <ClCompile Include="..\Source\Platform\Desktop\DesktopUART.cpp" />
+    <ClCompile Include="..\Source\PokerGame\AI.cpp" />
     <ClCompile Include="..\Source\PokerGame\Card.cpp" />
     <ClCompile Include="..\Source\PokerGame\Deck.cpp" />
     <ClCompile Include="..\Source\PokerGame\PokerGame.cpp" />

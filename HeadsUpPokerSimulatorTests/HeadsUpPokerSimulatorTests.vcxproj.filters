@@ -81,6 +81,9 @@
     <ClCompile Include="..\Source\Platform\Desktop\DesktopSPI.cpp">
       <Filter>SourceUnderTest</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\AI.cpp">
+      <Filter>SourceUnderTest</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Tests\HandTestWrapper.h">

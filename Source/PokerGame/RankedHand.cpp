@@ -95,7 +95,7 @@ RankedHand::Ranking RankedHand::getRanking() const
 	return this->ranking;
 }
 
-void RankedHand::rankHand()
+void __attribute__((noinline)) RankedHand::rankHand()
 {
 	// Clear sub_ranking
 	this->sub_ranking.clear();

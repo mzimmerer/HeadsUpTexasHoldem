@@ -93,6 +93,9 @@
     <ClCompile Include="..\Source\Platform\Desktop\DesktopPlatform.cpp">
       <Filter>Platform Source\Desktop</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\AI.cpp">
+      <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Dependencies\utl\include\utl\algorithm">
@@ -180,6 +183,9 @@
     </ClInclude>
     <ClInclude Include="..\Include\Platform\Desktop\DesktopPlatform.h">
       <Filter>Platform Headers\Desktop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGame\AI.h">
+      <Filter>PokerGame Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

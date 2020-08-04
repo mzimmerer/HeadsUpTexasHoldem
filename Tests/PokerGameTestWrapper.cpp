@@ -56,7 +56,7 @@ void PokerGameTestWrapper::subRoundChangeCallback(SubRound new_sub_round, const 
 	self->expectAIHandsUnrevealed(state);
 }
 
-bool PokerGameTestWrapper::roundEndCallback(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking,
+bool PokerGameTestWrapper::roundEndCallback(bool draw, const utl::string<MAX_NAME_SIZE>& winner, uint16_t winnings, RankedHand::Ranking ranking,
 	const PokerGameState& state, void* opaque)
 {
 	PokerGameTestWrapper* self = reinterpret_cast<PokerGameTestWrapper*>(opaque);

@@ -123,16 +123,9 @@ static void writeLineCallback(const utl::string<ConsoleIO::WIDTH>& line, void* o
 static utl::string<ConsoleIO::MAX_USER_INPUT_LEN> readLineCallback(void* opaque)
 {
 	// Read a line from the user
-#ifndef EMBEDDED_BUILD
-	//return readLine();
-	(void)readLine;
-	return utl::string<ConsoleIO::MAX_USER_INPUT_LEN>("c\r\n");
-#else
-	// TODO XXX FIXME, just spamming embedded builds with 'c' for long duration testing
-	//return readLine();
-	(void)readLine;
-	return utl::string<ConsoleIO::MAX_USER_INPUT_LEN>("c\r\n");
-#endif
+	return readLine();
+	//(void)readLine;
+	//return utl::string<ConsoleIO::MAX_USER_INPUT_LEN>("c\r\n");
 }
 
 static void delayCallback(int16_t delay_ms)

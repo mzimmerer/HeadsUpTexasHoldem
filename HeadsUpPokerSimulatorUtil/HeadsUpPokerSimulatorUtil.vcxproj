@@ -18,74 +18,12 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Dependencies\utl\new.cpp" />
-    <ClCompile Include="..\Dependencies\utl\string.cpp" />
-    <ClCompile Include="..\Source\Exception.cpp" />
-    <ClCompile Include="..\Source\main.cpp" />
-    <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pPlatform.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pSPI.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pUART.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\Source\Platform\Desktop\DesktopPlatform.cpp" />
-    <ClCompile Include="..\Source\Platform\Desktop\DesktopSPI.cpp" />
-    <ClCompile Include="..\Source\Platform\Desktop\DesktopUART.cpp" />
-    <ClCompile Include="..\Source\PokerGame\AI.cpp" />
-    <ClCompile Include="..\Source\PokerGame\Card.cpp" />
-    <ClCompile Include="..\Source\PokerGame\ConsoleIO.cpp" />
-    <ClCompile Include="..\Source\PokerGame\Deck.cpp" />
-    <ClCompile Include="..\Source\PokerGame\PokerGame.cpp" />
-    <ClCompile Include="..\Source\PokerGame\Random.cpp" />
-    <ClCompile Include="..\Source\PokerGame\RankedHand.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Dependencies\utl\include\utl\algorithm" />
-    <None Include="..\Dependencies\utl\include\utl\array" />
-    <None Include="..\Dependencies\utl\include\utl\cstddef" />
-    <None Include="..\Dependencies\utl\include\utl\cstdint" />
-    <None Include="..\Dependencies\utl\include\utl\cstdlib" />
-    <None Include="..\Dependencies\utl\include\utl\fifo" />
-    <None Include="..\Dependencies\utl\include\utl\list" />
-    <None Include="..\Dependencies\utl\include\utl\new" />
-    <None Include="..\Dependencies\utl\include\utl\random" />
-    <None Include="..\Dependencies\utl\include\utl\string" />
-    <None Include="..\Dependencies\utl\include\utl\unordered_map" />
-    <None Include="..\Dependencies\utl\include\utl\utility" />
-    <None Include="..\Dependencies\utl\include\utl\vector" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Include\Exception.h" />
-    <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pPlatform.h" />
-    <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pSPI.h" />
-    <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pUART.h" />
-    <ClInclude Include="..\Include\Platform\Desktop\DesktopPlatform.h" />
-    <ClInclude Include="..\Include\Platform\Desktop\DesktopSPI.h" />
-    <ClInclude Include="..\Include\Platform\Desktop\DesktopUART.h" />
-    <ClInclude Include="..\Include\Platform\Platform.h" />
-    <ClInclude Include="..\Include\PokerGame\AI.h" />
-    <ClInclude Include="..\Include\PokerGame\Card.h" />
-    <ClInclude Include="..\Include\PokerGame\ConsoleIO.h" />
-    <ClInclude Include="..\Include\PokerGame\Deck.h" />
-    <ClInclude Include="..\Include\PokerGame\PokerGame.h" />
-    <ClInclude Include="..\Include\PokerGame\PokerGameState.h" />
-    <ClInclude Include="..\Include\PokerGame\Random.h" />
-    <ClInclude Include="..\Include\PokerGame\RankedHand.h" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{CA2158C7-526D-4D57-A12E-4B667CF77356}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>HeadsUpPokerSimulator</RootNamespace>
+    <ProjectGuid>{DFAE45C5-0CB3-46F6-BB83-90F69710B462}</ProjectGuid>
+    <RootNamespace>HeadsUpPokerSimulatorUtil</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>uHoldemApp</ProjectName>
+    <ProjectName>uHoldemUtils</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -132,10 +70,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -144,31 +82,25 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>..\Include;..\Dependencies\utl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Include;..\Dependencies\utl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -177,15 +109,12 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -196,8 +125,6 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -205,7 +132,6 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\Include;..\Dependencies\utl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -214,6 +140,29 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Dependencies\utl\new.cpp" />
+    <ClCompile Include="..\Dependencies\utl\string.cpp" />
+    <ClCompile Include="..\Source\Exception.cpp" />
+    <ClCompile Include="..\Source\PokerGame\AI.cpp" />
+    <ClCompile Include="..\Source\PokerGame\Card.cpp" />
+    <ClCompile Include="..\Source\PokerGame\ConsoleIO.cpp" />
+    <ClCompile Include="..\Source\PokerGame\Deck.cpp" />
+    <ClCompile Include="..\Source\PokerGame\PokerGame.cpp" />
+    <ClCompile Include="..\Source\PokerGame\Random.cpp" />
+    <ClCompile Include="..\Source\PokerGame\RankedHand.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Include\PokerGame\AI.h" />
+    <ClInclude Include="..\Include\PokerGame\Card.h" />
+    <ClInclude Include="..\Include\PokerGame\ConsoleIO.h" />
+    <ClInclude Include="..\Include\PokerGame\Deck.h" />
+    <ClInclude Include="..\Include\PokerGame\PokerGame.h" />
+    <ClInclude Include="..\Include\PokerGame\PokerGameState.h" />
+    <ClInclude Include="..\Include\PokerGame\Random.h" />
+    <ClInclude Include="..\Include\PokerGame\RankedHand.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

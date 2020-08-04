@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="PokerGame Source Files">
+      <UniqueIdentifier>{6fe31c22-0355-411d-8845-c69069af2a0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PokerGame Header Files">
+      <UniqueIdentifier>{066aa510-736f-4555-9417-5a93ffd9f5b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UTL Source Files">
+      <UniqueIdentifier>{ce742abc-c98f-4f3e-af5d-aedcb8527d0f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Source\PokerGame\Card.cpp">
+      <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\ConsoleIO.cpp">
+      <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\Deck.cpp">
+      <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\PokerGame.cpp">
+      <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\Random.cpp">
+      <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\RankedHand.cpp">
+      <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\utl\new.cpp">
+      <Filter>UTL Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\utl\string.cpp">
+      <Filter>UTL Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Exception.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\PokerGame\AI.cpp">
+      <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Include\PokerGame\Card.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGame\ConsoleIO.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGame\Deck.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGame\PokerGame.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGame\PokerGameState.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGame\Random.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGame\RankedHand.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\PokerGame\AI.h">
+      <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

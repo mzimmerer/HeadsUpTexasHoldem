@@ -142,7 +142,7 @@ void ConsoleIO::subRoundChange(PokerGame::SubRound new_sub_round, const PokerGam
 	self->updateScreen<32>(hint_text);
 }
 
-bool ConsoleIO::roundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking,
+bool ConsoleIO::roundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, uint16_t winnings, RankedHand::Ranking ranking,
 	const PokerGameState& state, void* opaque)
 {
 	ConsoleIO* self = reinterpret_cast<ConsoleIO*>(opaque);
@@ -150,7 +150,7 @@ bool ConsoleIO::roundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, Ra
 	// Insert the event text into the event text queue
 	if (self->event_string_queue.size() > MAX_EVENT_STRING_QUEUE_LEN - 1)
 		self->event_string_queue.pop_back();
-	utl::string<MAX_EVENT_STRING_LEN> event_text = self->roundEndToString(draw, winner, ranking, state.chipsRemaining());
+	utl::string<MAX_EVENT_STRING_LEN> event_text = self->roundEndToString(draw, winner, ranking, winnings);
 	self->event_string_queue.push_front(event_text);
 
 	// Copy the state
@@ -158,9 +158,8 @@ bool ConsoleIO::roundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, Ra
 
 	// Update the screen
 	{
-		utl::string<32> hint_text = utl::const_string<32>(PSTR("Continue(c) or quit(q)?"));
-
 		// Update the screen
+		utl::string<32> hint_text = utl::const_string<32>(PSTR("Continue(c) or quit(q)?"));
 		self->updateScreen<32>(hint_text);
 	}
 
@@ -666,6 +665,10 @@ void ConsoleIO::updateScreen(const utl::string<SIZE>& hint_text)
 
 	// Wait 100ms after each screen draw
 	this->delay_callback(100);
+
+
+//	this_platform.debugPrintStackInfo(); // XXX
+//	while (1);
 }
 
 void ConsoleIO::lineBufferCopy(utl::string<WIDTH>& dst, utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_begin, utl::string<MAX_EVENT_STRING_LEN>::const_iterator src_end, size_t x)

@@ -64,7 +64,7 @@ public:
 	using SubRoundChangeCallback = void(*)(SubRound new_sub_round, const PokerGameState& state, void* opaque);
 
 	/// Round end callback definition
-	using RoundEndCallback = bool(*)(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking,
+	using RoundEndCallback = bool(*)(bool draw, const utl::string<MAX_NAME_SIZE>& winner, uint16_t winnings, RankedHand::Ranking ranking,
 		const PokerGameState& state, void* opaque);
 
 	/// Game end callback definition

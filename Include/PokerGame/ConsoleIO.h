@@ -82,12 +82,13 @@ public:
 	/** Inform the user about the round ending
 	 *  @param draw True if the round was a draw
 	 *  @param winner The winner of the round
+	 *  @param winnings The pot size won
 	 *  @param ranking The ranking of the winning hand
 	 *  @param state The current game state
 	 *  @param True if the game should continue, false otherwise
 	 *  @param opaque A user provided pointer to a specific ConsoleIO instance
 	 */
-	static bool roundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, RankedHand::Ranking ranking, const PokerGameState& state, void* opaque);
+	static bool roundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, uint16_t winnings, RankedHand::Ranking ranking, const PokerGameState& state, void* opaque);
 
 	/** Inform the user about the game ending
 	 *  @param winner The winner of the game

@@ -17,12 +17,9 @@
  **/
 #include "PokerGame/PokerGame.h"
 
- // TODO royal flush ranked hand detection broken
- // TODO need to implement side pots
-
- // TODO need a method to measure hand strengths, make a utility that does this
-
 #include "Exception.h"
+
+#include "PokerGame/AI.h"
 
 PokerGame::PokerGame(uint32_t random_seed_in, uint8_t small_blind_in, uint16_t starting_stack_size_in, DecisionCallback decision_callback_in,
 	PlayerActionCallback player_action_callback_in, SubRoundChangeCallback subround_change_callback_in,
@@ -310,9 +307,7 @@ utl::pair<PokerGame::PlayerAction, uint16_t> PokerGame::playerAction(uint8_t pla
 	else
 	{
 		// Allow AI to make a decision
-	//	return this->current_state.player_states[player_id].decision(state); TODO XXX FIXME AI!!! Pick it from the sky
-		return utl::pair<PlayerAction, uint16_t>(PlayerAction::Bet, 100);
-		//	return utl::pair<PlayerAction, uint16_t>(PlayerAction::CheckOrCall, 0);
+		return AI::computerDecision(this->current_state, this->rng, player_id);
 	}
 }
 
@@ -465,9 +460,12 @@ bool PokerGame::bettingRoundStep(uint8_t& acting_player, uint8_t& players_to_act
 }
 
 // XXX
-PokerGame::Outcome PokerGame::determineOutcome()
+PokerGame::Outcome __attribute__((noinline)) PokerGame::determineOutcome()
 {
 	Outcome result;
+
+	// XXX
+	uint16_t winnings = 0;
 
 	// Rank each player's hand
 	utl::list<RankedHand, 6> ranked_hands;
@@ -491,6 +489,11 @@ PokerGame::Outcome PokerGame::determineOutcome()
 
 	// Sort the list in descending order
 	ranked_hands.sort([](const RankedHand& lhs, const RankedHand& rhs) { return lhs >= rhs;	});
+
+
+
+
+
 
 	bool TEMP_BOOL = false;
 
@@ -546,7 +549,7 @@ PokerGame::Outcome PokerGame::determineOutcome()
 			this->current_state.player_states[tmp.front().id].stack += carry_over;
 
 			// Get this players chip share
-			uint16_t winnings = this->current_state.getChipShare(tmp.front().id);
+			winnings = this->current_state.getChipShare(tmp.front().id);
 			winnings /= winners;
 
 			// Give the player the winnings
@@ -563,7 +566,7 @@ PokerGame::Outcome PokerGame::determineOutcome()
 		this->current_state.player_states[tmp.front().id].stack += carry_over;
 
 		// Get this players chip share
-		uint16_t winnings = this->current_state.getChipShare(tmp.front().id);
+		winnings = this->current_state.getChipShare(tmp.front().id);
 		winnings /= winners;
 
 		// Give the player the winnings
@@ -574,6 +577,10 @@ PokerGame::Outcome PokerGame::determineOutcome()
 			ranked_hands.pop_front();
 
 	} while (this->current_state.chipsRemaining() > 0);
+
+	// XXX
+	this->current_state.current_pot_shares[0] = winnings;
+	// XXX
 
 	return result;
 }
@@ -658,6 +665,9 @@ void PokerGame::callbackWithSubroundChange(SubRound new_subround)
 
 bool PokerGame::callbackWithRoundEnd(bool draw, const utl::string<MAX_NAME_SIZE>& winner, const utl::vector<uint8_t, 6>& revealing_players, RankedHand::Ranking ranking)
 {
+	// Cache 'winnings'
+	uint16_t winnings = this->current_state.chipsRemaining();
+
 	// Clear the current bet
 	this->current_state.current_bet = 0;
 
@@ -668,5 +678,5 @@ bool PokerGame::callbackWithRoundEnd(bool draw, const utl::string<MAX_NAME_SIZE>
 	PokerGameState state = this->constructState(0, revealing_players);
 
 	// Callback with the round end information
-	return this->round_end_callback(draw, winner, ranking, state, this->opaque);
+	return this->round_end_callback(draw, winner, winnings, ranking, state, this->opaque);
 }
