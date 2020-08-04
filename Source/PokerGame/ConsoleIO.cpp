@@ -221,7 +221,7 @@ uint16_t ConsoleIO::userInputToInt(const utl::string<MAX_USER_INPUT_LEN>& input)
 	if (input.size() == 0)
 		return 0;
 
-	return strtol(input.c_str(), nullptr, 10);
+	return static_cast<uint16_t>(strtol(input.c_str(), nullptr, 10));
 }
 
 utl::string<ConsoleIO::MAX_EVENT_STRING_LEN> ConsoleIO::actionToString(const utl::string<MAX_NAME_SIZE>& player_name, PokerGame::PlayerAction action, uint16_t bet)

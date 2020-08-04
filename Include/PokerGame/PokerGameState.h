@@ -27,6 +27,9 @@ static constexpr size_t MAX_NAME_SIZE = 5;
 
 struct PlayerState
 {
+    /// Default constructor
+    PlayerState() : stack(0), pot_investment(0), folded(false) {}
+
     /// The player's name
 	utl::string<MAX_NAME_SIZE> name;
 
@@ -34,7 +37,7 @@ struct PlayerState
 	utl::array<Card, 2> hand;
 
     /// The player's stack
-	uint16_t stack;
+    uint16_t stack;
     
     /// The player's current pot_investment
     uint16_t pot_investment;
@@ -49,13 +52,13 @@ struct PokerGameState
     utl::array<uint16_t, 6> current_pot_shares;
 
     /// The current bet
-    uint16_t current_bet;
+    uint16_t current_bet{0};
 
     /// The current player acting
-    uint8_t current_player;
+    uint8_t current_player{0};
 
     /// The current dealer position
-    uint8_t current_dealer;
+    uint8_t current_dealer{0};
 
     /// The current board
 	utl::vector<Card, 5> board;

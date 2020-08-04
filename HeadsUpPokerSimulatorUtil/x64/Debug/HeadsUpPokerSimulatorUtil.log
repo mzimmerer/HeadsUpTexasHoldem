@@ -2,26 +2,10 @@
   string.cpp
   Exception.cpp
   AI.cpp
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(161,34): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(170,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(198,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(205,47): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(234,24): warning C4244: 'initializing': conversion from 'float' to 'uint8_t', possible loss of data
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(242,39): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(244,40): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(246,40): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(248,40): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(259,100): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(261,100): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(263,100): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(265,100): warning C4305: 'argument': truncation from 'double' to 'float'
   Card.cpp
   ConsoleIO.cpp
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\ConsoleIO.cpp(224,15): warning C4244: 'return': conversion from 'long' to 'uint16_t', possible loss of data
   Deck.cpp
   PokerGame.cpp
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\PokerGame.cpp(578,23): warning C4267: '/=': conversion from 'size_t' to 'uint16_t', possible loss of data
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\PokerGame.cpp(595,22): warning C4267: '/=': conversion from 'size_t' to 'uint16_t', possible loss of data
 C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Dependencies\utl\include\utl\utility(85,1): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Dependencies\utl\include\utl\list(154): message : see reference to function template instantiation 'T *utl::pool<T,6>::emplace<size_t&,utl::array<Card,2>&,utl::vector<Card,5>&>(size_t &,utl::array<Card,2> &,utl::vector<Card,5> &)' being compiled
           with
@@ -33,12 +17,12 @@ C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Dependencies\utl\include\utl\list
           [
               T=RankedHand
           ]
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\PokerGame.cpp(508): message : see reference to function template instantiation 'T &utl::list<T,6>::emplace_back<size_t&,utl::array<Card,2>&,utl::vector<Card,5>&>(size_t &,utl::array<Card,2> &,utl::vector<Card,5> &)' being compiled
+C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\PokerGame.cpp(502): message : see reference to function template instantiation 'T &utl::list<T,6>::emplace_back<size_t&,utl::array<Card,2>&,utl::vector<Card,5>&>(size_t &,utl::array<Card,2> &,utl::vector<Card,5> &)' being compiled
           with
           [
               T=RankedHand
           ]
-C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\PokerGame.cpp(508): message : see reference to function template instantiation 'T &utl::list<T,6>::emplace_back<size_t&,utl::array<Card,2>&,utl::vector<Card,5>&>(size_t &,utl::array<Card,2> &,utl::vector<Card,5> &)' being compiled
+C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\PokerGame.cpp(502): message : see reference to function template instantiation 'T &utl::list<T,6>::emplace_back<size_t&,utl::array<Card,2>&,utl::vector<Card,5>&>(size_t &,utl::array<Card,2> &,utl::vector<Card,5> &)' being compiled
           with
           [
               T=RankedHand

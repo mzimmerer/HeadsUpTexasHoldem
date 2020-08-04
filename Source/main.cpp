@@ -38,7 +38,7 @@ static UART* uart0 = nullptr;
 static uint8_t processLine(const utl::string<8>& line)
 {
 	line_fifo.push(line);
-	return line.size() + 1;
+	return static_cast<uint8_t>(line.size()) + 1;
 }
 
 static uint8_t processLine(utl::fifo<char, 8>::iterator begin,

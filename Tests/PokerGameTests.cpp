@@ -16,10 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-compare"
-#include <gtest/gtest.h>
-#pragma GCC diagnostic pop
+#include "GTestIncludes.h"
 
 #include "PokerGameTestFixture.h"
 

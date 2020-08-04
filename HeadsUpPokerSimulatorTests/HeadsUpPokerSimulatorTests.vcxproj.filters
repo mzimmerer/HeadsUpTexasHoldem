@@ -95,6 +95,9 @@
     <ClInclude Include="..\Tests\PokerGameTestWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Tests\GTestIncludes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Dependencies\utl\include\utl\algorithm">

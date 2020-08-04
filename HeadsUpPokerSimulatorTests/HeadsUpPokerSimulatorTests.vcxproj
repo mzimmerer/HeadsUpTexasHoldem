@@ -170,6 +170,7 @@
     <ClCompile Include="..\Tests\PokerGameTestWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Tests\GTestIncludes.h" />
     <ClInclude Include="..\Tests\HandTestWrapper.h" />
     <ClInclude Include="..\Tests\PokerGameTestFixture.h" />
     <ClInclude Include="..\Tests\PokerGameTestWrapper.h" />

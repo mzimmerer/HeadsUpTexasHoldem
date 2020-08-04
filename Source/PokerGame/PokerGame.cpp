@@ -568,7 +568,7 @@ PokerGame::Outcome PokerGame::determineOutcome()
 
 			// Get this players chip share
 			winnings = this->current_state.getChipShare(stack_mapping.front().player_id);
-			winnings /= winners;
+			winnings /= static_cast<uint16_t>(winners);
 
 			// Give the player the winnings
 			this->current_state.player_states[stack_mapping.front().player_id].stack += winnings;
@@ -585,7 +585,7 @@ PokerGame::Outcome PokerGame::determineOutcome()
 
 		// Get this players chip share
 		winnings = this->current_state.getChipShare(stack_mapping.front().player_id);
-		winnings /= winners;
+		winnings /= static_cast<uint16_t>(winners);
 
 		// Give the player the winnings
 		this->current_state.player_states[stack_mapping.front().player_id].stack += winnings;
