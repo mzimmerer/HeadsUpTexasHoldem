@@ -29,6 +29,7 @@ SPI& SPI::operator=(const SPI& other)
 
 unsigned char spi_tranceiver(unsigned char data)
 {
+    return 0;
 }
 
 size_t SPI::transaction(const char* src_begin, const char* src_end,
