@@ -24,7 +24,7 @@ UART::UART()
 {
 }
 
-UART::UART(volatile utl::fifo<char, 8>& isr_fifo_in, const UARTOptions& options_in) : isr_fifo_internal(&((utl::fifo<char, 8>&)isr_fifo))
+UART::UART(const UARTOptions& options_in)
 {
 }
 
