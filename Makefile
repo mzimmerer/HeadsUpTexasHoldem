@@ -73,6 +73,28 @@ ifeq ($(TARGET),atmega328p)
     APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pSPI.o
     APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pUART.o
     APPLICATION := $(APPLICATION).elf
+
+else ifeq ($(TARGET),stm32)
+    CXX := arm-none-eabi-g++
+
+  #  CXXFLAGS += -mmcu=atmega328p
+    
+    CXXFLAGS += -ffunction-sections
+    CXXFLAGS += -fdata-sections
+    CXXFLAGS += -flto
+    CXXFLAGS += -DEMBEDDED_BUILD
+    CXXFLAGS += -DPLATFORM_ATMEGA328P
+    CXXFLAGS += -DF_CPU=16000000UL
+
+  #  LDFLAGS += -mmcu=atmega328p
+    LDFLAGS += -Wl,--gc-sections
+    LDFLAGS += -Wl,-Map,texas_holdem.map
+
+    APP_OBJ += $(OBJECTDIR)/Source/Platform/STM32/STM32Platform.o
+    APP_OBJ += $(OBJECTDIR)/Source/Platform/STM32/STM32SPI.o
+    APP_OBJ += $(OBJECTDIR)/Source/Platform/STM32/STM32UART.o
+    APPLICATION := $(APPLICATION).elf
+
 else
     CXX := g++
     CXXFLAGS += -DPLATFORM_DESKTOP
