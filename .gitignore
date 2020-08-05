@@ -11,6 +11,9 @@ HeadsUpPokerSimulator/Release/*
 HeadsUpPokerSimulatorTests/x64/*
 HeadsUpPokerSimulatorTests/Debug/*
 HeadsUpPokerSimulatorTests/Release/*
+HeadsUpPokerSimulatorUtil/x64/*
+HeadsUpPokerSimulatorUtil/Debug/*
+HeadsUpPokerSimulatorUtil/Release/*
 texas_holdem*
 run_tests*
 Obj/*

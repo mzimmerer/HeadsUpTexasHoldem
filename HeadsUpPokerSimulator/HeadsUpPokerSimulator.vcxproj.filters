@@ -49,6 +49,9 @@
     <Filter Include="Platform Headers\STM32">
       <UniqueIdentifier>{c356bad0-7ec0-4c61-9659-8ddcf5ef8805}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Makefile">
+      <UniqueIdentifier>{41c83066-3332-4a46-acf1-3171bf967055}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\utl\new.cpp">
@@ -157,6 +160,9 @@
     </None>
     <None Include="..\Dependencies\utl\include\utl\vector">
       <Filter>UTL Header Files</Filter>
+    </None>
+    <None Include="..\Makefile">
+      <Filter>Makefile</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

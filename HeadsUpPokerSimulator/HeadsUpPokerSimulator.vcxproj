@@ -77,6 +77,7 @@
     <None Include="..\Dependencies\utl\include\utl\unordered_map" />
     <None Include="..\Dependencies\utl\include\utl\utility" />
     <None Include="..\Dependencies\utl\include\utl\vector" />
+    <None Include="..\Makefile" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Exception.h" />
