@@ -16,4 +16,18 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-#include "Platform/Desktop/DesktopConst.h"
+#pragma once
+
+#include <utl/string>
+
+template <const size_t SIZE>
+utl::string<SIZE> rom_string(const char* c_str)
+{
+    return utl::string<SIZE>(c_str);
+}
+
+#define ACCESS_ROM_STR(size, str) (rom_string<size>(str))
+
+#define ROM_DATA
+
+#define ACCESS_ROM_DATA(data_ref) (data_ref)

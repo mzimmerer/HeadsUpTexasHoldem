@@ -22,6 +22,7 @@
 #include <utl/fifo>
 #include <utl/string>
 
+#include "Platform/STM32/STM32Const.h"
 #include "Platform/STM32/STM32UART.h"
 #include "Platform/STM32/STM32SPI.h"
 
