@@ -83,7 +83,7 @@ else ifeq ($(TARGET),stm32)
     CXXFLAGS += -fdata-sections
     CXXFLAGS += -flto
     CXXFLAGS += -DEMBEDDED_BUILD
-    CXXFLAGS += -DPLATFORM_ATMEGA328P
+    CXXFLAGS += -DPLATFORM_STM32
     CXXFLAGS += -DF_CPU=16000000UL
 
   #  LDFLAGS += -mmcu=atmega328p
