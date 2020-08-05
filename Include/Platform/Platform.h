@@ -18,8 +18,17 @@
 
 #pragma once
 
-#ifdef PLATFORM_ATMEGA328P
+#if defined (PLATFORM_ATMEGA328P)
 #include "Platform/Atmega328p/Atmega328pPlatform.h"
+#elif defined (PLATFORM_STM32)
+#include "Platform/STM32/STM32Platform.h"
 #else
 #include "Platform/Desktop/DesktopPlatform.h"
+#endif
+
+#ifdef EMBEDDED_BUILD
+#include <avr/pgmspace.h>
+#else
+#include <cstring>
+const char* PSTR(const char* c_string);
 #endif
