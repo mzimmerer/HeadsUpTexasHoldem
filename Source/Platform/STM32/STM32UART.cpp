@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-#include "Platform/Atmega328p/Atmega328pUART.h"
+#include "Platform/STM32/STM32UART.h"
 
 #include <utl/cstdint>
 
