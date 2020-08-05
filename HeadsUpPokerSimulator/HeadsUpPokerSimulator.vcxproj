@@ -23,6 +23,10 @@
     <ClCompile Include="..\Dependencies\utl\string.cpp" />
     <ClCompile Include="..\Source\Exception.cpp" />
     <ClCompile Include="..\Source\main.cpp" />
+    <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pConst.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pPlatform.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -35,9 +39,22 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\Source\Platform\Desktop\DesktopConst.cpp" />
     <ClCompile Include="..\Source\Platform\Desktop\DesktopPlatform.cpp" />
     <ClCompile Include="..\Source\Platform\Desktop\DesktopSPI.cpp" />
     <ClCompile Include="..\Source\Platform\Desktop\DesktopUART.cpp" />
+    <ClCompile Include="..\Source\Platform\STM32\STM32Platform.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\STM32\STM32SPI.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\STM32\STM32UART.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Source\PokerGame\AI.cpp" />
     <ClCompile Include="..\Source\PokerGame\Card.cpp" />
     <ClCompile Include="..\Source\PokerGame\ConsoleIO.cpp" />
@@ -63,13 +80,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Exception.h" />
+    <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pConst.h" />
     <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pPlatform.h" />
     <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pSPI.h" />
     <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pUART.h" />
+    <ClInclude Include="..\Include\Platform\Desktop\DesktopConst.h" />
     <ClInclude Include="..\Include\Platform\Desktop\DesktopPlatform.h" />
     <ClInclude Include="..\Include\Platform\Desktop\DesktopSPI.h" />
     <ClInclude Include="..\Include\Platform\Desktop\DesktopUART.h" />
     <ClInclude Include="..\Include\Platform\Platform.h" />
+    <ClInclude Include="..\Include\Platform\STM32\STM32Platform.h" />
+    <ClInclude Include="..\Include\Platform\STM32\STM32SPI.h" />
+    <ClInclude Include="..\Include\Platform\STM32\STM32UART.h" />
     <ClInclude Include="..\Include\PokerGame\AI.h" />
     <ClInclude Include="..\Include\PokerGame\Card.h" />
     <ClInclude Include="..\Include\PokerGame\ConsoleIO.h" />

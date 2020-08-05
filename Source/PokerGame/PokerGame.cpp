@@ -18,7 +18,7 @@
 #include "PokerGame/PokerGame.h"
 
 #include "Exception.h"
-
+#include "Platform/Platform.h"
 #include "PokerGame/AI.h"
 
 PokerGame::PokerGame(uint32_t random_seed_in, uint8_t small_blind_in, uint16_t starting_stack_size_in, DecisionCallback decision_callback_in,
@@ -34,12 +34,12 @@ PokerGame::PokerGame(uint32_t random_seed_in, uint8_t small_blind_in, uint16_t s
 	deck(rng)
 {
 	// Initialize name strings
-	this->current_state.player_states[0].name = utl::const_string<32>(PSTR("You"));
-	this->current_state.player_states[1].name = utl::const_string<32>(PSTR("Ron"));
-	this->current_state.player_states[2].name = utl::const_string<32>(PSTR("Betty"));
-	this->current_state.player_states[3].name = utl::const_string<32>(PSTR("Bill"));
-	this->current_state.player_states[4].name = utl::const_string<32>(PSTR("Alice"));
-	this->current_state.player_states[5].name = utl::const_string<32>(PSTR("Jack"));
+	this->current_state.player_states[0].name = ACCESS_ROM_STR(32, "You");
+	this->current_state.player_states[1].name = ACCESS_ROM_STR(32, "Ron");
+	this->current_state.player_states[2].name = ACCESS_ROM_STR(32, "Betty");
+	this->current_state.player_states[3].name = ACCESS_ROM_STR(32, "Bill");
+	this->current_state.player_states[4].name = ACCESS_ROM_STR(32, "Alice");
+	this->current_state.player_states[5].name = ACCESS_ROM_STR(32, "Jack");
 
 	// Initialize player states
 	for (size_t player_id = 0; player_id < MAX_PLAYERS; ++player_id) {
@@ -527,7 +527,7 @@ PokerGame::Outcome PokerGame::determineOutcome()
 
 			// Set the result
 			result.draw = winners == 1 ? false : true;
-			result.winner = winners == 1 ? this->current_state.player_states[ranked_hands.begin()->getPlayerID()].name : utl::const_string<5>(PSTR("Draw"));
+			result.winner = winners == 1 ? this->current_state.player_states[ranked_hands.begin()->getPlayerID()].name : ACCESS_ROM_STR(5, "Draw");
 			result.ranking = ranked_hands.begin()->getRanking();
 
 			// Clear 'first_iteration'

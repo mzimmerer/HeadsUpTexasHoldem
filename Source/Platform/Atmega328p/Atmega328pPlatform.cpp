@@ -107,8 +107,8 @@ void PlatformAtmega328p::debugPrintStackInfo(int id)
 
 	// Create a string with this information and write the string to console
 	utl::string<16> stack_pointer_str = utl::to_string<8>(id);
-	stack_pointer_str += utl::const_string<16>(PSTR(" - "));
+	stack_pointer_str += ACCESS_ROM_STR(32, " - ");
 	stack_pointer_str += utl::to_string<16>(MAX_SEEN_STACK);
-	stack_pointer_str += utl::const_string<16>(PSTR("\r\n"));
+	stack_pointer_str += ACCESS_ROM_STR(32, "\r\n");
 	this->console.writeBytes(stack_pointer_str.begin(), stack_pointer_str.end());
 }

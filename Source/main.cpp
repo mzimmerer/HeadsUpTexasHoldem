@@ -116,7 +116,7 @@ static void writeLineCallback(const utl::string<ConsoleIO::WIDTH>& line, void* o
 	uart0->writeBytes(line.begin(), line.end());
 
 	// Write "\r\n" tp the user's screen
-	utl::string<2> end_line(utl::const_string<2>(PSTR("\r\n")));
+	utl::string<2> end_line(ACCESS_ROM_STR(2, "\r\n"));
 	uart0->writeBytes(end_line.begin(), end_line.end());
 }
 

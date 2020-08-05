@@ -43,6 +43,12 @@
     <Filter Include="Platform Source\Desktop">
       <UniqueIdentifier>{62de1296-69be-47b2-bdf7-aaa118965fe9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Platform Source\STM32">
+      <UniqueIdentifier>{66e0f6a8-ddd9-4df3-99f7-279406cfc794}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform Headers\STM32">
+      <UniqueIdentifier>{c356bad0-7ec0-4c61-9659-8ddcf5ef8805}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Dependencies\utl\new.cpp">
@@ -95,6 +101,21 @@
     </ClCompile>
     <ClCompile Include="..\Source\PokerGame\AI.cpp">
       <Filter>PokerGame Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\STM32\STM32Platform.cpp">
+      <Filter>Platform Source\STM32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\STM32\STM32SPI.cpp">
+      <Filter>Platform Source\STM32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\STM32\STM32UART.cpp">
+      <Filter>Platform Source\STM32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pConst.cpp">
+      <Filter>Platform Source\Atmega328p</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\Desktop\DesktopConst.cpp">
+      <Filter>Platform Source\Desktop</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -186,6 +207,21 @@
     </ClInclude>
     <ClInclude Include="..\Include\PokerGame\AI.h">
       <Filter>PokerGame Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\STM32\STM32Platform.h">
+      <Filter>Platform Headers\STM32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\STM32\STM32SPI.h">
+      <Filter>Platform Headers\STM32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\STM32\STM32UART.h">
+      <Filter>Platform Headers\STM32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pConst.h">
+      <Filter>Platform Headers\Atmega328p</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\Desktop\DesktopConst.h">
+      <Filter>Platform Headers\Desktop</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

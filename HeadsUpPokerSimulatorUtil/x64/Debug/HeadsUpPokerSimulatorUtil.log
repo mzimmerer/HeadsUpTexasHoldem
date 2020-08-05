@@ -2,6 +2,10 @@
   string.cpp
   Exception.cpp
   AI.cpp
+C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(23,41): error C2146: syntax error: missing ';' before identifier 'PROGMEM'
+C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(23,52): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(23,52): error C2440: 'initializing': cannot convert from 'initializer list' to 'int'
+C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\AI.cpp(23,52): message : The initializer contains too many elements
   Card.cpp
   ConsoleIO.cpp
   Deck.cpp
@@ -31,4 +35,3 @@ C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\PokerGame.cpp(50
   RankedHand.cpp
   main.cpp
   Generating Code...
-  HeadsUpPokerSimulatorUtil.vcxproj -> C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\x64\Debug\uHoldemUtils.exe

@@ -25,10 +25,3 @@
 #else
 #include "Platform/Desktop/DesktopPlatform.h"
 #endif
-
-#ifdef EMBEDDED_BUILD
-#include <avr/pgmspace.h>
-#else
-#include <cstring>
-const char* PSTR(const char* c_string);
-#endif

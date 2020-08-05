@@ -21,6 +21,7 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "Platform/Desktop/DesktopConst.h"
 #include "Platform/Desktop/DesktopUART.h"
 #include "Platform/Desktop/DesktopSPI.h"
 

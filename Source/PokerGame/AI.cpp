@@ -18,11 +18,9 @@
 
 #include "PokerGame/AI.h"
 
-#ifdef EMBEDDED_BUILD
-static const uint8_t hand_strengths[91] PROGMEM = {
-#else
-static const uint8_t hand_strengths[91] = {
-#endif
+#include "Platform/Platform.h"
+
+static const uint8_t hand_strengths[91] ROM_DATA = {
 		0xBD,
 		 0x0,
 		 0x0,
@@ -148,11 +146,7 @@ static float handStrength(const utl::array<Card, 2>& hand)
 	}
 
 	// Lookup the hand strength
-#ifdef EMBEDDED_BUILD
-	return pgm_read_byte(&hand_strengths[getOffset(ordered_hand_values[0], ordered_hand_values[1])]);
-#else
-	return hand_strengths[getOffset(ordered_hand_values[0], ordered_hand_values[1])];
-#endif
+	return ACCESS_ROM_DATA(hand_strengths[getOffset(ordered_hand_values[0], ordered_hand_values[1])]);
 }
 
 static float calculatePotOdds(const PokerGameState& state, uint16_t bet)

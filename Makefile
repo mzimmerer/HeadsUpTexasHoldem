@@ -55,7 +55,7 @@ CXXFLAGS := -std=gnu++17 -Wall -Werror -I./Include -I$(UTLDIR)/include -Os
 TEST_CXXFLAGS := -I$(GOOGLETESTDIR)/include -I$(GOOGLETESTDIR)
 
 ifeq ($(TARGET),atmega328p)
-    CXX := /cygdrive/g/Downloads/tmp/arm-linux/bin/arm-linux-g++.exe
+    CXX := avr-g++
 
     CXXFLAGS += -mmcu=atmega328p
     CXXFLAGS += -ffunction-sections

@@ -22,6 +22,7 @@
 #include <utl/fifo>
 #include <utl/string>
 
+#include "Platform/Atmega328p/Atmega328pConst.h"
 #include "Platform/Atmega328p/Atmega328pUART.h"
 #include "Platform/Atmega328p/Atmega328pSPI.h"
 
