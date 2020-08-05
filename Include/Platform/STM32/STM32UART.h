@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include <avr/interrupt.h>
 #include <utl/cstdint>
 #include <utl/fifo>
 
