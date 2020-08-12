@@ -18,44 +18,51 @@
 
 #pragma once
 
-#include <cstdint>
-#include <cstddef>
+#include <utl/cstddef>
+#include <utl/cstdint>
 
- /// Forward declaration of PlatformDesktop class
-class PlatformDesktop;
+ /// Forward declaration of PlatformSTM32 class
+class PlatformSTM32;
 
- /** SPI class. A SPI bus driver for Desktop emulation
+ /** I2C class. A I2C bus driver for STM32 uCs
   */
-class SPI
+class I2C
 {
 public:
 
-    /// Allow PlatformDesktop private access
-    friend PlatformDesktop;
+    /// Allow PlatformSTM32 private access
+    friend PlatformSTM32;
 
-    /// The SPI Options struct
-	struct SPIOptions
+    /// The I2C Options struct
+	struct I2COptions
 	{
 		uint32_t clock_frequency_hz;
 	};
 
-    /** SPI Constructor
-     *  @param options The SPI options
+    /** I2C Constructor
+     *  @param options The I2C options
      */
-	SPI(const SPIOptions& options);
+	I2C(const I2COptions& options);
 
     /** Copy operator
-     *  @param other The SPI object to copy
-     *  @result A reference to the lhs SPI object
+     *  @param other The I2C object to copy
+     *  @result A reference to the lhs I2C object
      */
-	SPI& operator=(const SPI& other);
+	I2C& operator=(const I2C& other);
 
-    /** SPI transaction function
+    /** I2C transaction function
+     *  @param dst_addr The destination I2C address
      *  @param src_begin An iterator to the beginning of source data
      *  @param src_end An iterator to the end of source data
      *  @param dst_begin An iterator to the beginning of destination data
      *  @param dst_end An iterator to the end of destination data
      */
-	size_t transaction(const char* src_begin, const char* src_end,
-		char* dst_begin, char* dst_end);
+	size_t transaction(uint8_t dst_addr, const uint8_t* src_begin, const uint8_t* src_end,
+        uint8_t* dst_begin = nullptr, uint8_t* dst_end = nullptr);
+
+private:
+
+    size_t write(const uint8_t* src_begin, const uint8_t* src_end);
+
+    size_t read(uint8_t* dst_begin, uint8_t* dst_end);
 };

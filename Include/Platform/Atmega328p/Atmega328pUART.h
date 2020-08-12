@@ -22,11 +22,17 @@
 #include <utl/cstdint>
 #include <utl/fifo>
 
+ /// Forward declaration of PlatformAtmega328p class
+class PlatformAtmega328p;
+
  /** UART class. A UART bus driver for Atmega328p uCs
   */
 class UART
 {
 public:
+
+    /// Allow PlatformAtmega328p private access
+    friend PlatformAtmega328p;
 
     /// The UART Options struct
 	struct UARTOptions
@@ -34,17 +40,10 @@ public:
 		uint32_t baudrate;
 	};
 
-
     /** UART default constructor, constructs an empty, non-functional UART object
      *  @param options The SPI options
      */
     UART();
-
-    /** UART constructor
-     *  @param isr_fifo_in A reference to the isr_fifo that will be used
-     *  @param options The UART options to use
-     */
-	UART(volatile utl::fifo<char, 8>& isr_fifo_in, const UARTOptions& options);
 
     /** Copy operator
      *  @param other The UART object to copy
@@ -83,7 +82,13 @@ private:
 
     /// A pointer to this UART's ISR fifo, if any
 	utl::fifo<char, 8>* isr_fifo_internal;
+
+    /** UART constructor
+     *  @param isr_fifo_in A reference to the isr_fifo that will be used
+     *  @param options The UART options to use
+     */
+    UART(volatile utl::fifo<char, 8>& isr_fifo_in, const UARTOptions& options);
 };
 
-/// A single isr_fifo is available on Atmega328p uCs
+/// A single UART bus is available on Atmega328p uCs
 extern volatile utl::fifo<char, 8> isr_fifo;

@@ -19,7 +19,9 @@
 #pragma once
 
 #if defined (PLATFORM_ATMEGA328P)
-#include "Platform/Atmega328p/Atmega328pPlatform.h"
+#include "Platform/ATMega328p/Atmega328pPlatform.h"
+#elif defined (PLATFORM_MSP430FR2355)
+#include "Platform/MSP430FR2355/MSP430FR2355Platform.h"
 #elif defined (PLATFORM_STM32)
 #include "Platform/STM32/STM32Platform.h"
 #else

@@ -31,14 +31,8 @@
     <Filter Include="Platform Source">
       <UniqueIdentifier>{efc4c0ea-34f5-45f8-8604-323824ffb2da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Platform Headers\Atmega328p">
-      <UniqueIdentifier>{d5cc5e7e-315d-4ac7-822e-1ca912b087ab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Platform Headers\Desktop">
       <UniqueIdentifier>{1799bb21-6acf-4538-b4cc-090c9f095b96}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Platform Source\Atmega328p">
-      <UniqueIdentifier>{885da1e6-f789-4579-9294-cd4451c5b7fa}</UniqueIdentifier>
     </Filter>
     <Filter Include="Platform Source\Desktop">
       <UniqueIdentifier>{62de1296-69be-47b2-bdf7-aaa118965fe9}</UniqueIdentifier>
@@ -51,6 +45,18 @@
     </Filter>
     <Filter Include="Makefile">
       <UniqueIdentifier>{41c83066-3332-4a46-acf1-3171bf967055}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform Source\ATMega328p">
+      <UniqueIdentifier>{885da1e6-f789-4579-9294-cd4451c5b7fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform Headers\ATMega328p">
+      <UniqueIdentifier>{d5cc5e7e-315d-4ac7-822e-1ca912b087ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform Headers\MSP430FR2355">
+      <UniqueIdentifier>{454d17d5-8fa9-426b-8360-005c3d3e25c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform Source\MSP430FR2355">
+      <UniqueIdentifier>{6ba7b0ed-44f8-4277-9cbe-b172053da4d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -85,13 +91,13 @@
       <Filter>PokerGame Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pPlatform.cpp">
-      <Filter>Platform Source\Atmega328p</Filter>
+      <Filter>Platform Source\ATMega328p</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pUART.cpp">
-      <Filter>Platform Source\Atmega328p</Filter>
+      <Filter>Platform Source\ATMega328p</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pSPI.cpp">
-      <Filter>Platform Source\Atmega328p</Filter>
+      <Filter>Platform Source\ATMega328p</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Platform\Desktop\DesktopSPI.cpp">
       <Filter>Platform Source\Desktop</Filter>
@@ -114,11 +120,17 @@
     <ClCompile Include="..\Source\Platform\STM32\STM32UART.cpp">
       <Filter>Platform Source\STM32</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pConst.cpp">
-      <Filter>Platform Source\Atmega328p</Filter>
+    <ClCompile Include="..\Source\Platform\MSP430FR2355\MSP430FR2355Platform.cpp">
+      <Filter>Platform Source\MSP430FR2355</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Platform\Desktop\DesktopConst.cpp">
-      <Filter>Platform Source\Desktop</Filter>
+    <ClCompile Include="..\Source\Platform\MSP430FR2355\MSP430FR2355SPI.cpp">
+      <Filter>Platform Source\MSP430FR2355</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\MSP430FR2355\MSP430FR2355UART.cpp">
+      <Filter>Platform Source\MSP430FR2355</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Platform\STM32\STM32I2C.cpp">
+      <Filter>Platform Source\STM32</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -164,6 +176,16 @@
     <None Include="..\Makefile">
       <Filter>Makefile</Filter>
     </None>
+    <None Include="..\Make\Atmega328P.mk">
+      <Filter>Makefile</Filter>
+    </None>
+    <None Include="..\Make\STM32.mk">
+      <Filter>Makefile</Filter>
+    </None>
+    <None Include="..\Make\Desktop.mk">
+      <Filter>Makefile</Filter>
+    </None>
+    <None Include="..\Make\MSP430FR2355.mk" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\PokerGame\Card.h">
@@ -194,13 +216,13 @@
       <Filter>Platform Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pPlatform.h">
-      <Filter>Platform Headers\Atmega328p</Filter>
+      <Filter>Platform Headers\ATMega328p</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pUART.h">
-      <Filter>Platform Headers\Atmega328p</Filter>
+      <Filter>Platform Headers\ATMega328p</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pSPI.h">
-      <Filter>Platform Headers\Atmega328p</Filter>
+      <Filter>Platform Headers\ATMega328p</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Platform\Desktop\DesktopSPI.h">
       <Filter>Platform Headers\Desktop</Filter>
@@ -224,10 +246,25 @@
       <Filter>Platform Headers\STM32</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Platform\Atmega328p\Atmega328pConst.h">
-      <Filter>Platform Headers\Atmega328p</Filter>
+      <Filter>Platform Headers\ATMega328p</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\Platform\Desktop\DesktopConst.h">
       <Filter>Platform Headers\Desktop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\MSP430FR2355\MSP430FR2355Const.h">
+      <Filter>Platform Headers\MSP430FR2355</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\MSP430FR2355\MSP430FR2355Platform.h">
+      <Filter>Platform Headers\MSP430FR2355</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\MSP430FR2355\MSP430FR2355SPI.h">
+      <Filter>Platform Headers\MSP430FR2355</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\MSP430FR2355\MSP430FR2355UART.h">
+      <Filter>Platform Headers\MSP430FR2355</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Platform\STM32\STM32I2C.h">
+      <Filter>Platform Headers\STM32</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -21,11 +21,17 @@
 #include <utl/cstddef>
 #include <utl/cstdint>
 
+ /// Forward declaration of PlatformSTM32 class
+class PlatformSTM32;
+
  /** SPI class. A SPI bus driver for STM32 uCs
   */
 class SPI
 {
 public:
+
+    /// Allow PlatformSTM32 private access
+    friend PlatformSTM32;
 
     /// The SPI Options struct
 	struct SPIOptions

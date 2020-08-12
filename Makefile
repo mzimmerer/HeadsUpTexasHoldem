@@ -16,14 +16,24 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ##
 
-APPLICATION := ./texas_holdem
-TEST_APPLICATION := ./run_tests
+TARGET ?= Desktop
+
+APPLICATION := ./uholdem
+TEST_APPLICATION := ./uholdem_tests
 
 SOURCEDIR := ./Source
-OBJECTDIR := ./Obj
+ifeq ($(TARGET),atmega328p)
+    OBJECTDIR := ./Obj/Atmega328P
+	OUTPUTDIR := ./Output/Atmega328P
+else ifeq ($(TARGET),stm32)
+    OBJECTDIR := ./Obj/STM32
+	OUTPUTDIR := ./Output/STM32
+else
+    OBJECTDIR := ./Obj/Desktop
+	OUTPUTDIR := ./Output/Desktop
+endif
 TESTOBJECTDIR := ./Obj/Tests
 TESTDIR := ./Tests
-
 UTLDIR := ./Dependencies/utl
 GOOGLETESTDIR := ./Dependencies/googletest/googletest
 
@@ -40,7 +50,6 @@ APP_SRC += $(SOURCEDIR)/PokerGame/Deck.cpp
 APP_SRC += $(SOURCEDIR)/PokerGame/PokerGame.cpp
 APP_SRC += $(SOURCEDIR)/PokerGame/Random.cpp
 APP_SRC += $(SOURCEDIR)/PokerGame/RankedHand.cpp
-
 APP_OBJ := $(APP_SRC:%.cpp=$(OBJECTDIR)/%.o)
 
 TEST_SRC := $(shell find $(TESTDIR) -name '*.cpp')
@@ -50,82 +59,57 @@ GTEST_SRC := $(GOOGLETESTDIR)/src/gtest-all.cc
 GTEST_SRC += $(GOOGLETESTDIR)/src/gtest_main.cc
 GTEST_OBJ := $(GTEST_SRC:%.cc=$(TESTOBJECTDIR)/%.o) 
 
-CXXFLAGS := -std=gnu++17 -Wall -Werror -I./Include -I$(UTLDIR)/include -Os
+#CXXFLAGS += -Werror // TODO FIXME XXX uncomment
+CXXFLAGS := -I./Include
+CXXFLAGS += -I$(UTLDIR)/include
 
 TEST_CXXFLAGS := -I$(GOOGLETESTDIR)/include -I$(GOOGLETESTDIR)
 
-ifeq ($(TARGET),atmega328p)
-    CXX := avr-g++
-
-    CXXFLAGS += -mmcu=atmega328p
-    CXXFLAGS += -ffunction-sections
-    CXXFLAGS += -fdata-sections
-    CXXFLAGS += -flto
-    CXXFLAGS += -DEMBEDDED_BUILD
-    CXXFLAGS += -DPLATFORM_ATMEGA328P
-    CXXFLAGS += -DF_CPU=16000000UL
-
-    LDFLAGS += -mmcu=atmega328p
-    LDFLAGS += -Wl,--gc-sections
-    LDFLAGS += -Wl,-Map,texas_holdem.map
-
-    APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pPlatform.o
-    APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pSPI.o
-    APP_OBJ += $(OBJECTDIR)/Source/Platform/Atmega328p/Atmega328pUART.o
-    APPLICATION := $(APPLICATION).elf
-
-else ifeq ($(TARGET),stm32)
-    CXX := arm-none-eabi-g++
-
-  #  CXXFLAGS += -mmcu=atmega328p
-    
-    CXXFLAGS += -ffunction-sections
-    CXXFLAGS += -fdata-sections
-    CXXFLAGS += -flto
-    CXXFLAGS += -DEMBEDDED_BUILD
-    CXXFLAGS += -DPLATFORM_STM32
-    CXXFLAGS += -DF_CPU=16000000UL
-
-  #  LDFLAGS += -mmcu=atmega328p
-    LDFLAGS += -Wl,--gc-sections
-    LDFLAGS += -Wl,-Map,texas_holdem.map
-
-    APP_OBJ += $(OBJECTDIR)/Source/Platform/STM32/STM32Platform.o
-    APP_OBJ += $(OBJECTDIR)/Source/Platform/STM32/STM32SPI.o
-    APP_OBJ += $(OBJECTDIR)/Source/Platform/STM32/STM32UART.o
-    APPLICATION := $(APPLICATION).elf
-
-else
-    CXX := g++
-    CXXFLAGS += -DPLATFORM_DESKTOP
-    APP_OBJ += $(OBJECTDIR)/Source/Platform/Desktop/DesktopPlatform.o
-    APP_OBJ += $(OBJECTDIR)/Source/Platform/Desktop/DesktopSPI.o
-    APP_OBJ += $(OBJECTDIR)/Source/Platform/Desktop/DesktopUART.o
-endif
-
 DEVICE ?= /dev/ttyS0
 
+BUILD_TARGETS := $(OUTPUTDIR)/$(APPLICATION)
+
+ifeq ($(TARGET),atmega328p)
+    include Make/Atmega328P.mk
+else ifeq ($(TARGET),msp430fr2355)
+    include Make/MSP430FR2355.mk
+else ifeq ($(TARGET),stm32)
+    include Make/STM32.mk
+else
+    include Make/Desktop.mk
+endif
+
 .PHONY: all
-all: $(APPLICATION)
+all: $(BUILD_TARGETS)
 
-.PHONY: tests
-tests: $(TEST_APPLICATION)
-
-.PHONY: flash
-flash: $(APPLICATION)
-	avrdude.exe -c arduino -p atmega328p -P $(DEVICE) -e -U flash:w:$<
-
-$(APPLICATION): $(APP_OBJ) $(MAIN_OBJ)
-	$(CXX) $^ -o $@ $(CXXFLAGS) $(LDFLAGS)
-	avr-size $(APPLICATION)
-
-$(TESTOBJECTDIR)/%.o: %.cpp
+$(OUTPUTDIR)/$(APPLICATION): $(APP_OBJ) $(MAIN_OBJ)
 	@mkdir -p '$(@D)'
-	$(CXX) $< -c -o $@ $(CXXFLAGS) $(TEST_CXXFLAGS)
+	$(CXX) $^ -o $@ $(LDFLAGS)
+	$(SIZE) $(OUTPUTDIR)/$(APPLICATION)
+
+$(OUTPUTDIR)/$(APPLICATION).elf: $(OUTPUTDIR)/$(APPLICATION)
+	@mkdir -p '$(@D)'
+	cp $< $@
+
+$(OUTPUTDIR)/$(APPLICATION).hex: $(OUTPUTDIR)/$(APPLICATION).elf
+	@mkdir -p '$(@D)'
+	$(OBJCOPY) -O ihex $< $@
+
+$(OUTPUTDIR)/$(APPLICATION).bin: $(OUTPUTDIR)/$(APPLICATION).elf
+	@mkdir -p '$(@D)'
+	$(OBJCOPY) -O binary $< $@
 
 $(OBJECTDIR)/%.o: %.cpp
 	@mkdir -p '$(@D)'
 	$(CXX) $< -c -o $@ $(CXXFLAGS)
+
+$(OBJECTDIR)/%.o: %.s
+	@mkdir -p '$(@D)'
+	$(CXX) -x assembler-with-cpp $< -o $@ $(ASFLAGS)
+
+$(TESTOBJECTDIR)/%.o: %.cpp
+	@mkdir -p '$(@D)'
+	$(CXX) $< -c -o $@ $(CXXFLAGS) $(TEST_CXXFLAGS)
 
 $(TESTOBJECTDIR)/%.o: %.cc
 	@mkdir -p '$(@D)'
@@ -134,6 +118,13 @@ $(TESTOBJECTDIR)/%.o: %.cc
 $(TEST_APPLICATION): $(TEST_OBJ) $(APP_OBJ) $(GTEST_OBJ)
 	$(CXX) $^ -o $(TEST_APPLICATION) $(LDFLAGS)
 
+.PHONY: tests
+tests: $(TEST_APPLICATION)
+
+.PHONY: flash
+flash: $(FLASH_TOOL_FILE)
+	$(FLASH_TOOL) $(FLASH_ARGS)
+
 .PHONY: clean
 clean:
-	rm -rf $(OBJECTDIR) $(APPLICATION)* $(TEST_APPLICATION)*
+	rm -rf $(OBJECTDIR) $(OUTPUTDIR) $(APPLICATION)* $(TEST_APPLICATION)*

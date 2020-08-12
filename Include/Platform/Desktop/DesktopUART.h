@@ -22,11 +22,17 @@
 
 #include <utl/fifo>
 
+ /// Forward declaration of PlatformDesktop class
+class PlatformDesktop;
+
  /** UART class. A UART bus driver for Desktop emulation
   */
 class UART
 {
 public:
+
+    /// Allow PlatformDesktop private access
+    friend PlatformDesktop;
 
     /// The UART Options struct
 	struct UARTOptions

@@ -18,20 +18,20 @@
 
 #pragma once
 
-#include <cstdint>
-#include <cstddef>
+#include <utl/cstddef>
+#include <utl/cstdint>
 
- /// Forward declaration of PlatformDesktop class
-class PlatformDesktop;
+ /// Forward declaration of PlatformMSP430FR2355 class
+class PlatformMSP430FR2355;
 
- /** SPI class. A SPI bus driver for Desktop emulation
+ /** SPI class. A SPI bus driver for MSP430FR2355 uCs
   */
 class SPI
 {
 public:
 
-    /// Allow PlatformDesktop private access
-    friend PlatformDesktop;
+    /// Allow PlatformMSP430FR2355 private access
+    friend PlatformMSP430FR2355;
 
     /// The SPI Options struct
 	struct SPIOptions
@@ -57,5 +57,5 @@ public:
      *  @param dst_end An iterator to the end of destination data
      */
 	size_t transaction(const char* src_begin, const char* src_end,
-		char* dst_begin, char* dst_end);
+		                  char* dst_begin, char* dst_end);
 };

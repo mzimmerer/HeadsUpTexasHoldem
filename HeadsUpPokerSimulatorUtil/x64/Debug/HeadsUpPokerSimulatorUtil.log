@@ -1,1 +1,34 @@
-﻿
+﻿  new.cpp
+  string.cpp
+  Exception.cpp
+  AI.cpp
+  Card.cpp
+  ConsoleIO.cpp
+  Deck.cpp
+  PokerGame.cpp
+C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Dependencies\utl\include\utl\utility(85,1): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Dependencies\utl\include\utl\list(154): message : see reference to function template instantiation 'T *utl::pool<T,6>::emplace<size_t&,utl::array<Card,2>&,utl::vector<Card,5>&>(size_t &,utl::array<Card,2> &,utl::vector<Card,5> &)' being compiled
+          with
+          [
+              T=RankedHand
+          ]
+C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Dependencies\utl\include\utl\list(155): message : see reference to function template instantiation 'T *utl::pool<T,6>::emplace<size_t&,utl::array<Card,2>&,utl::vector<Card,5>&>(size_t &,utl::array<Card,2> &,utl::vector<Card,5> &)' being compiled
+          with
+          [
+              T=RankedHand
+          ]
+C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\PokerGame.cpp(502): message : see reference to function template instantiation 'T &utl::list<T,6>::emplace_back<size_t&,utl::array<Card,2>&,utl::vector<Card,5>&>(size_t &,utl::array<Card,2> &,utl::vector<Card,5> &)' being compiled
+          with
+          [
+              T=RankedHand
+          ]
+C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\Source\PokerGame\PokerGame.cpp(502): message : see reference to function template instantiation 'T &utl::list<T,6>::emplace_back<size_t&,utl::array<Card,2>&,utl::vector<Card,5>&>(size_t &,utl::array<Card,2> &,utl::vector<Card,5> &)' being compiled
+          with
+          [
+              T=RankedHand
+          ]
+  Random.cpp
+  RankedHand.cpp
+  main.cpp
+  Generating Code...
+  HeadsUpPokerSimulatorUtil.vcxproj -> C:\Users\mzimm\source\repos\HeadsUpTexasHoldem\x64\Debug\uHoldemUtils.exe

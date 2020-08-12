@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -23,10 +23,6 @@
     <ClCompile Include="..\Dependencies\utl\string.cpp" />
     <ClCompile Include="..\Source\Exception.cpp" />
     <ClCompile Include="..\Source\main.cpp" />
-    <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pConst.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\Source\Platform\Atmega328p\Atmega328pPlatform.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -39,10 +35,16 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\Source\Platform\Desktop\DesktopConst.cpp" />
     <ClCompile Include="..\Source\Platform\Desktop\DesktopPlatform.cpp" />
     <ClCompile Include="..\Source\Platform\Desktop\DesktopSPI.cpp" />
     <ClCompile Include="..\Source\Platform\Desktop\DesktopUART.cpp" />
+    <ClCompile Include="..\Source\Platform\MSP430FR2355\MSP430FR2355Platform.cpp" />
+    <ClCompile Include="..\Source\Platform\MSP430FR2355\MSP430FR2355SPI.cpp" />
+    <ClCompile Include="..\Source\Platform\MSP430FR2355\MSP430FR2355UART.cpp" />
+    <ClCompile Include="..\Source\Platform\STM32\STM32I2C.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Source\Platform\STM32\STM32Platform.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -78,6 +80,10 @@
     <None Include="..\Dependencies\utl\include\utl\utility" />
     <None Include="..\Dependencies\utl\include\utl\vector" />
     <None Include="..\Makefile" />
+    <None Include="..\Make\Atmega328P.mk" />
+    <None Include="..\Make\Desktop.mk" />
+    <None Include="..\Make\MSP430FR2355.mk" />
+    <None Include="..\Make\STM32.mk" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\Exception.h" />
@@ -89,7 +95,12 @@
     <ClInclude Include="..\Include\Platform\Desktop\DesktopPlatform.h" />
     <ClInclude Include="..\Include\Platform\Desktop\DesktopSPI.h" />
     <ClInclude Include="..\Include\Platform\Desktop\DesktopUART.h" />
+    <ClInclude Include="..\Include\Platform\MSP430FR2355\MSP430FR2355Const.h" />
+    <ClInclude Include="..\Include\Platform\MSP430FR2355\MSP430FR2355Platform.h" />
+    <ClInclude Include="..\Include\Platform\MSP430FR2355\MSP430FR2355SPI.h" />
+    <ClInclude Include="..\Include\Platform\MSP430FR2355\MSP430FR2355UART.h" />
     <ClInclude Include="..\Include\Platform\Platform.h" />
+    <ClInclude Include="..\Include\Platform\STM32\STM32I2C.h" />
     <ClInclude Include="..\Include\Platform\STM32\STM32Platform.h" />
     <ClInclude Include="..\Include\Platform\STM32\STM32SPI.h" />
     <ClInclude Include="..\Include\Platform\STM32\STM32UART.h" />

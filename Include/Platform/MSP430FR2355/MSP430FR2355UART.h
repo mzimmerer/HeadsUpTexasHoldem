@@ -21,23 +21,24 @@
 #include <utl/cstdint>
 #include <utl/fifo>
 
+
  /** Startup script interface functions
   */
 extern "C" {
-    extern void USART1_IRQHandler(void);
+    extern void USCI_A1_ISR(void);
 }
 
-/// Forward declaration of PlatformSTM32 class
-class PlatformSTM32;
+ /// Forward declaration of PlatformMSP430FR2355 class
+class PlatformMSP430FR2355;
 
- /** UART class. A UART bus driver for STM32 uCs
+ /** UART class. A UART bus driver for MSP430FR2355 uCs
   */
 class UART
 {
 public:
 
-    /// Allow PlatformSTM32 private access
-    friend PlatformSTM32;
+    /// Allow PlatformMSP430FR2355 private access
+    friend PlatformMSP430FR2355;
 
     /// The UART Options struct
 	struct UARTOptions
@@ -62,6 +63,11 @@ public:
      *  @return The number of bytes read
      */
     size_t readBytes(char* begin, char* end);
+
+    /** Write a char to the UART bus.
+     *  @param chr The character to write
+     */
+    void writeChar(char chr);
 
     /** Write bytes to the UART bus
      *  @param begin The beginning of the source buffer

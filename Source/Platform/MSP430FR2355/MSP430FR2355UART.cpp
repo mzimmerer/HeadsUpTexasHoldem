@@ -16,17 +16,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-#include "Platform/STM32/STM32UART.h"
+#include "Platform/MSP430FR2355/MSP430FR2355UART.h"
 
-#include "stm32f031x6.h"
-
-#include <utl/cstdint>
-#include <utl/fifo>
-#include <utl/string>
+#include <msp430.h>
 
 volatile utl::fifo<char, 8> isr_fifo;
 
-void USART1_IRQHandler(void)
+void __attribute__((interrupt(USCI_A1_VECTOR))) USCI_A1_ISR(void)
 {
     // C-style cast away isr_fifo's volatile keyword, we will manage concurrent access
 
@@ -35,17 +31,16 @@ void USART1_IRQHandler(void)
         ((utl::fifo<char, 8>&)isr_fifo).pop();
 
     // Push a byte from the UART buffer into the ISR fifo
-    ((utl::fifo<char, 8>&)isr_fifo).push(USART1->RDR);
+    ((utl::fifo<char, 8>&)isr_fifo).push(UCA1RXBUF);
 }
 
 static void writeChar(char c)
 {
     // Write the byte
-    USART1->TDR = static_cast<char>(c);
+    UCA1TXBUF = c;
 
     // Wait for the byte to finish writing
-    while ((USART1->ISR & USART_ISR_TXE) == 0)
-        ;
+    while (!(UCA1IFG & UCTXIFG));
 }
 
 static int readChar(utl::fifo<char, 8>& isr_fifo)
@@ -54,14 +49,14 @@ static int readChar(utl::fifo<char, 8>& isr_fifo)
     int result = -1;
 
     // Critical section
-    NVIC_DisableIRQ(USART1_IRQn);
+    UCA1IE &= ~UCRXIE;
 
     // If there is a byte to read, read it
     if (isr_fifo.size() > 0)
         result = static_cast<int>(isr_fifo.pop());
 
     // End critical section
-    NVIC_EnableIRQ(USART1_IRQn);
+    UCA1IE |= UCRXIE;
 
     return result;
 }
@@ -70,49 +65,32 @@ UART::UART() : isr_fifo_internal(nullptr)
 {
 }
 
-UART::UART(volatile utl::fifo<char, 8>& isr_fifo_in, const UARTOptions& options_in) : isr_fifo_internal(&((utl::fifo<char, 8>&)isr_fifo))
+UART::UART(volatile utl::fifo<char, 8>& isr_fifo, const UARTOptions& options) : isr_fifo_internal(&((utl::fifo<char, 8>&)isr_fifo))
 {
-    // Enable USART1 peripheral clock
-    RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+    return;
+    P4DIR &= ~BIT2;
+    P4DIR |= BIT3;
 
-    // Calculate baudrate (oversampling == 16)
-    uint32_t BAUD_VALUE = F_CPU / options_in.baudrate;
+    // Configure UART pins
+    P4SEL0 |= BIT2 | BIT3;
 
-    // Write baud rate register
-    USART1->BRR = BAUD_VALUE;
+    // Configure UART
+    UCA1CTLW0 |= UCSWRST;
+    UCA1CTLW0 |= UCSSEL_1;                    // set ACLK as BRCLK
 
-    // Set TX pin as alternate function
-    GPIOA->AFR[0] &= ~GPIO_AFRL_AFSEL2;
-    GPIOA->AFR[0] |= (0x01) << GPIO_AFRL_AFSEL2_Pos;
+    // Baud Rate calculation. Referred to UG 17.3.10
+    // (1) N=32768/9600=3.41333333333
+    // (2) OS16=0, UCBRx=INT(N)=3
+    // (4) Fractional portion = 0.413. Refered to UG Table 17-4, UCBRSx=0x92.
+    UCA1BR0 = 3;                              // INT(32768/9600)
+    UCA1BR1 = 0x00;
+    UCA1MCTLW = 0x9200;
 
-    // Configure TX pin on PA2
-    GPIOA->MODER &= ~(GPIO_MODER_MODER2);
-    GPIOA->MODER |= GPIO_MODER_MODER2_1;
-    GPIOA->OTYPER &= ~GPIO_OTYPER_OT_2;
+    UCA1CTLW0 &= ~UCSWRST;                    // Initialize eUSCI
+    UCA1IE |= UCRXIE;                         // Enable USCI_A1 RX interrupt
 
-    // Set RX pin as alternate function
-    GPIOA->AFR[0] &= ~GPIO_AFRL_AFSEL3;
-    GPIOA->AFR[0] |= (0x01) << GPIO_AFRL_AFSEL3_Pos;
-
-    // Configure RX pin on PA3
-    GPIOA->MODER &= ~(GPIO_MODER_MODER3);
-    GPIOA->MODER |= GPIO_MODER_MODER3_1;
-    GPIOA->OTYPER &= ~GPIO_OTYPER_OT_3;
-
-    // Enable transmitter
-    USART1->CR1 |= USART_CR1_TE;
-
-    // Enable receiver
-    USART1->CR1 |= USART_CR1_RE;
-
-    // Enable RXNE IRQ
-    USART1->CR1 |= USART_CR1_RXNEIE;
-
-    // Enable USART1
-    USART1->CR1 |= USART_CR1_UE;
-
-    // Configure NVIC with this new IRQ/ISR mapping
-    NVIC_EnableIRQ(USART1_IRQn);
+    // Enable global interrupts
+    __enable_interrupt();
 }
 
 UART& UART::operator=(const UART& other)
@@ -130,7 +108,7 @@ size_t UART::writeBytes(const char* begin, const char* end)
     {
         // Only write if the isr_fifo pointer is valid
         if (this->isr_fifo_internal != nullptr)
-            writeChar(*begin);
+            ::writeChar(*begin);
 
         // Increment iterators
         ++begin;
@@ -151,7 +129,7 @@ size_t UART::readBytes(char* begin, char* end)
     while (begin != end) {
 
         // Read a single character, breaking the while loop if EOF is encountered
-        int c = readChar(*this->isr_fifo_internal);
+        int c = ::readChar(*this->isr_fifo_internal);
         if (c == -1)
             break;
 

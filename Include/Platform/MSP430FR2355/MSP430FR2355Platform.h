@@ -22,30 +22,22 @@
 #include <utl/fifo>
 #include <utl/string>
 
-#include "Platform/STM32/STM32Const.h"
-#include "Platform/STM32/STM32I2C.h"
-#include "Platform/STM32/STM32SPI.h"
-#include "Platform/STM32/STM32UART.h"
+#include "Platform/MSP430FR2355/MSP430FR2355Const.h"
+#include "Platform/MSP430FR2355/MSP430FR2355UART.h"
+#include "Platform/MSP430FR2355/MSP430FR2355SPI.h"
 
-/** Startup script interface functions
- */
-extern "C" {
-    extern void SystemInit();
-    extern void TIM2_IRQHandler(void);
-}
-
- /** PlatformSTM32 class. Implements STM32 specific platform features
+ /** PlatformMSP430FR2355 class. Implements MSP430FR2355 specific platform features
   */
-class PlatformSTM32 {
+class PlatformMSP430FR2355 {
 public:
 
-    /** PlatformSTM32 Constructor
+    /** PlatformMSP430FR2355 Constructor
      */
-	PlatformSTM32();
+	PlatformMSP430FR2355();
 
-    /** PlatformSTM32 Deconstructor
+    /** PlatformMSP430FR2355 Deconstructor
      */
-	~PlatformSTM32();
+	~PlatformMSP430FR2355();
 
     /** Get a random seed
      *  @result The random seed
@@ -69,19 +61,12 @@ public:
      */
 	UART configureUART(int index, const UART::UARTOptions& options);
 
-    /** Configure an SPI port
+    /** Configure a SPI port
      *  @param index The platform specific SPI index to configure
      *  @param options The options to configure
      *  @resul A copy of the SPI object
      */
 	SPI configureSPI(int index, const SPI::SPIOptions& options);
-
-    /** Configure an I2C port
-     *  @param index The platform specific I2C index to configure
-     *  @param options The options to configure
-     *  @resul A copy of the I2C object
-     */
-    I2C configureI2C(int index, const I2C::I2COptions& options);
 
 	/** Print stack size information for debugging purposes
      *  @param id An integer to print along with the stack size information
@@ -95,4 +80,4 @@ private:
 };
 
 /// Global access to this platform
-extern PlatformSTM32 this_platform;
+extern PlatformMSP430FR2355 this_platform;

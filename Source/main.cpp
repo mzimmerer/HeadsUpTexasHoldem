@@ -20,11 +20,12 @@
 
 #ifndef EMBEDDED_BUILD
 #include <stdexcept>
-#include <iostream>
 #endif
 
 #include <utl/fifo>
 #include <utl/string>
+#include <utl/utility>
+#include <utl/vector>
 
 #include "PokerGame/ConsoleIO.h"
 #include "PokerGame/PokerGame.h"
@@ -33,7 +34,7 @@ static utl::fifo<char, 8> local_fifo;
 
 static utl::fifo<utl::string<8>, 4> line_fifo;
 
-static UART* uart0 = nullptr;
+static UART uart0;
 
 static uint8_t processLine(const utl::string<8>& line)
 {
@@ -91,7 +92,7 @@ static utl::string<8> readLine()
 		// Read bytes from the UART bus
 		utl::vector<char, 8> buffer;
 		buffer.resize(8);
-		size_t bytes_read = uart0->readBytes(buffer.begin(), buffer.end());
+		size_t bytes_read = uart0.readBytes(buffer.begin(), buffer.end());
 		buffer.resize(bytes_read);
 		if (bytes_read == 0)
 			continue;
@@ -113,11 +114,11 @@ static utl::string<8> readLine()
 static void writeLineCallback(const utl::string<ConsoleIO::WIDTH>& line, void* opaque)
 {
 	// Write a line to the user's screen
-	uart0->writeBytes(line.begin(), line.end());
+	uart0.writeBytes(line.begin(), line.end());
 
 	// Write "\r\n" tp the user's screen
 	utl::string<2> end_line(ACCESS_ROM_STR(2, "\r\n"));
-	uart0->writeBytes(end_line.begin(), end_line.end());
+	uart0.writeBytes(end_line.begin(), end_line.end());
 }
 
 static utl::string<ConsoleIO::MAX_USER_INPUT_LEN> readLineCallback(void* opaque)
@@ -134,17 +135,113 @@ static void delayCallback(int16_t delay_ms)
 int main()
 {
 	// Initialize the platform
-	const UART::UARTOptions uart_options{500000};
-	UART uart0_local = this_platform.configureUART(0, uart_options);
-	uart0 = &uart0_local;
+	const UART::UARTOptions uart_options{ 500000 };
+	uart0 = this_platform.configureUART(0, uart_options);
+
+
+
+
+
+	// XXX
+	const I2C::I2COptions i2c_options{ 1 };
+	I2C i2c0_local = this_platform.configureI2C(0, i2c_options);
+
+	uint8_t command = 0x05; // XXX read ambient temperature
+	uint16_t raw_temp;
+	uint8_t* raw_temp_p = reinterpret_cast<uint8_t*>(&raw_temp);
+
+	while (1) {
+
+		i2c0_local.transaction(0x18, &command, &command + sizeof(command),
+			raw_temp_p, raw_temp_p + sizeof(raw_temp));
+
+		raw_temp = (raw_temp << 8) | (raw_temp >> 8);
+
+		raw_temp &= 0x1FFF;
+
+		uint16_t temp_int = raw_temp >> 4;
+		uint16_t temp_rem16 = raw_temp & 0x000F;
+
+		utl::string<32> temp_string = utl::to_string<32>(temp_int);
+		temp_string += ".";
+		switch (temp_rem16) {
+		default:
+		case 0:
+			temp_string += "0000";
+			break;
+		case 1:
+			temp_string += "0625";
+			break;
+		case 2:
+			temp_string += "1250";
+			break;
+		case 3:
+			temp_string += "1875";
+			break;
+		case 4:
+			temp_string += "2500";
+			break;
+		case 5:
+			temp_string += "3125";
+			break;
+		case 6:
+			temp_string += "3750";
+			break;
+		case 7:
+			temp_string += "4375";
+			break;
+		case 8:
+			temp_string += "5000";
+			break;
+		case 9:
+			temp_string += "5625";
+			break;
+		case 10:
+			temp_string += "6250";
+			break;
+		case 11:
+			temp_string += "6875";
+			break;
+		case 12:
+			temp_string += "7500";
+			break;
+		case 13:
+			temp_string += "8125";
+			break;
+		case 14:
+			temp_string += "8750";
+			break;
+		case 15:
+			temp_string += "9375";
+			break;
+		}
+		temp_string += " C\r\n";
+
+		uart0.writeBytes(temp_string.begin(), temp_string.end());
+
+		while (1)
+			;
+
+	}
+	// XXX
+
+
+
+
+	while (1)
+		;
+
+
 
 	// Run the program
-#ifdef EMBEDDED_BUILD
+//#ifdef EMBEDDED_BUILD
 	while (1) {
-#else
-	try
-	{
-#endif
+
+		//#else
+		//	try
+		//	{
+		//#endif
+#if 1
 		// Update the random seed
 		uint32_t random_seed = this_platform.randomSeed();
 
@@ -161,13 +258,15 @@ int main()
 		// Wait 3 seconds
 		this_platform.delayMilliSeconds(3000);
 
-#ifndef EMBEDDED_BUILD
-	}
-	catch (std::runtime_error& e)
-	{
-		std::cerr << e.what() << std::endl;
-	}
-#else
-	}
 #endif
+
+		//#ifndef EMBEDDED_BUILD
+		//	}
+		//	catch (std::runtime_error& e)
+		//	{
+		//		std::cerr << e.what() << std::endl;
+	}
+	//#else
+	//	}
+	//#endif
 }

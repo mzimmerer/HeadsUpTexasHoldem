@@ -21,11 +21,17 @@
 #include <utl/cstddef>
 #include <utl/cstdint>
 
+ /// Forward declaration of PlatformAtmega328p class
+class PlatformAtmega328p;
+
  /** SPI class. A SPI bus driver for Atmega328p uCs
   */
 class SPI
 {
 public:
+
+    /// Allow PlatformAtmega328p private access
+    friend PlatformAtmega328p;
 
     /// The SPI Options struct
 	struct SPIOptions
