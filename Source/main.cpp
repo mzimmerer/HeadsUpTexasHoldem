@@ -84,15 +84,33 @@ static void processRxBuffer(utl::fifo<char, 8>& buffer)
 	} while (0);
 }
 
-static utl::string<8> readLine()
+static utl::string<8> readLine(int max_delay_ms)
 {
+	// Get the current system time
+	utl::pair<uint32_t, uint16_t> tbegin = this_platform.sysTime();
+
+	// Add the delay
+	utl::pair<uint32_t, uint16_t> tend = tbegin;
+	tend.second += max_delay_ms;
+	if (tend.second > 1000) {
+		tend.second -= 1000;
+		tend.first += 1;
+	}
+
 	// While we have not received a full line
 	while (line_fifo.empty() == true) {
+
+		// Get the current system time
+		utl::pair<uint32_t, uint16_t> tnow = this_platform.sysTime();
+
+		// If max_delay_ms milli-seconds have elapsed, return an empty string
+		if (tnow.first >= tend.first && tnow.second >= tend.second)
+			return "";
 
 		// Read bytes from the UART bus
 		utl::vector<char, 8> buffer;
 		buffer.resize(8);
-		size_t bytes_read = uart0.readBytes(buffer.begin(), buffer.end());
+		size_t bytes_read = uart0.readBytes(buffer.begin(), buffer.end(), max_delay_ms);
 		buffer.resize(bytes_read);
 		if (bytes_read == 0)
 			continue;
@@ -131,7 +149,9 @@ void PRINT_TEMP()
 	uint16_t temp_int = raw_temp >> 4;
 	uint16_t temp_rem16 = raw_temp & 0x000F;
 
-	utl::string<32> temp_string = utl::to_string<32>(temp_int);
+	utl::string<32> temp_string;
+	temp_string += "MCP9808: ";
+	temp_string += utl::to_string<32>(temp_int);
 	temp_string += ".";
 	switch (temp_rem16) {
 	default:
@@ -184,7 +204,7 @@ void PRINT_TEMP()
 		temp_string += "9375";
 		break;
 	}
-	temp_string += " C\r\n";
+	temp_string += " C - ";
 
 	uart0.writeBytes(temp_string.begin(), temp_string.end());
 
@@ -269,15 +289,6 @@ char NIBBLE(uint8_t nibble)
 		return 'F';
 	}
 }
-void PRINT_BYTE(uint8_t byte)
-{
-	utl::string<32> temp_string("0x");
-	temp_string.push_back(NIBBLE(byte >> 4));
-	temp_string.push_back(NIBBLE(byte & 0x0F));
-	temp_string += "\r\n";
-	uart0.writeBytes(temp_string.begin(), temp_string.end());
-}
-
 
 #include "stm32f031x6.h" // XXX
 void PRINT_PRESSURE()
@@ -285,52 +296,23 @@ void PRINT_PRESSURE()
 	const SPI::SPIOptions spi_options{ 1 };
 	SPI spi0 = this_platform.configureSPI(0, spi_options);
 
-	GPIOB->ODR |= GPIO_ODR_3; // XXX
-	GPIOB->ODR &= ~GPIO_ODR_3; // XXX
-
-
-	// XXX
-	{
-		// Reset device
-		char tx[2] = { 0x80 | 0x50, 0x00 };
-		char rx[2] = {};
-		spi0.transaction(&tx[0], &tx[0] + sizeof(tx), &rx[0], &rx[0] + sizeof(rx));
-		this_platform.delayMilliSeconds(1); // TODO XXX FIXME remove this!
-
-		if (rx[1] == 0) {
-			GPIOB->ODR |= GPIO_ODR_3; // XXX
-			GPIOB->ODR &= ~GPIO_ODR_3; // XXX
-		}
-		else if (rx[1] == 0xff) {
-			GPIOB->ODR |= GPIO_ODR_3; // XXX
-			GPIOB->ODR &= ~GPIO_ODR_3; // XXX
-			GPIOB->ODR |= GPIO_ODR_3; // XXX
-			GPIOB->ODR &= ~GPIO_ODR_3; // XXX
-		}
-	}
-	// XXX
-
 	{
 		// Reset device
 		char tx[2] = { 0x00 | 0x60, 0xB6 };
 		char rx[2] = {};
 		spi0.transaction(tx, tx + sizeof(tx), rx, rx + sizeof(rx));
-		this_platform.delayMilliSeconds(1); // TODO XXX FIXME remove this!
+		this_platform.delayMilliSeconds(2); // TODO XXX FIXME remove this!
 	}
-
-	this_platform.delayMilliSeconds(10); // TODO XXX FIXME remove this!
-
-	//return;
+	this_platform.delayMilliSeconds(20); // TODO XXX FIXME remove this!
 
 	{
 		// Force a conversion
 		char tx[2] = { 0x00 | 0x74, 0x32 };
 		char rx[2] = {};
 		spi0.transaction(tx, tx + sizeof(tx), rx, rx + sizeof(rx));
-		this_platform.delayMilliSeconds(1); // TODO XXX FIXME remove this!
+		this_platform.delayMilliSeconds(2); // TODO XXX FIXME remove this!
 	}
-
-	this_platform.delayMilliSeconds(10); // TODO XXX FIXME remove this!
+	this_platform.delayMilliSeconds(20); // TODO XXX FIXME remove this!
 
 	int32_t temperature_raw = 0;
 	{
@@ -338,7 +320,7 @@ void PRINT_PRESSURE()
 		char tx[4] = { 0x80 | 0x7A , 0x00, 0x00, 0x00 };
 		char rx[4] = {};
 		spi0.transaction(tx, tx + sizeof(tx), rx, rx + sizeof(rx));
-		this_platform.delayMilliSeconds(1); // TODO XXX FIXME remove this!
+		this_platform.delayMilliSeconds(2); // TODO XXX FIXME remove this!
 
 		temperature_raw = static_cast<uint32_t>(rx[1]) << 16;
 		temperature_raw |= static_cast<uint32_t>(rx[2]) << 8;
@@ -352,7 +334,7 @@ void PRINT_PRESSURE()
 		char tx[4] = { 0x80 | 0x77 , 0x00, 0x00, 0x00 };
 		char rx[4] = {};
 		spi0.transaction(tx, tx + sizeof(tx), rx, rx + sizeof(rx));
-		this_platform.delayMilliSeconds(1); // TODO XXX FIXME remove this!
+		this_platform.delayMilliSeconds(2); // TODO XXX FIXME remove this!
 
 		pressure_raw = rx[1] << 16;
 		pressure_raw |= rx[2] << 8;
@@ -367,7 +349,7 @@ void PRINT_PRESSURE()
 		char tx[3] = { 0x80 | 0x08 + 2 * i, 0x00, 0x00 };
 		char rx[3] = {};
 		spi0.transaction(tx, tx + sizeof(tx), rx, rx + sizeof(rx));
-		this_platform.delayMilliSeconds(1); // TODO XXX FIXME remove this!
+		this_platform.delayMilliSeconds(2); // TODO XXX FIXME remove this!
 
 		DIGT[i] = rx[2] << 8;
 		DIGT[i] |= rx[1] << 0;
@@ -380,28 +362,19 @@ void PRINT_PRESSURE()
 		char tx[9] = { 0x80 | 0x0E + 2 * i, 0x00, 0x00 };
 		char rx[9] = {};
 		spi0.transaction(tx, tx + sizeof(tx), rx, rx + sizeof(rx));
-		this_platform.delayMilliSeconds(1); // TODO XXX FIXME remove this!
+		this_platform.delayMilliSeconds(2); // TODO XXX FIXME remove this!
 
 		DIGP[i] = rx[2] << 8;
 		DIGP[i] |= rx[1] << 0;
 	}
 
-	int32_t TEMP = bmp280_compensate_T_int32(temperature_raw, DIGT);
-	int32_t TEMP_INT = TEMP / 100;
-	int32_t TEMP_REM = TEMP % 100;
-
-	{
-		utl::string<32> temp_string = utl::to_string<32>(TEMP_INT);
-		temp_string += ".";
-		temp_string += utl::to_string<32>(TEMP_REM);
-		temp_string += " C\r\n";
-		uart0.writeBytes(temp_string.begin(), temp_string.end());
-	}
-
+	bmp280_compensate_T_int32(temperature_raw, DIGT);
 	uint32_t PRESSURE = bmp280_compensate_P_int32(pressure_raw, DIGP);
 	{
-		utl::string<32> temp_string = utl::to_string<32>(PRESSURE);
-		temp_string += " Pa\r\n";
+		utl::string<32> temp_string;
+		temp_string = "BMP280: ";
+		temp_string += utl::to_string<32>(PRESSURE);
+		temp_string += " Pa";
 		uart0.writeBytes(temp_string.begin(), temp_string.end());
 	}
 }
@@ -419,11 +392,31 @@ static void writeLineCallback(const utl::string<ConsoleIO::WIDTH>& line, void* o
 
 static utl::string<ConsoleIO::MAX_USER_INPUT_LEN> readLineCallback(void* opaque)
 {
-	PRINT_TEMP(); // XXX
-	PRINT_PRESSURE(); // XXX
+	utl::string<ConsoleIO::MAX_USER_INPUT_LEN> line;
 
-	// Read a line from the user
-	return readLine();
+	// Write "\r\n" tp the user's screen
+	utl::string<2> end_line(ACCESS_ROM_STR(2, "\r\n"));
+	uart0.writeBytes(end_line.begin(), end_line.end());
+
+	// While the user hasn't supplied feedback for some time
+	do {
+
+		// Print temperature
+		PRINT_TEMP();
+
+		// Print pressure
+		PRINT_PRESSURE();
+
+		// Read a line from the user
+		line = readLine(250);
+
+		// Write "\r" tp the user's screen
+		end_line = "\r";
+		uart0.writeBytes(end_line.begin(), end_line.end());
+
+	} while (line.size() == 0);
+
+	return line;
 }
 
 static void delayCallback(int16_t delay_ms)
@@ -436,12 +429,6 @@ int main()
 	// Initialize the platform
 	const UART::UARTOptions uart_options{ 500000 };
 	uart0 = this_platform.configureUART(0, uart_options);
-
-
-
-
-
-
 
 	// Run the program
 //#ifdef EMBEDDED_BUILD

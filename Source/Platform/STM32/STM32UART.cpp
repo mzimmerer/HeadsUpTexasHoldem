@@ -140,7 +140,7 @@ size_t UART::writeBytes(const char* begin, const char* end)
     return result;
 }
 
-size_t UART::readBytes(char* begin, char* end)
+size_t UART::readBytes(char* begin, char* end, uint32_t max_delay_ms)
 {
     // Only read bytes if the isr_fifo pointer is valid
     if (this->isr_fifo_internal == nullptr)

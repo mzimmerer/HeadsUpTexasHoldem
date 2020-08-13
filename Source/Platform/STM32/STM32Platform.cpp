@@ -53,6 +53,7 @@ void SystemInit() // TODO XXX FIXME clean this up
         RCC_CFGR_PLLSRC);
     RCC->CFGR |= (RCC_CFGR_PLLSRC_HSI_DIV2 |
         RCC_CFGR_PLLMUL12);
+
     // Turn the PLL on and wait for it to be ready.
     RCC->CR |= (RCC_CR_PLLON);
     while (!(RCC->CR & RCC_CR_PLLRDY)) {};
@@ -85,13 +86,17 @@ void SystemInit() // TODO XXX FIXME clean this up
     RCC->APB1RSTR &= ~(RCC_APB1RSTR_TIM2RST);
 
     // Set the timer prescaler/autoreload timing registers.
+
     // (These are 16-bit timers, so this won't work with >65MHz.)
-    TIM2->PSC = F_CPU / 1000;
+    TIM2->PSC = F_CPU / 2000; // TODO XXX FIXME unexpected factor of 2?  FUXKED... I just monkeyed this
     TIM2->ARR = 1;
+
     // Send an update event to reset the timer and apply settings.
     TIM2->EGR |= TIM_EGR_UG;
+
     // Enable the hardware interrupt.
     TIM2->DIER |= TIM_DIER_UIE;
+
     // Enable the timer.
     TIM2->CR1 |= TIM_CR1_CEN;
 
@@ -178,6 +183,17 @@ SPI PlatformSTM32::configureSPI(int index, const SPI::SPIOptions& options_in)
 I2C PlatformSTM32::configureI2C(int index, const I2C::I2COptions& options_in)
 {
     return I2C(options_in);
+}
+
+utl::pair<uint32_t, uint16_t> PlatformSTM32::sysTime()
+{
+    // Read the current time in a critical section
+    NVIC_DisableIRQ(TIM2_IRQn);
+    uint32_t now_s = system_time_s;
+    uint16_t now_ms = system_time_ms;
+    NVIC_EnableIRQ(TIM2_IRQn);
+
+    return utl::pair<uint32_t, uint16_t>(now_s, now_ms);
 }
 
 void PlatformSTM32::debugPrintStackInfo(int id)

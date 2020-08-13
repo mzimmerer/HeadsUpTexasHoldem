@@ -61,7 +61,7 @@ public:
      *  @param end The end of the destination buffer
      *  @return The number of bytes read
      */
-    size_t readBytes(char* begin, char* end);
+    size_t readBytes(char* begin, char* end, uint32_t max_delay_ms = 0); // TODO XXX FIXME API update
 
     /** Write bytes to the UART bus
      *  @param begin The beginning of the source buffer

@@ -21,6 +21,7 @@
 #include <utl/cstdint>
 #include <utl/fifo>
 #include <utl/string>
+#include <utl/utility>
 
 #include "Platform/STM32/STM32Const.h"
 #include "Platform/STM32/STM32I2C.h"
@@ -82,6 +83,10 @@ public:
      *  @resul A copy of the I2C object
      */
     I2C configureI2C(int index, const I2C::I2COptions& options);
+
+    // XXX
+    utl::pair<uint32_t, uint16_t> sysTime(); // TODO XXX FIXME a better time representation
+    // XXX
 
 	/** Print stack size information for debugging purposes
      *  @param id An integer to print along with the stack size information
