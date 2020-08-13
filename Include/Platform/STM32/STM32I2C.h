@@ -39,11 +39,6 @@ public:
 		uint32_t clock_frequency_hz;
 	};
 
-    /** I2C Constructor
-     *  @param options The I2C options
-     */
-	I2C(const I2COptions& options);
-
     /** Copy operator
      *  @param other The I2C object to copy
      *  @result A reference to the lhs I2C object
@@ -65,4 +60,9 @@ private:
     size_t write(const uint8_t* src_begin, const uint8_t* src_end);
 
     size_t read(uint8_t* dst_begin, uint8_t* dst_end);
+
+    /** I2C Constructor
+     *  @param options The I2C options
+     */
+    I2C(const I2COptions& options);
 };

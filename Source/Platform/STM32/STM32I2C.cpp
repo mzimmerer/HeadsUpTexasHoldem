@@ -24,34 +24,6 @@ I2C::I2C(const I2COptions& options)
 {
     // Enable I2C1 peripheral clock
     RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
-
-    // Set SCL pin as alternate function
-    GPIOA->AFR[1] &= ~GPIO_AFRH_AFSEL9;
-    GPIOA->AFR[1] |= (0x04) << GPIO_AFRH_AFSEL9_Pos;
-
-    // Configure SCL pin on PA9
-    GPIOA->MODER &= ~(GPIO_MODER_MODER9);
-    GPIOA->MODER |= GPIO_MODER_MODER9_1;
-    GPIOA->OTYPER &= ~GPIO_OTYPER_OT_9;
-    GPIOA->PUPDR &= ~GPIO_PUPDR_PUPDR9;
-    GPIOA->PUPDR |= GPIO_PUPDR_PUPDR9_0;
-
-
-    // Set SDA pin as alternate function
-    GPIOA->AFR[1] &= ~GPIO_AFRH_AFSEL10;
-    GPIOA->AFR[1] |= (0x04) << GPIO_AFRH_AFSEL10_Pos;
-
-    // Configure SDA pin on PA10
-    GPIOA->MODER &= ~(GPIO_MODER_MODER10);
-    GPIOA->MODER |= GPIO_MODER_MODER10_1;
-    GPIOA->OTYPER &= ~GPIO_OTYPER_OT_10;
-    GPIOA->PUPDR &= ~GPIO_PUPDR_PUPDR10;
-    GPIOA->PUPDR |= GPIO_PUPDR_PUPDR10_0;
-
-
-
-
-
     
     // Disable the I2C peripheral
     I2C1->CR1 &= ~I2C_CR1_PE;
@@ -64,13 +36,30 @@ I2C::I2C(const I2COptions& options)
     I2C1->TIMINGR &= ~I2C_TIMINGR_SCLDEL;
     I2C1->TIMINGR |= 0x4 << I2C_TIMINGR_SCLDEL_Pos;
 
-   // c = I2C->RXDR;
-  //  I2C->TXDR = c;
-
-
-
     // Enable the I2C peripheral
     I2C1->CR1 |= I2C_CR1_PE;
+
+    // Set SCL pin as alternate function
+    GPIOA->AFR[1] &= ~GPIO_AFRH_AFSEL9;
+    GPIOA->AFR[1] |= (0x04) << GPIO_AFRH_AFSEL9_Pos;
+
+    // Configure SCL pin on PA9
+    GPIOA->MODER &= ~(GPIO_MODER_MODER9);
+    GPIOA->MODER |= GPIO_MODER_MODER9_1;
+    GPIOA->OTYPER &= ~GPIO_OTYPER_OT_9;
+    GPIOA->PUPDR &= ~GPIO_PUPDR_PUPDR9;
+    GPIOA->PUPDR |= GPIO_PUPDR_PUPDR9_0;
+
+    // Set SDA pin as alternate function
+    GPIOA->AFR[1] &= ~GPIO_AFRH_AFSEL10;
+    GPIOA->AFR[1] |= (0x04) << GPIO_AFRH_AFSEL10_Pos;
+
+    // Configure SDA pin on PA10
+    GPIOA->MODER &= ~(GPIO_MODER_MODER10);
+    GPIOA->MODER |= GPIO_MODER_MODER10_1;
+    GPIOA->OTYPER &= ~GPIO_OTYPER_OT_10;
+    GPIOA->PUPDR &= ~GPIO_PUPDR_PUPDR10;
+    GPIOA->PUPDR |= GPIO_PUPDR_PUPDR10_0;
 }
 
 I2C& I2C::operator=(const I2C& other)
