@@ -28,10 +28,7 @@
 #include "PokerGame/Deck.h"
 #include "PokerGame/Random.h"
 #include "PokerGame/RankedHand.h"
-
-// XXX
 #include "PokerGame/AI.h"
-// XXX
 
 static utl::array<utl::array<utl::pair<int, int>, 13>, 13> results;
 
@@ -96,7 +93,6 @@ static void texasHoldemShowDown(Deck& deck)
 
 int main(int argc, char** argv)
 {
-#if 0
 	// Constuct deck
 	Random rng(time(nullptr));
 	Deck deck(rng);
@@ -130,14 +126,6 @@ int main(int argc, char** argv)
 		}
 	}
 	std::cout << "};" << std::endl;
-#endif
-
-	//utl::array<Card, 2> hand;
-	//hand[0] = Card(Card::Value::King, Card::Suit::Hearts);
-	//hand[1] = Card(Card::Value::Ace, Card::Suit::Hearts);
-
-	//uint8_t strength = AI::handStrength(hand);
-
 
 	return 0;
 }

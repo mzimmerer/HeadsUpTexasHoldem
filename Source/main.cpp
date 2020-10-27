@@ -129,257 +129,6 @@ static utl::string<8> readLine(int max_delay_ms)
 	return line_fifo.pop();
 }
 
-// XXX
-void PRINT_TEMP()
-{
-	const I2C::I2COptions i2c_options{ 1 };
-	I2C i2c0_local = this_platform.configureI2C(0, i2c_options);
-
-	uint8_t command = 0x05; // XXX read ambient temperature
-	uint16_t raw_temp;
-	uint8_t* raw_temp_p = reinterpret_cast<uint8_t*>(&raw_temp);
-
-	i2c0_local.transaction(0x18, &command, &command + sizeof(command),
-		raw_temp_p, raw_temp_p + sizeof(raw_temp));
-
-	raw_temp = (raw_temp << 8) | (raw_temp >> 8);
-
-	raw_temp &= 0x1FFF;
-
-	uint16_t temp_int = raw_temp >> 4;
-	uint16_t temp_rem16 = raw_temp & 0x000F;
-
-	utl::string<32> temp_string;
-	temp_string += "MCP9808: ";
-	temp_string += utl::to_string<32>(temp_int);
-	temp_string += ".";
-	switch (temp_rem16) {
-	default:
-	case 0:
-		temp_string += "0000";
-		break;
-	case 1:
-		temp_string += "0625";
-		break;
-	case 2:
-		temp_string += "1250";
-		break;
-	case 3:
-		temp_string += "1875";
-		break;
-	case 4:
-		temp_string += "2500";
-		break;
-	case 5:
-		temp_string += "3125";
-		break;
-	case 6:
-		temp_string += "3750";
-		break;
-	case 7:
-		temp_string += "4375";
-		break;
-	case 8:
-		temp_string += "5000";
-		break;
-	case 9:
-		temp_string += "5625";
-		break;
-	case 10:
-		temp_string += "6250";
-		break;
-	case 11:
-		temp_string += "6875";
-		break;
-	case 12:
-		temp_string += "7500";
-		break;
-	case 13:
-		temp_string += "8125";
-		break;
-	case 14:
-		temp_string += "8750";
-		break;
-	case 15:
-		temp_string += "9375";
-		break;
-	}
-	temp_string += " C - ";
-
-	uart0.writeBytes(temp_string.begin(), temp_string.end());
-
-}
-
-// XXX
-static int32_t t_fine;
-int32_t bmp280_compensate_T_int32(int32_t adc_T, const uint16_t* DIG)
-{
-	int32_t var1, var2, T;
-	var1 = ((((adc_T >> 3) -((int32_t)DIG[0] << 1))) * ((int32_t)DIG[1])) >> 11;
-	var2 = (((((adc_T >> 4) -((int32_t)DIG[0])) * ((adc_T >> 4) -((int32_t)DIG[0]))) >> 12) *
-		((int32_t)DIG[2])) >> 14;
-	t_fine = var1 + var2;
-	T = (t_fine * 5 + 128) >> 8;
-	return T;
-}
-uint32_t bmp280_compensate_P_int32(int32_t adc_P, const uint16_t* DIG)
-{
-	int32_t var1, var2;
-	uint32_t p;
-	var1 = (((int32_t)t_fine) >> 1) -(int32_t)64000;
-	var2 = (((var1 >> 2) * (var1 >> 2)) >> 11) * ((int32_t)DIG[5]);
-	var2 = var2 + ((var1 * ((int32_t)DIG[4])) << 1);
-	var2 = (var2 >> 2) + (((int32_t)DIG[3]) << 16);
-	var1 = (((DIG[2] * (((var1 >> 2) * (var1 >> 2)) >> 13)) >> 3) + ((((int32_t)DIG[1]) * var1) >> 1)) >> 18;
-	var1 = ((((32768 + var1)) * ((int32_t)DIG[0])) >> 15);
-	if (var1 == 0)
-	{
-		return 0; // avoid exception caused by division by zero
-	}
-	p = (((uint32_t)(((int32_t)1048576) - adc_P) - (var2 >> 12))) * 3125;
-	if (p < 0x80000000)
-	{
-		p = (p << 1) / ((uint32_t)var1);
-	}
-	else
-	{
-		p = (p / (uint32_t)var1) * 2;
-	}
-	var1 = (((int32_t)DIG[8]) * ((int32_t)(((p >> 3) * (p >> 3)) >> 13))) >> 12;
-	var2 = (((int32_t)(p >> 2)) * ((int32_t)DIG[7])) >> 13;
-	p = (uint32_t)((int32_t)p + ((var1 + var2 + DIG[6]) >> 4));
-	return p;
-}
-// XXX
-
-char NIBBLE(uint8_t nibble)
-{
-	switch (nibble) {
-	case 0:
-		return '0';
-	case 1:
-		return '1';
-	case 2:
-		return '2';
-	case 3:
-		return '3';
-	case 4:
-		return '4';
-	case 5:
-		return '5';
-	case 6:
-		return '6';
-	case 7:
-		return '7';
-	case 8:
-		return '8';
-	case 9:
-		return '9';
-	case 10:
-		return 'A';
-	case 11:
-		return 'B';
-	case 12:
-		return 'C';
-	case 13:
-		return 'D';
-	case 14:
-		return 'E';
-	case 15:
-		return 'F';
-	}
-}
-
-#include "stm32f031x6.h" // XXX
-void PRINT_PRESSURE()
-{
-	const SPI::SPIOptions spi_options{ 1 };
-	SPI spi0 = this_platform.configureSPI(0, spi_options);
-
-	{
-		// Reset device
-		char tx[2] = { 0x00 | 0x60, 0xB6 };
-		char rx[2] = {};
-		spi0.transaction(tx, tx + sizeof(tx), rx, rx + sizeof(rx));
-		this_platform.delayMilliSeconds(2); // TODO XXX FIXME remove this!
-	}
-	this_platform.delayMilliSeconds(20); // TODO XXX FIXME remove this!
-
-	{
-		// Force a conversion
-		char tx[2] = { 0x00 | 0x74, 0x32 };
-		char rx[2] = {};
-		spi0.transaction(tx, tx + sizeof(tx), rx, rx + sizeof(rx));
-		this_platform.delayMilliSeconds(2); // TODO XXX FIXME remove this!
-	}
-	this_platform.delayMilliSeconds(20); // TODO XXX FIXME remove this!
-
-	int32_t temperature_raw = 0;
-	{
-		// Read pressure
-		char tx[4] = { 0x80 | 0x7A , 0x00, 0x00, 0x00 };
-		char rx[4] = {};
-		spi0.transaction(tx, tx + sizeof(tx), rx, rx + sizeof(rx));
-		this_platform.delayMilliSeconds(2); // TODO XXX FIXME remove this!
-
-		temperature_raw = static_cast<uint32_t>(rx[1]) << 16;
-		temperature_raw |= static_cast<uint32_t>(rx[2]) << 8;
-		temperature_raw |= static_cast<uint32_t>(rx[3]) << 0;
-		temperature_raw >>= 4;
-	}
-
-	uint32_t pressure_raw = 0;
-	{
-		// Read pressure
-		char tx[4] = { 0x80 | 0x77 , 0x00, 0x00, 0x00 };
-		char rx[4] = {};
-		spi0.transaction(tx, tx + sizeof(tx), rx, rx + sizeof(rx));
-		this_platform.delayMilliSeconds(2); // TODO XXX FIXME remove this!
-
-		pressure_raw = rx[1] << 16;
-		pressure_raw |= rx[2] << 8;
-		pressure_raw |= rx[3] << 0;
-		pressure_raw >>= 4;
-	}
-
-	uint16_t DIGT[3]; // XXX
-	for (size_t i = 0; i < 3; ++i)
-	{
-		// Read DIG parameters
-		char tx[3] = { 0x80 | 0x08 + 2 * i, 0x00, 0x00 };
-		char rx[3] = {};
-		spi0.transaction(tx, tx + sizeof(tx), rx, rx + sizeof(rx));
-		this_platform.delayMilliSeconds(2); // TODO XXX FIXME remove this!
-
-		DIGT[i] = rx[2] << 8;
-		DIGT[i] |= rx[1] << 0;
-	}
-
-	uint16_t DIGP[9]; // XXX
-	for (size_t i = 0; i < 9; ++i)
-	{
-		// Read DIG parameters
-		char tx[9] = { 0x80 | 0x0E + 2 * i, 0x00, 0x00 };
-		char rx[9] = {};
-		spi0.transaction(tx, tx + sizeof(tx), rx, rx + sizeof(rx));
-		this_platform.delayMilliSeconds(2); // TODO XXX FIXME remove this!
-
-		DIGP[i] = rx[2] << 8;
-		DIGP[i] |= rx[1] << 0;
-	}
-
-	bmp280_compensate_T_int32(temperature_raw, DIGT);
-	uint32_t PRESSURE = bmp280_compensate_P_int32(pressure_raw, DIGP);
-	{
-		utl::string<32> temp_string;
-		temp_string = "BMP280: ";
-		temp_string += utl::to_string<32>(PRESSURE);
-		temp_string += " Pa";
-		uart0.writeBytes(temp_string.begin(), temp_string.end());
-	}
-}
-// XXX
-
 static void writeLineCallback(const utl::string<ConsoleIO::WIDTH>& line, void* opaque)
 {
 	// Write a line to the user's screen
@@ -400,12 +149,6 @@ static utl::string<ConsoleIO::MAX_USER_INPUT_LEN> readLineCallback(void* opaque)
 
 	// While the user hasn't supplied feedback for some time
 	do {
-
-		// Print temperature
-		PRINT_TEMP();
-
-		// Print pressure
-		PRINT_PRESSURE();
 
 		// Read a line from the user
 		line = readLine(250);
@@ -431,14 +174,14 @@ int main()
 	uart0 = this_platform.configureUART(0, uart_options);
 
 	// Run the program
-//#ifdef EMBEDDED_BUILD
+#ifdef EMBEDDED_BUILD
 	while (1) {
 
-		//#else
-		//	try
-		//	{
-		//#endif
-#if 1
+#else
+	try
+	{
+#endif
+
 		// Update the random seed
 		uint32_t random_seed = this_platform.randomSeed();
 
@@ -455,15 +198,15 @@ int main()
 		// Wait 3 seconds
 		this_platform.delayMilliSeconds(3000);
 
-#endif
 
-		//#ifndef EMBEDDED_BUILD
-		//	}
-		//	catch (std::runtime_error& e)
-		//	{
-		//		std::cerr << e.what() << std::endl;
+
+#ifndef EMBEDDED_BUILD
 	}
-	//#else
-	//	}
-	//#endif
+	catch (std::runtime_error& e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
+#else
+}
+#endif
 }
